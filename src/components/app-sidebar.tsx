@@ -16,8 +16,10 @@ import {
   IconUsers,
 } from "@tabler/icons-react"
 
+import Link from "next/link" 
+
 //  Untuk mode gelap terang atau sistem
-import { Moon, Sun } from "lucide-react"
+import { Bell, Moon, Sun } from "lucide-react"
 import { useTheme } from "next-themes"
 
 import { Button } from "@/components/ui/button"
@@ -53,105 +55,28 @@ const data = {
   navMain: [
     {
       title: "Dashboard",
-      url: "/dashboard",
+      url: "/main/dashboard",
       icon: IconDashboard,
     },
     {
       title: "Data Laporan",
-      url: "/data-laporan",
+      url: "/main/data-laporan",
       icon: IconReport,
     },
     {
       title: "Data Akun",
-      url: "/data-akun",
+      url: "/main/data-akun",
       icon: IconUsers,
     },
     {
       title: "Data Rekomendasi",
-      url: "/data-rekomendasi",
+      url: "/main/data-rekomendasi",
       icon: IconChartBar,
     },
-  ],
-  navClouds: [
     {
-      title: "Capture",
-      icon: IconCamera,
-      isActive: true,
-      url: "#",
-      items: [
-        {
-          title: "Active Proposals",
-          url: "#",
-        },
-        {
-          title: "Archived",
-          url: "#",
-        },
-      ],
-    },
-    {
-      title: "Proposal",
-      icon: IconFileDescription,
-      url: "#",
-      items: [
-        {
-          title: "Active Proposals",
-          url: "#",
-        },
-        {
-          title: "Archived",
-          url: "#",
-        },
-      ],
-    },
-    {
-      title: "Prompts",
-      icon: IconFileAi,
-      url: "#",
-      items: [
-        {
-          title: "Active Proposals",
-          url: "#",
-        },
-        {
-          title: "Archived",
-          url: "#",
-        },
-      ],
-    },
-  ],
-  navSecondary: [
-    {
-      title: "Settings",
-      url: "#",
-      icon: IconSettings,
-    },
-    {
-      title: "Get Help",
-      url: "#",
-      icon: IconHelp,
-    },
-    {
-      title: "Search",
-      url: "#",
-      icon: IconSearch,
-    },
-  ],
-  documents: [
-    {
-      name: "Data Library",
-      url: "#",
-      icon: IconDatabase,
-    },
-    {
-      name: "Reports",
-      url: "#",
-      icon: IconReport,
-    },
-    {
-      name: "Word Assistant",
-      url: "#",
-      icon: IconFileWord,
+      title: "Notifikasi",
+      url: "/main/notifikasi",
+      icon: Bell,
     },
   ],
 }
@@ -159,25 +84,25 @@ const data = {
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   return (
     <Sidebar collapsible="offcanvas" {...props}>
-      <SidebarHeader>
-        <div className="flex items-center justify-between px-4 py-2">
-          <a href="#" className="flex items-center space-x-2">
-            <img src="/balapin.svg" alt="BALAP-IN Logo" className="w-10 h-10" />
-            <span className="text-base font-bold">BALAP-IN</span>
-            </a>
-            <ModeToggle />
-            </div>
-            </SidebarHeader>
+  <SidebarHeader>
+    <div className="flex items-center justify-between px-4 py-2">
+      <Link href="/" className="flex items-center space-x-2">
+        <img src="/balapin.svg" alt="BALAP-IN Logo" className="w-10 h-10" />
+        <span className="text-base font-bold">BALAP-IN</span>
+      </Link>
+      <ModeToggle />
+    </div>
+  </SidebarHeader>
 
-      <SidebarContent>
-        <NavMain items={data.navMain} />
-        <NavDocuments items={data.documents} />
-        <NavSecondary items={data.navSecondary} className="mt-auto" />
-      </SidebarContent>
-      <SidebarFooter>
-        <NavUser user={data.user} />
-      </SidebarFooter>
-    </Sidebar>
+  <SidebarContent>
+    <NavMain items={data.navMain} />
+  </SidebarContent>
+
+  <SidebarFooter>
+    <NavUser user={data.user} />
+  </SidebarFooter>
+</Sidebar>
+
   )
 }
 

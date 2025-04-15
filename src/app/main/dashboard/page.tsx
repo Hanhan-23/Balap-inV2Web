@@ -1,3 +1,5 @@
+"use client"
+
 import { AppSidebar } from "@/components/app-sidebar"
 import { ChartAreaInteractive } from "@/components/chart-area-interactive"
 import { DataTable } from "@/components/data-table"
@@ -38,3 +40,19 @@ export default function Page() {
     </SidebarProvider>
   )
 }
+
+// Redirect berdasarkan status login
+// src/app/page.tsx
+// import { cookies } from "next/headers";
+// import { redirect } from "next/navigation";
+
+// export default function Home() {
+//   const cookieStore = cookies();
+//   const isLoggedIn = cookieStore.get("auth_token"); // atau nama cookie kamu
+
+//   if (isLoggedIn) {
+//     redirect("/main/dashboard");
+//   } else {
+//     redirect("/login");
+//   }
+// }
