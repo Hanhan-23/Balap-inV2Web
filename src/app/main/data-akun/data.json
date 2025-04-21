@@ -1,0 +1,163 @@
+[
+    {
+      "id": 1,
+      "username": "Farhan9098",
+      "email": "frhn@gmail.com",
+      "no_telp": "081278783322",
+      "alamat": "Jl. Ahmad Yani",
+      "jabatan": "Kepala"
+    },
+    {
+      "id": 2,
+      "username": "DewiRahayu",
+      "email": "dewi.rahayu@gmail.com",
+      "no_telp": "082134567890",
+      "alamat": "Jl. Sudirman No. 12",
+      "jabatan": "Sekretaris"
+    },
+    {
+      "id": 3,
+      "username": "AndiPutra",
+      "email": "andi.putra@email.com",
+      "no_telp": "081223344556",
+      "alamat": "Jl. Merdeka No. 45",
+      "jabatan": "Staf IT"
+    },
+    {
+      "id": 4,
+      "username": "SitiNurhaliza",
+      "email": "siti.nurhaliza@gmail.com",
+      "no_telp": "082199887766",
+      "alamat": "Jl. Kartini No. 5",
+      "jabatan": "HRD"
+    },
+    {
+      "id": 5,
+      "username": "BudiSantoso",
+      "email": "budi.santoso@yahoo.com",
+      "no_telp": "085611223344",
+      "alamat": "Jl. Imam Bonjol No. 10",
+      "jabatan": "Manajer"
+    },
+    {
+      "id": 6,
+      "username": "AgusSaputra",
+      "email": "agus.saputra@email.com",
+      "no_telp": "081356789012",
+      "alamat": "Jl. Soekarno Hatta",
+      "jabatan": "Keuangan"
+    },
+    {
+      "id": 7,
+      "username": "NurAini",
+      "email": "nur.aini@gmail.com",
+      "no_telp": "082145678900",
+      "alamat": "Jl. Diponegoro No. 9",
+      "jabatan": "Admin"
+    },
+    {
+      "id": 8,
+      "username": "RizkyPratama",
+      "email": "rizky.pratama@hotmail.com",
+      "no_telp": "083812345678",
+      "alamat": "Jl. Pelita No. 22",
+      "jabatan": "Teknisi"
+    },
+    {
+      "id": 9,
+      "username": "LestariDewi",
+      "email": "lestari.dewi@email.com",
+      "no_telp": "082298765432",
+      "alamat": "Jl. Teuku Umar No. 8",
+      "jabatan": "Marketing"
+    },
+    {
+      "id": 10,
+      "username": "YusufHidayat",
+      "email": "yusuf.hidayat@gmail.com",
+      "no_telp": "081377889900",
+      "alamat": "Jl. Gajah Mada No. 14",
+      "jabatan": "Pengawas"
+    },
+    {
+      "id": 11,
+      "username": "WulanSetiawan",
+      "email": "wulan.setiawan@gmail.com",
+      "no_telp": "081267891234",
+      "alamat": "Jl. Cempaka No. 1",
+      "jabatan": "Customer Service"
+    },
+    {
+      "id": 12,
+      "username": "FajarHidayah",
+      "email": "fajar.hidayah@gmail.com",
+      "no_telp": "082198765432",
+      "alamat": "Jl. Raya Bukit Indah",
+      "jabatan": "Asisten Manajer"
+    },
+    {
+      "id": 13,
+      "username": "MelatiAyunda",
+      "email": "melati.ayunda@mail.com",
+      "no_telp": "081256789321",
+      "alamat": "Jl. Bunga Mawar No. 7",
+      "jabatan": "Staf Kepegawaian"
+    },
+    {
+      "id": 14,
+      "username": "DoniSaputra",
+      "email": "doni.saputra@gmail.com",
+      "no_telp": "085612345670",
+      "alamat": "Jl. Pemuda No. 33",
+      "jabatan": "Operasional"
+    },
+    {
+      "id": 15,
+      "username": "LinaRosdiana",
+      "email": "lina.rosdiana@yahoo.com",
+      "no_telp": "081377889011",
+      "alamat": "Jl. Teratai Putih",
+      "jabatan": "Konsultan"
+    },
+    {
+      "id": 16,
+      "username": "RezaAkbar",
+      "email": "reza.akbar@email.com",
+      "no_telp": "083845678123",
+      "alamat": "Jl. Mangga Besar",
+      "jabatan": "Teknisi Senior"
+    },
+    {
+      "id": 17,
+      "username": "AyuLestari",
+      "email": "ayu.lestari@gmail.com",
+      "no_telp": "081344556677",
+      "alamat": "Jl. Melati Indah",
+      "jabatan": "Staf Marketing"
+    },
+    {
+      "id": 18,
+      "username": "HendraGunawan",
+      "email": "hendra.gunawan@gmail.com",
+      "no_telp": "085822334455",
+      "alamat": "Jl. Cemara No. 18",
+      "jabatan": "Support IT"
+    },
+    {
+      "id": 19,
+      "username": "TiaraSalsabila",
+      "email": "tiara.salsa@gmail.com",
+      "no_telp": "082145987654",
+      "alamat": "Jl. Pahlawan No. 22",
+      "jabatan": "Public Relations"
+    },
+    {
+      "id": 20,
+      "username": "BayuRamadhan",
+      "email": "bayu.ramadhan@gmail.com",
+      "no_telp": "081399876543",
+      "alamat": "Jl. Rajawali No. 40",
+      "jabatan": "Surveyor"
+    }
+  ]
+  

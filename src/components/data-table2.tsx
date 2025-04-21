@@ -10,39 +10,28 @@ import {
 
 import { Button } from "@/components/ui/button"
 import { Checkbox } from "@/components/ui/checkbox"
-import { Eye, EyeOff, MoreVertical, Filter } from "lucide-react"
+import { Eye, EyeOff, MoreVertical, Filter } from "lucide-react" // Import Filter icon
 import { useState } from "react"
 
-type AccountData = {
+type ComplaintData = {
   id: number
-  username: string
-  email: string
-  no_telp: string
+  judul_pengaduan: string
+  deskripsi_pengaduan: string
+  cuaca: string
+  nilai_kerusakan: string
   alamat: string
-  jabatan: string
+  status: string
 }
 
 interface DataTableProps {
-  data: AccountData[]
+  data: ComplaintData[]
 }
 
 export function DataTable({ data }: DataTableProps) {
   const [showTable, setShowTable] = useState(true)
   const [globalFilter, setGlobalFilter] = useState("")
-  const [filterActive, setFilterActive] = useState(false)
-  
-  const [usernameFilter, setUsernameFilter] = useState("")
-  const [emailFilter, setEmailFilter] = useState("")
 
-  // Filter data berdasarkan kata kunci pencarian
-  const filteredData = data.filter((item) => {
-    return (
-      (item.username.toLowerCase().includes(usernameFilter.toLowerCase()) || usernameFilter === "") &&
-      (item.email.toLowerCase().includes(emailFilter.toLowerCase()) || emailFilter === "")
-    )
-  })
-
-  const columns: ColumnDef<AccountData>[] = [
+  const columns: ColumnDef<ComplaintData>[] = [
     {
       id: "select",
       header: ({ table }) => (
@@ -63,24 +52,26 @@ export function DataTable({ data }: DataTableProps) {
       enableHiding: false,
     },
     {
-      accessorKey: "username",
-      header: "Username",
+      accessorKey: "judul_pengaduan",
+      header: "Judul Pengaduan",
       cell: ({ row }) => (
-        <div className="flex items-center gap-2">
-          <div className="w-7 h-7 bg-gray-300 rounded-full" /> {/* Avatar Placeholder */}
-          <span>{row.original.username}</span>
-        </div>
+        <span className="font-bold">{row.original.judul_pengaduan}</span>
       ),
     },
     {
-      accessorKey: "email",
-      header: "Email",
-      cell: ({ row }) => row.original.email,
+      accessorKey: "deskripsi_pengaduan",
+      header: "Deskripsi Pengaduan",
+      cell: ({ row }) => row.original.deskripsi_pengaduan,
     },
     {
-      accessorKey: "no_telp",
-      header: "No. Telp",
-      cell: ({ row }) => row.original.no_telp,
+      accessorKey: "cuaca",
+      header: "Cuaca",
+      cell: ({ row }) => row.original.cuaca,
+    },
+    {
+      accessorKey: "nilai_kerusakan",
+      header: "Nilai Kerusakan",
+      cell: ({ row }) => row.original.nilai_kerusakan,
     },
     {
       accessorKey: "alamat",
@@ -88,9 +79,9 @@ export function DataTable({ data }: DataTableProps) {
       cell: ({ row }) => row.original.alamat,
     },
     {
-      accessorKey: "jabatan",
-      header: "Jabatan",
-      cell: ({ row }) => row.original.jabatan,
+      accessorKey: "status",
+      header: "Status",
+      cell: ({ row }) => row.original.status,
     },
     {
       id: "actions",
@@ -106,7 +97,7 @@ export function DataTable({ data }: DataTableProps) {
   ]
 
   const table = useReactTable({
-    data: filteredData,
+    data,
     columns,
     getCoreRowModel: getCoreRowModel(),
     getPaginationRowModel: getPaginationRowModel(),
@@ -119,15 +110,12 @@ export function DataTable({ data }: DataTableProps) {
     <div className="space-y-4">
       {/* Top Bar */}
       <div className="flex items-center justify-between px-2">
-        <h2 className="text-2xl font-bold text-gray-900 dark:text-white">Data Akun</h2>
+        <h2 className="text-2xl font-bold">Data Laporan</h2>
         <div className="flex gap-2">
-          <Button
-            variant="outline"
-            onClick={() => setFilterActive(!filterActive)}
-            className="flex items-center gap-2"
-          >
-            <Filter className="w-5 h-5" />
-            Filter
+          {/* Filter Button with Filter Icon */}
+          <Button variant="outline" className="flex items-center gap-2">
+            <Filter className="w-4 h-4" /> {/* Filter Icon */}
+            Filters
           </Button>
           <Button
             variant="ghost"
@@ -140,48 +128,18 @@ export function DataTable({ data }: DataTableProps) {
         </div>
       </div>
 
-      {/* Filter Form */}
-      {filterActive && (
-        <div className="space-y-2 p-4 border bg-gray-50 dark:bg-gray-800 dark:border-gray-700">
-          <div className="flex gap-4">
-            <div className="flex flex-col w-full">
-              <label htmlFor="usernameFilter" className="text-sm font-medium">Username</label>
-              <input
-                id="usernameFilter"
-                type="text"
-                value={usernameFilter}
-                onChange={(e) => setUsernameFilter(e.target.value)}
-                placeholder="Filter by username"
-                className="border px-3 py-2 rounded-md w-full"
-              />
-            </div>
-            <div className="flex flex-col w-full">
-              <label htmlFor="emailFilter" className="text-sm font-medium">Email</label>
-              <input
-                id="emailFilter"
-                type="text"
-                value={emailFilter}
-                onChange={(e) => setEmailFilter(e.target.value)}
-                placeholder="Filter by email"
-                className="border px-3 py-2 rounded-md w-full"
-              />
-            </div>
-          </div>
-        </div>
-      )}
-
       {/* Table */}
       {showTable && (
         <div className="overflow-x-auto rounded-xl border bg-white dark:bg-gray-900">
           <div className="w-full min-w-[1335px] mx-auto px-4">
-            <table className="min-w-full text-sm text-gray-700 dark:text-white">
+            <table className="min-w-full text-sm text-gray-700 dark:text-white dark:bg-gray-900">
               <thead className="bg-gray-100 dark:bg-gray-800">
                 {table.getHeaderGroups().map((headerGroup) => (
                   <tr key={headerGroup.id}>
                     {headerGroup.headers.map((header) => (
                       <th
                         key={header.id}
-                        className="px-6 py-3 text-left font-medium text-gray-600 dark:text-gray-300"
+                        className="px-6 py-3 text-left font-medium text-gray-600 dark:text-gray-300 border-b dark:border-gray-700"
                       >
                         {flexRender(header.column.columnDef.header, header.getContext())}
                       </th>

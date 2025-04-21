@@ -2,24 +2,16 @@
 
 import * as React from "react"
 import {
-  IconCamera,
-  IconChartBar,
   IconDashboard,
-  IconDatabase,
-  IconFileAi,
-  IconFileDescription,
-  IconFileWord,
-  IconHelp,
   IconReport,
-  IconSearch,
-  IconSettings,
   IconUsers,
+  IconChartBar,
+  IconBell, // Ganti dengan ikon yang ada, misalnya IconBell
 } from "@tabler/icons-react"
 
-import Link from "next/link" 
+import { Sun, Moon } from "lucide-react" // Pastikan mengimpor Sun dan Moon dari lucide-react
 
-//  Untuk mode gelap terang atau sistem
-import { Bell, Moon, Sun } from "lucide-react"
+import Link from "next/link"
 import { useTheme } from "next-themes"
 
 import { Button } from "@/components/ui/button"
@@ -30,21 +22,18 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
 
-import { NavDocuments } from "@/components/nav-documents"
 import { NavMain } from "@/components/nav-main"
-import { NavSecondary } from "@/components/nav-secondary"
 import { NavUser } from "@/components/nav-user"
-import {
-  Sidebar,
-  SidebarContent,
-  SidebarFooter,
-  SidebarHeader,
-  // SidebarMenu,
-  // SidebarMenuButton,
-  // SidebarMenuItem,
-} from "@/components/ui/sidebar"
+import { Sidebar, SidebarContent, SidebarFooter, SidebarHeader } from "@/components/ui/sidebar"
 
 import Header from "@/components/header"
+
+// Definisi tipe NavItem
+interface NavItem {
+  title: string;
+  url: string;
+  icon: React.ForwardRefExoticComponent<any>; // Ikon tidak perlu spesifik IconProps
+}
 
 const data = {
   user: {
@@ -76,7 +65,7 @@ const data = {
     {
       title: "Notifikasi",
       url: "/main/notifikasi",
-      icon: Bell,
+      icon: IconBell, // Ganti dengan ikon yang sesuai
     },
   ],
 }
@@ -84,47 +73,26 @@ const data = {
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   return (
     <Sidebar collapsible="offcanvas" {...props}>
-  <SidebarHeader>
-    <div className="flex items-center justify-between px-4 py-2">
-      <Link href="/" className="flex items-center space-x-2">
-        <img src="/balapin.svg" alt="BALAP-IN Logo" className="w-10 h-10" />
-        <span className="text-base font-bold">BALAP-IN</span>
-      </Link>
-      <ModeToggle />
-    </div>
-  </SidebarHeader>
+      <SidebarHeader>
+        <div className="flex items-center justify-between px-4 py-2">
+          <Link href="/" className="flex items-center space-x-2">
+            <img src="/balapin.svg" alt="BALAP-IN Logo" className="w-10 h-10" />
+            <span className="text-base font-bold">BALAP-IN</span>
+          </Link>
+          <ModeToggle />
+        </div>
+      </SidebarHeader>
 
-  <SidebarContent>
-    <NavMain items={data.navMain} />
-  </SidebarContent>
+      <SidebarContent>
+        <NavMain items={data.navMain} />
+      </SidebarContent>
 
-  <SidebarFooter>
-    <NavUser user={data.user} />
-  </SidebarFooter>
-</Sidebar>
-
+      <SidebarFooter>
+        <NavUser user={data.user} />
+      </SidebarFooter>
+    </Sidebar>
   )
 }
-
-export default function DashboardLayout({ children }: { children: React.ReactNode }) {
-  return (
-    <div className="flex h-screen">
-      {/* Sidebar */}
-      <aside className="w-64 border-r bg-white">
-        {/* Sidebar content */}
-      </aside>
-
-      {/* Main content area */}
-      <div className="flex-1 flex flex-col">
-        <Header />
-        <main className="flex-1 overflow-auto bg-gray-50 p-6">
-          {children}
-        </main>
-      </div>
-    </div>
-  );
-}
-
 
 export function ModeToggle() {
   const { setTheme } = useTheme()
