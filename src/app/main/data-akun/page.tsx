@@ -1,7 +1,8 @@
 "use client"
 
 import { useState } from "react"
-import { DataTable } from "@/components/data-table" // pastikan ini untuk akun
+import { useRouter } from "next/navigation" // ✅ Ganti dengan Next.js router
+import { DataTable } from "@/components/data-table"
 import { SiteHeader } from "@/components/site-header"
 import { SidebarInset, SidebarProvider } from "@/components/ui/sidebar"
 import {
@@ -22,6 +23,7 @@ import data from "./data.json" // data akun
 
 export default function Page() {
   const [search, setSearch] = useState("")
+  const router = useRouter() // ✅ Ganti useNavigate dengan useRouter
 
   // Filter data akun berdasarkan kata kunci
   const filteredData = data.filter((item) =>
@@ -67,12 +69,12 @@ export default function Page() {
                       </button>
                     </DropdownMenuTrigger>
                     <DropdownMenuContent className="w-44">
-                      <DropdownMenuItem onClick={() => console.log("Profil")}>
+                      <DropdownMenuItem onClick={() => router.push("/main/edit-akun")}>
                         <User className="w-4 h-4 mr-2" />
                         Profil
                       </DropdownMenuItem>
                       <DropdownMenuSeparator />
-                      <DropdownMenuItem onClick={() => console.log("Logout")}>
+                      <DropdownMenuItem onClick={() => router.push("/login")}>
                         <LogOut className="w-4 h-4 mr-2" />
                         Logout
                       </DropdownMenuItem>

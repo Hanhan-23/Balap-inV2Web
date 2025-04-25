@@ -1,6 +1,7 @@
 "use client"
 
 import { useState } from "react"
+import { useRouter } from "next/navigation"  // Import useRouter
 import { DataTable } from "@/components/data-table2"
 import { SiteHeader } from "@/components/site-header"
 import { SidebarInset, SidebarProvider } from "@/components/ui/sidebar"
@@ -22,6 +23,7 @@ import data from "./data.json"
 
 export default function Page() {
   const [search, setSearch] = useState("")
+  const router = useRouter()  // Initialize useRouter
 
   const filteredData = data.filter((item) =>
     item.judul_pengaduan.toLowerCase().includes(search.toLowerCase()) ||
@@ -68,12 +70,12 @@ export default function Page() {
                       </button>
                     </DropdownMenuTrigger>
                     <DropdownMenuContent className="w-44">
-                      <DropdownMenuItem onClick={() => console.log("Profil")}>
+                      <DropdownMenuItem onClick={() => router.push("/main/edit-akun")}> {/* Navigate to the edit profile page */}
                         <User className="w-4 h-4 mr-2" />
                         Profil
                       </DropdownMenuItem>
                       <DropdownMenuSeparator />
-                      <DropdownMenuItem onClick={() => console.log("Logout")}>
+                      <DropdownMenuItem onClick={() => router.push("/login")}>
                         <LogOut className="w-4 h-4 mr-2" />
                         Logout
                       </DropdownMenuItem>

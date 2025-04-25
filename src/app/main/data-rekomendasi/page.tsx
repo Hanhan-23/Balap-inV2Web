@@ -1,6 +1,7 @@
 "use client"
 
-import { useState } from "react"
+import { useState } from "react"  // Import useState once
+import { useRouter } from "next/navigation"  // Import useRouter
 import { DataTable } from "@/components/data-table3"
 import { SiteHeader } from "@/components/site-header"
 import { SidebarInset, SidebarProvider } from "@/components/ui/sidebar"
@@ -21,7 +22,8 @@ import {
 import data from "./data.json"
 
 export default function Page() {
-  const [search, setSearch] = useState("")
+  const [search, setSearch] = useState("")  // Corrected duplicate useState import
+  const router = useRouter()  // Initialize useRouter
 
   const filteredData = data.filter((item) =>
     item.judul_pengaduan.toLowerCase().includes(search.toLowerCase()) ||
@@ -68,12 +70,12 @@ export default function Page() {
                       </button>
                     </DropdownMenuTrigger>
                     <DropdownMenuContent className="w-44">
-                      <DropdownMenuItem onClick={() => console.log("Profil")}>
+                      <DropdownMenuItem onClick={() => router.push("/main/edit-akun")}>
                         <User className="w-4 h-4 mr-2" />
                         Profil
                       </DropdownMenuItem>
                       <DropdownMenuSeparator />
-                      <DropdownMenuItem onClick={() => console.log("Logout")}>
+                      <DropdownMenuItem onClick={() => router.push("/login")}>
                         <LogOut className="w-4 h-4 mr-2" />
                         Logout
                       </DropdownMenuItem>
