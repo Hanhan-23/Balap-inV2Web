@@ -1,8 +1,8 @@
+import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
-import "./globals.css";
+import "../globals.css";
 import { ThemeProvider } from "@/components/providers/ThemeProvider";
 
-// Font configuration
 const geistSans = Geist({
   variable: "--font-geist-sans",
   subsets: ["latin"],
@@ -13,16 +13,12 @@ const geistMono = Geist_Mono({
   subsets: ["latin"],
 });
 
-// src/app/layout.tsx
-export const metadata = {
-  title: 'BALAP-IN',
-  description: 'Aplikasi pelaporan infrastruktur',
-  icons: {
-    icon: '/logo.svg',
-  },
+export const metadata: Metadata = {
+  title: "Daftar Akun Balapin",
+  description: "Halaman register admin untuk sistem BALAP-IN",
 };
 
-export default function RootLayout({ children }: { children: React.ReactNode }) {
+export default function AuthLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en" suppressHydrationWarning>
       <head />
