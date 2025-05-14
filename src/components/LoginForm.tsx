@@ -7,6 +7,7 @@ import { Label } from "@/components/ui/label";
 // import Link from "next/link";
 import { useState } from "react";
 import { Eye, EyeOff } from "lucide-react";
+import { Checkbox } from "@/components/ui/checkbox";
 // import { Progress } from "@/components/ui/progress"
 
 export function LoginForm({
@@ -29,7 +30,7 @@ export function LoginForm({
               </div>
               <div className="grid gap-3">
                 <Label htmlFor="email">Email</Label>
-                <Input id="email" type="email" placeholder="m@example.com" required/>
+                <Input id="email" type="email" placeholder="m@gmail.com" required/>
               </div>
               
               <div className="grid gap-3">
@@ -43,7 +44,7 @@ export function LoginForm({
                   </div>
                 </div>
               </div>
-
+    
               <Button type="submit" className="w-full">
                 Login
               </Button>

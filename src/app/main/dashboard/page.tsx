@@ -19,7 +19,7 @@ const SingleUserPage = () => {
   return (
     <div className="">
       {/* Welcome Message Section - Added this */}
-      <div className="bg-blue-200 text-center text-black p-2 rounded-md shadow-lg shadow-blue-900/20">
+      <div className="bg-blue-200 dark:bg-zinc-900 text-center text-black dark:text-white p-2 rounded-md shadow-lg shadow-blue-900/20 dark:shadow-blue-500/20">
         <h1 className="text-xl font-bold">Welcome to BALAP-IN </h1>
         <h2 className="text-md font-bold">Batam Lapor Infrastruktur Jalan</h2>
       </div>

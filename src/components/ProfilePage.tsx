@@ -12,8 +12,10 @@ const ProfilePage = () => {
   const [isEditing, setIsEditing] = useState(false);
   const [profile, setProfile] = useState({
     name: "Dinas Bina Marga dan Sumber Daya Air Kota Batam",
-    email: "dbmsdakotabekasi2018@gmail.com",
+    personName: "Yulia Pipka", // Added new field
+    email: "dbmsdakotabatam@gmail.com",
     phone: "(021)82678824",
+    jabatan: "Sekretaris",
     photo: "/logo-bdmsda.png",
     password: "",
     newPassword: "",
@@ -47,13 +49,11 @@ const ProfilePage = () => {
     <div className="h-screen">
       <AppSidebar />
       
-      {/* Tightened up the content container */}
       <div className="flex-1 p-4 pl-6 overflow-auto">
-        <h1 className="text-2xl font-bold mb-4">Profil Pemerintah</h1>
+        <h1 className="text-2xl font-bold mb-4">Profil Saya</h1>
         
         <div className="bg-white dark:bg-gray-800 rounded-lg shadow p-5">
           <div className="flex flex-col md:flex-row gap-6">
-            {/* Profile Photo - Compact version */}
             <div className="flex flex-col items-center">
               <Avatar className="w-36 h-36 mb-3">
                 <AvatarImage src={'/logo-dbmsda.png'} />
@@ -74,17 +74,31 @@ const ProfilePage = () => {
               )}
             </div>
 
-            {/* Profile Info - Compact and left-aligned */}
             <div className="flex-1 space-y-3">
               <div className="grid grid-cols-1 gap-3">
+                {/* Added Name field */}
+                <div>
+                  <Label className="text-sm">Nama Anda</Label>
+                  {isEditing ? (
+                    <Input
+                      name="personName"
+                      value={profile.personName}
+                      onChange={handleChange}
+                      className="w-full"
+                    />
+                  ) : (
+                    <div className="p-2 border rounded-md text-sm">{profile.personName}</div>
+                  )}
+                </div>
+
                 <div>
                   <Label className="text-sm">Nama Instansi</Label>
                   {isEditing ? (
                     <Input
                       name="name"
                       value={profile.name}
-                      onChange={handleChange}
-                      className="w-full"
+                      disabled
+                      className="w-full bg-gray-100 dark:bg-gray-700 cursor-not-allowed"
                     />
                   ) : (
                     <div className="p-2 border rounded-md text-sm">{profile.name}</div>
@@ -102,6 +116,20 @@ const ProfilePage = () => {
                     />
                   ) : (
                     <div className="p-2 border rounded-md text-sm">{profile.phone}</div>
+                  )}
+                </div>
+
+                <div>
+                  <Label className="text-sm">Jabatan</Label>
+                  {isEditing ? (
+                    <Input
+                      name="jabatan"
+                      value={profile.jabatan}
+                      disabled
+                      className="w-full bg-gray-100 dark:bg-gray-700 cursor-not-allowed"
+                    />
+                  ) : (
+                    <div className="p-2 border rounded-md text-sm">{profile.jabatan}</div>
                   )}
                 </div>
 

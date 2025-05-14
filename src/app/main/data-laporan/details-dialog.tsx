@@ -34,7 +34,7 @@ export function DetailsDialog({ open, onOpenChange, report }: DetailsDialogProps
           </div>
           <div className="grid grid-cols-2 gap-4">
             <div>
-              <h3 className="font-medium">Tanggal:</h3>
+              <h3 className="font-medium">Tanggal Laporan:</h3>
               <p>{report.tanggal}</p>
             </div>
             <div>

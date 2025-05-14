@@ -190,7 +190,7 @@ const RecommendedPage = async () => {
   const data = await getData();
   return (
     <div className="">
-      <div className="mb-8 px-4 py-2 bg-red-300 rounded-md">
+      <div className="mb-8 px-4 py-2 bg-red-300 rounded-md dark:bg-red-950">
         <h1 className="font-semibold">Rekomendasi Perbaikan</h1>
       </div>
       <DataTable columns={columns} data={data}/>
