@@ -35,5 +35,7 @@ urlpatterns = [
     path('beranda/petaberanda', viewsberanda.petaRekomendasiBeranda, name='petarekomendasiberanda'),
 
     #Laporan Handler
-    path('laporan/', viewslaporan.hello, name='laporan')
+    path('laporan', viewslaporan.cardLaporan, name='laporan'),
+    path('laporan/detail/<str:id>', viewslaporan.getDetailLaporan, name='laporandetail'),
+    path('laporan/toggle-status/<str:id>', viewslaporan.toggleStatusLaporan, name='togglestatus'),
 ]
