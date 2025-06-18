@@ -16,7 +16,15 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path
+from backend_django_web.laporanhandlers import views as viewslaporan
+from backend_django_web.authhandlers import views as viewsauth
 
 urlpatterns = [
     path('admin/', admin.site.urls),
+
+    #Auth Handler
+    path('auth/', viewsauth.pemerintahBuatAkun, name='pemerintahbuatakun'),
+
+    #Laporan Handler
+    path('laporan/', viewslaporan.hello, name='laporan')
 ]

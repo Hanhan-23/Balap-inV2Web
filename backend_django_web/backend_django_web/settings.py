@@ -25,12 +25,18 @@ SECRET_KEY = 'django-insecure-!yz$s15e3y(=kq#p$r5pe0ha(l#oosv$!2+mbh6t5zgg^-bfz+
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['*']
 
 
 # Application definition
 
 INSTALLED_APPS = [
+    'rest_framework',
+
+    'backend_django_web.apps.LaporanConfig',
+    'backend_django_web.laporanhandlers',
+    'backend_django_web.authhandlers',
+    
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
