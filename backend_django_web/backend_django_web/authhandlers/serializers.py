@@ -1,18 +1,20 @@
 from rest_framework import serializers
 from .models import Pemerintah
+from django.contrib.auth.hashers import make_password
 
 class PemerintahSerializer(serializers.Serializer):
     id = serializers.CharField(read_only=True)  
-    alamat = serializers.CharField(required=False, allow_blank=True)
+    alamat = serializers.CharField(required=True)
     nama_lengkap = serializers.CharField(required=True)
     email = serializers.EmailField(required=True)
     no_pegawai = serializers.IntegerField(required=True)
-    no_telp = serializers.CharField(required=False, allow_blank=True)
+    no_telp = serializers.CharField(required=True)
     password = serializers.CharField(required=True)
-    status = serializers.ChoiceField(choices=['belum_verif', 'verif'], required=False)
+    status = serializers.ChoiceField(choices=['belum_verif', 'verif'], required=False, default='belum_verif')
     tgl_pemerintah = serializers.DateTimeField(read_only=True)
 
     def create(self, validated_data):
+        validated_data['password'] = make_password(validated_data['password'])
         pemerintah = Pemerintah(**validated_data)
         pemerintah.save()
         return pemerintah

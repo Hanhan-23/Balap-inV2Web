@@ -23,7 +23,9 @@ urlpatterns = [
     path('admin/', admin.site.urls),
 
     #Auth Handler
-    path('auth/', viewsauth.pemerintahBuatAkun, name='pemerintahbuatakun'),
+    path('auth/buat', viewsauth.pemerintahBuatAkun, name='pemerintahbuatakun'),
+    path('auth/login', viewsauth.pemerintahLoginAkun, name='pemerintahloginakun'),
+    path('auth/refresh', viewsauth.refresh_token_view, name='pemerintahrefreshakun'),
 
     #Laporan Handler
     path('laporan/', viewslaporan.hello, name='laporan')
