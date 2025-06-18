@@ -1,3 +1,6 @@
 __pycache__
+appsgenerals/__pycache_
 authhandlers/__pycache__
 laporanhandlers/__pycache__
+berandahandlers/__pycache__
+.env

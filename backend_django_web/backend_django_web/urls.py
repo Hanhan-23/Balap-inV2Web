@@ -18,6 +18,7 @@ from django.contrib import admin
 from django.urls import path
 from backend_django_web.laporanhandlers import views as viewslaporan
 from backend_django_web.authhandlers import views as viewsauth
+from backend_django_web.berandahandlers import views as viewsberanda
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -26,6 +27,12 @@ urlpatterns = [
     path('auth/buat', viewsauth.pemerintahBuatAkun, name='pemerintahbuatakun'),
     path('auth/login', viewsauth.pemerintahLoginAkun, name='pemerintahloginakun'),
     path('auth/refresh', viewsauth.refresh_token_view, name='pemerintahrefreshakun'),
+
+    #Beranda Handler
+    path('beranda/empatanalisis', viewsberanda.empatAnalisis, name='berandaempatanalisis'),
+    path('beranda/rekomendasiberanda', viewsberanda.rekomendasiBeranda, name='rekomendasiberanda'),
+    path('beranda/statistikberanda', viewsberanda.statistikLaporanBeranda, name='statistiklaporanberanda'),
+    path('beranda/petaberanda', viewsberanda.petaRekomendasiBeranda, name='petarekomendasiberanda'),
 
     #Laporan Handler
     path('laporan/', viewslaporan.hello, name='laporan')

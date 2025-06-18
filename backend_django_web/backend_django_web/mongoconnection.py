@@ -1,11 +1,12 @@
 from mongoengine import connect, get_connection
 from pymongo.errors import ConnectionFailure
+from decouple import config
 
 def init_mongo_connection():
     try:
         connect(
             db='balap_in',
-            host='mongodb+srv://pbl20egovv:34HgRM15dPKCyuDM@balapin.q11l4z0.mongodb.net/?retryWrites=true&w=majority&appName=balapin',
+            host=config('MONGO_HOST'),
             tls=True,
             tlsAllowInvalidCertificates=True
         )
