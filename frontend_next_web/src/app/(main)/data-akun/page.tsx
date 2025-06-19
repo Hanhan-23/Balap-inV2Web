@@ -1,5 +1,5 @@
-import { Account, columns } from "./columns";
-import { DataTable } from "./data-table";
+import { Account, columns } from "../../../components/data_akun/columns";
+import { DataTable } from "../../../components/data_akun/data-table";
 
 const getData = async (): Promise<Account[]> => {
   return [

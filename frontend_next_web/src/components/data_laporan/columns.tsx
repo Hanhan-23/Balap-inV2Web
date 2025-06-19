@@ -19,7 +19,41 @@ import { ColumnDef } from "@tanstack/react-table";
 import { ArrowUpDown, MoreHorizontal } from "lucide-react";
 import { DetailsDialog } from "./details-dialog";
 
-import { CloudRainIcon, SunIcon } from "@phosphor-icons/react";
+import {
+  CloudRainIcon,
+  SunIcon,
+  RoadHorizonIcon,
+  LightbulbIcon,
+  BridgeIcon,
+} from "@phosphor-icons/react";
+
+import {
+  Drawer,
+  DrawerClose,
+  DrawerContent,
+  DrawerDescription,
+  DrawerFooter,
+  DrawerHeader,
+  DrawerTitle,
+  DrawerTrigger,
+} from "@/components/ui/drawer";
+
+import { Separator } from "@/components/ui/separator";
+import { Label } from "@/components/ui/label";
+import { useIsMobile } from "@/hooks/use-mobile";
+import { z } from "zod";
+
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+
+import Image from "next/image";
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
 
 export type Recommended = {
   id: string;
@@ -32,6 +66,17 @@ export type Recommended = {
   status: "selesai" | "disembunyikan";
 };
 
+export const schema = z.object({
+  id: z.string(),
+  tanggal: z.string(),
+  judul: z.string(),
+  jenisInfrastruktur: z.string(),
+  cuaca: z.string(),
+  kerusakan: z.string(),
+  lokasi: z.string(),
+  status: z.string(),
+});
+
 const truncateText = (text: string, maxLength: number = 25) => {
   if (!text) return "";
   if (text.length > maxLength) {
@@ -40,7 +85,7 @@ const truncateText = (text: string, maxLength: number = 25) => {
   return text;
 };
 
-export const columns: ColumnDef<Recommended>[] = [
+export const columns: ColumnDef<z.infer<typeof schema>>[] = [
   {
     id: "select",
     header: ({ table }) => (
@@ -81,9 +126,7 @@ export const columns: ColumnDef<Recommended>[] = [
         </div>
       </Button>
     ),
-    cell: ({ getValue }) => (
-      <div className="w-full">{getValue() as string}</div>
-    ),
+    cell: ({ row }) => <TableCellViewer item={row.original} />,
     enableHiding: false,
   },
   {
@@ -101,11 +144,6 @@ export const columns: ColumnDef<Recommended>[] = [
           >
             {truncateText(judul)}
           </button>
-          <DetailsDialog
-            open={open}
-            onOpenChange={setOpen}
-            report={row.original}
-          />
         </div>
       );
     },
@@ -119,22 +157,39 @@ export const columns: ColumnDef<Recommended>[] = [
 
       return (
         <div className="w-full">
-          {" "}
-          <p className="capitalize">{truncateText(jenisInfrastruktur)}</p>
-          <DetailsDialog
-            open={open}
-            onOpenChange={setOpen}
-            report={row.original}
-          />
+          <div
+            className={
+              "inline-flex items-center gap-1 px-2 py-1 text-muted-foreground text-xs capitalize border border-slate-300 rounded-full"
+            }
+          >
+            {jenisInfrastruktur === "jalan" && (
+              <RoadHorizonIcon
+                size={14}
+                weight="bold"
+                className="text-stone-600"
+              />
+            )}
+            {jenisInfrastruktur === "lampu_jalan" && (
+              <LightbulbIcon
+                size={14}
+                weight="bold"
+                className="text-yellow-500"
+              />
+            )}
+            {jenisInfrastruktur === "jembatan" && (
+              <BridgeIcon size={14} weight="bold" className="text-amber-600" />
+            )}
+            {jenisInfrastruktur.replace("_", " ")}
+          </div>
         </div>
       );
     },
   },
+
   {
     accessorKey: "cuaca",
     header: "Cuaca",
     cell: ({ row }) => {
-      const [open, setOpen] = useState(false);
       const cuaca = row.getValue("cuaca") as string;
 
       return (
@@ -187,11 +242,6 @@ export const columns: ColumnDef<Recommended>[] = [
           >
             {truncateText(lokasi)}
           </button>
-          <DetailsDialog
-            open={open}
-            onOpenChange={setOpen}
-            report={row.original}
-          />
         </div>
       );
     },
@@ -221,14 +271,7 @@ export const columns: ColumnDef<Recommended>[] = [
   },
   {
     id: "actions",
-    cell: ({ row }) => {
-      const [open, setOpen] = useState(false);
-      const pengaduan = row.original;
-
-      const handleStatusChange = (id: string, newStatus: string) => {
-        console.log(`Mengubah status pengaduan ${id} menjadi ${newStatus}`);
-      };
-
+    cell: ({}) => {
       return (
         <>
           <DropdownMenu>
@@ -239,35 +282,107 @@ export const columns: ColumnDef<Recommended>[] = [
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end">
-              <DropdownMenuItem onClick={() => setOpen(true)}>
-                View details
-              </DropdownMenuItem>
+              <DropdownMenuItem>View details</DropdownMenuItem>
               <DropdownMenuSub>
                 <DropdownMenuSubTrigger>Change Status</DropdownMenuSubTrigger>
                 <DropdownMenuSubContent>
-                  <DropdownMenuItem
-                    onClick={() => handleStatusChange(pengaduan.id, "selesai")}
-                  >
-                    Selesai
-                  </DropdownMenuItem>
-                  <DropdownMenuItem
-                    onClick={() =>
-                      handleStatusChange(pengaduan.id, "disembunyikan")
-                    }
-                  >
-                    Disembunyikan
-                  </DropdownMenuItem>
+                  <DropdownMenuItem>Selesai</DropdownMenuItem>
+                  <DropdownMenuItem>Disembunyikan</DropdownMenuItem>
                 </DropdownMenuSubContent>
               </DropdownMenuSub>
             </DropdownMenuContent>
           </DropdownMenu>
-          <DetailsDialog
-            open={open}
-            onOpenChange={setOpen}
-            report={pengaduan}
-          />
         </>
       );
     },
   },
 ];
+
+function TableCellViewer({ item }: { item: z.infer<typeof schema> }) {
+  const isMobile = useIsMobile();
+  return (
+    <Drawer direction={isMobile ? "bottom" : "right"}>
+      <DrawerTrigger asChild>
+        <Button variant="link" className="text-foreground w-fit px-0 text-left">
+          {item.tanggal}
+        </Button>
+      </DrawerTrigger>
+      <DrawerContent>
+        <DrawerHeader className="gap-1">
+          <DrawerTitle>{item.judul}</DrawerTitle>
+          <Image
+            src={"/jembatan_rusak.jpg"}
+            width={100}
+            height={100}
+            className="w-full aspect-video rounded-xl object-cover object-center pointer-events-none"
+            alt="..."
+          />
+        </DrawerHeader>
+        <div className="flex flex-col gap-4 overflow-y-auto px-4 text-sm">
+          <form className="flex flex-col gap-4">
+            <div className="flex flex-col gap-3">
+              <Label htmlFor="judul">Judul Pengaduan</Label>
+              <Input id="judul" defaultValue={item.judul} />
+            </div>
+            <div className="grid grid-cols-2 gap-4">
+              <div className="flex flex-col gap-3">
+                <Label htmlFor="jenisInfrastruktur">Jenis Infrastruktur</Label>
+                <Input
+                  id="jenisInfrastruktur"
+                  defaultValue={item.jenisInfrastruktur}
+                  className="capitalize"
+                  readOnly
+                />
+              </div>
+              <div className="flex flex-col gap-3">
+                <Label htmlFor="cuaca">Cuaca</Label>
+                <Input
+                  id="cuaca"
+                  defaultValue={item.cuaca}
+                  className="capitalize"
+                  readOnly
+                />
+              </div>
+            </div>
+            <div className="grid grid-cols-2 gap-4">
+              <div className="flex flex-col gap-3">
+                <Label htmlFor="status">Status</Label>
+                <Select defaultValue={item.status}>
+                  <SelectTrigger id="status" className="w-full">
+                    <SelectValue placeholder="Select a type" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="selesai">Selesai</SelectItem>
+                    <SelectItem value="disembunyikan">Disembunyikan</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+              <div className="flex flex-col gap-3">
+                <Label htmlFor="kerusakan">Kerusakan</Label>
+                <Input
+                  id="kerusakan"
+                  defaultValue={item.kerusakan}
+                  className="capitalize"
+                  readOnly
+                />
+              </div>
+            </div>
+
+            <div className="flex flex-col gap-3">
+              <Label htmlFor="lokasi">Lokasi</Label>
+              <Textarea value={item.lokasi} className="resize-none" readOnly />
+            </div>
+
+            {/* peta lokasi */}
+          </form>
+        </div>
+        <DrawerFooter>
+          <Button variant={'blue'}>Konfirmasi</Button>
+          <DrawerClose asChild>
+            <Button variant="outline">Selesai</Button>
+          </DrawerClose>
+        </DrawerFooter>
+      </DrawerContent>
+    </Drawer>
+  );
+}
