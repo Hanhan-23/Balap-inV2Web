@@ -39,6 +39,7 @@ INSTALLED_APPS = [
     'backend_django_web.appsgenerals',
     'backend_django_web.berandahandlers',
     'backend_django_web.akunhandlers',
+    'backend_django_web.rekomendasihandlers',
     
     'django.contrib.admin',
     'django.contrib.auth',

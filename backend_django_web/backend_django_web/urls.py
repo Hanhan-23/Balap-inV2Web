@@ -20,6 +20,7 @@ from backend_django_web.laporanhandlers import views as viewslaporan
 from backend_django_web.authhandlers import views as viewsauth
 from backend_django_web.berandahandlers import views as viewsberanda
 from backend_django_web.akunhandlers import views as viewsakun
+from backend_django_web.rekomendasihandlers import views as viewsrekomendasi
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -44,4 +45,9 @@ urlpatterns = [
     path('akun', viewsakun.cardAkunPemerintah, name='akun'),
     path('akun/toggle-status/<str:id>', viewsakun.toggleStatusPemerintah, name='togglestatusakun'),
     path('akun/update/<str:id>', viewsakun.updateAkunPemerintah, name='updateakun'),
+
+    #Akun Rekomendasi
+    path('rekomendasi', viewsrekomendasi.cardRekomendasi, name='rekomendasi'),
+    path('rekomendasi/detail/<str:id>', viewsrekomendasi.getDetailRekomendasi, name='detailrekomendasi'),
+    path('rekomendasi/update/<str:id>', viewsrekomendasi.ubahStatusUrgentRekomendasi, name='ubahstatusrekomendasi'),
 ]
