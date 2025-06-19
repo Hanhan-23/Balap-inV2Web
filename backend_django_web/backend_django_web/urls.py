@@ -19,6 +19,7 @@ from django.urls import path
 from backend_django_web.laporanhandlers import views as viewslaporan
 from backend_django_web.authhandlers import views as viewsauth
 from backend_django_web.berandahandlers import views as viewsberanda
+from backend_django_web.akunhandlers import views as viewsakun
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -38,4 +39,9 @@ urlpatterns = [
     path('laporan', viewslaporan.cardLaporan, name='laporan'),
     path('laporan/detail/<str:id>', viewslaporan.getDetailLaporan, name='laporandetail'),
     path('laporan/toggle-status/<str:id>', viewslaporan.toggleStatusLaporan, name='togglestatus'),
+
+    #Akun Handler
+    path('akun', viewsakun.cardAkunPemerintah, name='akun'),
+    path('akun/toggle-status/<str:id>', viewsakun.toggleStatusPemerintah, name='togglestatusakun'),
+    path('akun/update/<str:id>', viewsakun.updateAkunPemerintah, name='updateakun'),
 ]
