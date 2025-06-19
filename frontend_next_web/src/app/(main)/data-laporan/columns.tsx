@@ -23,7 +23,7 @@ export type Recommended = {
   id: string;
   tanggal: string;
   judul: string;
-  deskripsi: string;
+  jenisInfrastruktur: string;
   cuaca: string;
   kerusakan: string;
   lokasi: string;
@@ -100,29 +100,30 @@ export const columns: ColumnDef<Recommended>[] = [
     },
   },
   {
-    accessorKey: "deskripsi",
-    header: "Deskripsi",
-    cell: ({ row }) => {
-      const [open, setOpen] = useState(false);
-      const deskripsi = row.getValue("deskripsi") as string;
-      
-      return (
-        <>
-          <button 
-            onClick={() => setOpen(true)}
-            className="text-left hover:underline"
-          >
-            {truncateText(deskripsi)}
-          </button>
-          <DetailsDialog 
-            open={open} 
-            onOpenChange={setOpen} 
-            report={row.original} 
-          />
-        </>
-      );
-    },
+  accessorKey: "jenisInfrastruktur",
+  header: "Jenis Infrastruktur",
+  cell: ({ row }) => {
+    const [open, setOpen] = useState(false);
+    const jenisInfrastruktur = row.getValue("jenisInfrastruktur") as string;
+
+    return (
+      <div className="w-32">
+        <button 
+          onClick={() => setOpen(true)} 
+          className="text-muted-foreground px-1.5 text-left text-sm border border-border rounded-md w-full hover:underline"
+        >
+          {truncateText(jenisInfrastruktur)}
+        </button>
+
+        <DetailsDialog 
+          open={open} 
+          onOpenChange={setOpen} 
+          report={row.original} 
+        />
+      </div>
+    );
   },
+},
   {
     accessorKey: "cuaca",
     header: "Cuaca",

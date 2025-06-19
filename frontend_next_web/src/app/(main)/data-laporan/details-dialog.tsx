@@ -30,7 +30,7 @@ export function DetailsDialog({ open, onOpenChange, report }: DetailsDialogProps
           </div>
           <div>
             <h3 className="font-medium">Deskripsi Lengkap:</h3>
-            <p>{report.deskripsi}</p>
+            <p>{report.jenisInfrastruktur}</p>
           </div>
           <div className="grid grid-cols-2 gap-4">
             <div>
