@@ -16,7 +16,7 @@ def pemerintahBuatAkun(request):
         if Pemerintah.objects.filter(email=email).count() > 0:
             return Response({
                 'status': 'failed',
-                'message': 'Email sudah terdaftar'
+                'message': 'email_sudah_terdaftar'
             }, status=status.HTTP_400_BAD_REQUEST)
 
         serializers = PemerintahSerializer(data=request.data)
@@ -43,7 +43,7 @@ def pemerintahLoginAkun(request):
     try:
         pemerintah = Pemerintah.objects.get(email=email)
     except Pemerintah.DoesNotExist:
-        return Response({'status': 'Akun pemerintah tidak ditemukan'}, status=status.HTTP_401_UNAUTHORIZED)
+        return Response({'status': 'invalid_account'}, status=status.HTTP_401_UNAUTHORIZED)
 
     if check_password(password, pemerintah.password):
         access_token = generate_access_token(pemerintah.id)
