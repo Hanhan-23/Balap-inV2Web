@@ -324,7 +324,7 @@ const getData = async (): Promise<Recommended[]> => {
 const RecommendedPage = async () => {
   const data = await getData();
   return (
-    <div className="">
+    <div>
       <DataTable columns={columns} data={data} />
     </div>
   );

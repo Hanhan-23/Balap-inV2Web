@@ -19,11 +19,10 @@ import { cn } from "@/lib/utils";
 
 export type Account = {
   id: number;
-  username: string;
+  nama: string;
   email: string;
   no_telp: string;
   alamat: string;
-  jabatan: string;
 };
 
 const handleDeleteAccount = (id: number) => {
@@ -51,12 +50,8 @@ export const columns: ColumnDef<Account>[] = [
     ),
   },
   {
-    accessorKey: "id",
-    header: "ID",
-  },
-  {
-    accessorKey: "username",
-    header: "Username",
+    accessorKey: "nama",
+    header: "Nama",
   },
   {
     accessorKey: "email",
@@ -69,10 +64,6 @@ export const columns: ColumnDef<Account>[] = [
   {
     accessorKey: "alamat",
     header: "Alamat",
-  },
-  {
-    accessorKey: "jabatan",
-    header: "Jabatan",
   },
   {
     id: "aksi",

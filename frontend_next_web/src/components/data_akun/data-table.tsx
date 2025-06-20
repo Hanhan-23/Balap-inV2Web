@@ -40,10 +40,10 @@ export function DataTable<TData, TValue>({
     getPaginationRowModel: getPaginationRowModel(),
     getSortedRowModel: getSortedRowModel(),
     onSortingChange: setSorting,
-    onRowSelectionChange:setRowSelection,
+    onRowSelectionChange: setRowSelection,
     state: {
       sorting,
-      rowSelection
+      rowSelection,
     },
   });
 

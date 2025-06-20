@@ -281,7 +281,7 @@ export const columns: ColumnDef<z.infer<typeof schema>>[] = [
                 <MoreHorizontal className="h-4 w-4" />
               </Button>
             </DropdownMenuTrigger>
-            <DropdownMenuContent align="end">
+            <DropdownMenuContent className="w-40" align="end">
               <DropdownMenuItem>View details</DropdownMenuItem>
               <DropdownMenuSub>
                 <DropdownMenuSubTrigger>Change Status</DropdownMenuSubTrigger>
@@ -310,13 +310,15 @@ function TableCellViewer({ item }: { item: z.infer<typeof schema> }) {
       <DrawerContent>
         <DrawerHeader className="gap-1">
           <DrawerTitle>{item.judul}</DrawerTitle>
-          <Image
-            src={"/jembatan_rusak.jpg"}
-            width={100}
-            height={100}
-            className="w-full aspect-video rounded-xl object-cover object-center pointer-events-none"
-            alt="..."
-          />
+          <div>
+            <Image
+              src={"/jembatan_rusak.jpg"}
+              width={100}
+              height={100}
+              className="w-full aspect-video rounded-xl object-cover object-center pointer-events-none"
+              alt="..."
+            />
+          </div>
         </DrawerHeader>
         <div className="flex flex-col gap-4 overflow-y-auto px-4 text-sm">
           <form className="flex flex-col gap-4">
@@ -377,7 +379,7 @@ function TableCellViewer({ item }: { item: z.infer<typeof schema> }) {
           </form>
         </div>
         <DrawerFooter>
-          <Button variant={'blue'}>Konfirmasi</Button>
+          <Button variant={"blue"}>Konfirmasi</Button>
           <DrawerClose asChild>
             <Button variant="outline">Selesai</Button>
           </DrawerClose>
