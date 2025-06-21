@@ -34,22 +34,22 @@ import {
 const items = [
   {
     title: "Dashboard",
-    url: "/main/dashboard",
+    url: "/dashboard",
     icon: LayoutGrid,
   },
   {
     title: "Data Laporan",
-    url: "/main/data-laporan",
+    url: "/data-laporan",
     icon: FileText,
   },
   {
     title: "Data Akun",
-    url: "/main/data-akun",
+    url: "/data-akun",
     icon: Users,
   },
   {
     title: "Data Rekomendasi",
-    url: "/main/data-rekomendasi",
+    url: "/data-rekomendasi",
     icon: ChartLine,
   },
 ];
@@ -89,7 +89,7 @@ const AppSidebar = () => {
                   <SidebarMenuItem key={item.title}>
                     <SidebarMenuButton 
                       asChild
-                      className={isActive ? "bg-blue-200 dark:bg-blue-900/30" : ""}
+                      className={isActive ? "bg-blue-200 hover:bg-blue-200 dark:bg-blue-900/30" : ""}
                     >
                       <Link href={item.url}>
                         <item.icon className={isActive ? "text-blue-600 dark:text-blue-400" : ""} />

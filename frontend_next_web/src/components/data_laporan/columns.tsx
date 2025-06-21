@@ -139,6 +139,7 @@ export const columns: ColumnDef<z.infer<typeof schema>>[] = [
       return (
         <div className="w-full">
           <Button
+          variant={"ghost"}
             onClick={() => setOpen(true)}
             className="text-left hover:underline"
           >

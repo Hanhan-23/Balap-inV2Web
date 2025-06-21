@@ -1,6 +1,6 @@
 "use client";
 
-import { LogOut, Moon, Sun, User, Search } from "lucide-react";
+import { LogOut, Moon, Sun, User } from "lucide-react";
 import Link from "next/link";
 import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar";
 import {
@@ -14,21 +14,41 @@ import {
 import { Button } from "./ui/button";
 import { useTheme } from "next-themes";
 import { SidebarTrigger, useSidebar } from "./ui/sidebar";
-import { Input } from "./ui/input";
+import {
+  Breadcrumb,
+  BreadcrumbItem,
+  BreadcrumbLink,
+  BreadcrumbList,
+  BreadcrumbPage,
+  BreadcrumbSeparator,
+} from "@/components/ui/breadcrumb"
+import { Separator } from "./ui/separator";
 
 const Navbar = () => {
   const { theme, setTheme } = useTheme();
   const { toggleSidebar } = useSidebar();
   return (
-    <nav className="p-4 flex items-center justify-between sticky top-0 bg-background z-10">
+    <nav className="px-4 h-16 flex items-center justify-between sticky top-0 bg-background z-10">
       {/* LEFT */}
       <div className="flex items-center gap-4">
         <SidebarTrigger />
-        {/* SEARCH BOX */}
-        <div className="relative focus-within:ring-2 focus-within:ring-blue-200 focus-within:ring-offset-2 rounded-md">
-          <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 transform text-blue-400" />
-          <Input type="search" placeholder="Cari..." className="pl-10 w-[200px] md:w-[300px] focus:border-blue-500 text-blue-400 focus:outline-none"/>
-          </div>
+        <Separator
+          orientation="vertical"
+          className="mr-2 data-[orientation=vertical]:h-4"
+        />
+        <Breadcrumb>
+          <BreadcrumbList>
+            <BreadcrumbItem className="hidden md:block">
+              <BreadcrumbLink href="#">
+                Building Your Application
+              </BreadcrumbLink>
+            </BreadcrumbItem>
+            <BreadcrumbSeparator className="hidden md:block" />
+            <BreadcrumbItem>
+              <BreadcrumbPage>Data Fetching</BreadcrumbPage>
+            </BreadcrumbItem>
+          </BreadcrumbList>
+        </Breadcrumb>
       </div>
 
       {/* RIGHT */}
@@ -67,14 +87,15 @@ const Navbar = () => {
             <DropdownMenuLabel>Akun Saya</DropdownMenuLabel>
             <DropdownMenuSeparator />
             <Link href="/main/profile">
-            <DropdownMenuItem>
-              <User className="h-[1.2rem] w-[1.2rem] mr-2" />
-              Profil
-            </DropdownMenuItem>
+              <DropdownMenuItem>
+                <User className="h-[1.2rem] w-[1.2rem] mr-2" />
+                Profil
+              </DropdownMenuItem>
             </Link>
             <Link href="/login">
               <DropdownMenuItem variant="destructive">
-                <LogOut className="h-[1.2rem] w-[1.2rem] mr-2" />Keluar
+                <LogOut className="h-[1.2rem] w-[1.2rem] mr-2" />
+                Keluar
               </DropdownMenuItem>
             </Link>
           </DropdownMenuContent>
