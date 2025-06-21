@@ -30,12 +30,12 @@ export function DetailsDialog({ open, onOpenChange, report }: DetailsDialogProps
           </div>
           <div>
             <h3 className="font-medium">Deskripsi Lengkap:</h3>
-            <p>{report.jenisInfrastruktur}</p>
+            <p>{report.jenis}</p>
           </div>
           <div className="grid grid-cols-2 gap-4">
             <div>
               <h3 className="font-medium">Tanggal Laporan:</h3>
-              <p>{report.tanggal}</p>
+              <p>{report.tgl_lapor}</p>
             </div>
             <div>
               <h3 className="font-medium">Cuaca:</h3>
@@ -43,7 +43,7 @@ export function DetailsDialog({ open, onOpenChange, report }: DetailsDialogProps
             </div>
             <div>
               <h3 className="font-medium">Tingkat Kerusakan:</h3>
-              <p>{report.kerusakan}</p>
+              <p>{report.persentase}</p>
             </div>
             <div>
               <h3 className="font-medium">Status:</h3>
@@ -52,7 +52,7 @@ export function DetailsDialog({ open, onOpenChange, report }: DetailsDialogProps
           </div>
           <div>
             <h3 className="font-medium">Lokasi:</h3>
-            <p>{report.lokasi || "-"}</p>
+            <p>{report.alamat || "-"}</p>
           </div>
         </div>
       </DialogContent>

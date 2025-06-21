@@ -54,9 +54,11 @@ import {
 import Image from "next/image";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
+import { toggleStatusLaporan } from "@/services/datalaporanservices";
 
 export type Recommended = {
   id: string;
+  gambar:string;
   tgl_lapor: string;
   judul: string;
   jenis: string;
@@ -68,6 +70,7 @@ export type Recommended = {
 
 export const schema = z.object({
   id: z.string(),
+  gambar: z.string(),
   tgl_lapor: z.string(),
   judul: z.string(),
   jenis: z.string(),
@@ -84,6 +87,12 @@ const truncateText = (text: string, maxLength: number = 25) => {
   }
   return text;
 };
+
+const handleStatus = async (id: string) => {
+    await toggleStatusLaporan(id)
+
+    window.location.reload()
+}
 
 export const columns: ColumnDef<z.infer<typeof schema>>[] = [
   {
@@ -270,7 +279,18 @@ export const columns: ColumnDef<z.infer<typeof schema>>[] = [
   },
   {
     id: "actions",
-    cell: ({}) => {
+    cell: ({ row }: any) => {
+      const item = row.original;
+
+      const status = item.status
+      const finalStatus = () => {
+        if (status == 'selesai') {
+          return 'Sembunyikan'
+        } else if (status == 'disembunyikan') {
+          return 'Tampilkan'
+        }
+      }
+
       return (
         <>
           <DropdownMenu>
@@ -285,8 +305,10 @@ export const columns: ColumnDef<z.infer<typeof schema>>[] = [
               <DropdownMenuSub>
                 <DropdownMenuSubTrigger>Change Status</DropdownMenuSubTrigger>
                 <DropdownMenuSubContent>
-                  <DropdownMenuItem>Selesai</DropdownMenuItem>
-                  <DropdownMenuItem>Disembunyikan</DropdownMenuItem>
+                  <DropdownMenuItem onClick={() => {
+                    console.log(item.id)
+                    handleStatus(item.id)
+                  }}>{finalStatus()}</DropdownMenuItem>
                 </DropdownMenuSubContent>
               </DropdownMenuSub>
             </DropdownMenuContent>
@@ -311,7 +333,7 @@ function TableCellViewer({ item }: { item: z.infer<typeof schema> }) {
           <DrawerTitle>{item.judul}</DrawerTitle>
           <div>
             <Image
-              src={"/jembatan_rusak.jpg"}
+              src={`${item.gambar}`}
               width={100}
               height={100}
               className="w-full aspect-video rounded-xl object-cover object-center pointer-events-none"

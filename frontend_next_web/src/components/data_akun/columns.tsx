@@ -16,18 +16,20 @@ import {
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
 import { cn } from "@/lib/utils";
+import { toggleStatusAkun } from "@/services/akunservices";
 
 export type Account = {
-  id: number;
-  nama: string;
+  id: string;
+  nama_lengkap: string;
   email: string;
   no_telp: string;
-  alamat: string;
+  status: string;
 };
 
-const handleDeleteAccount = (id: number) => {
-  console.log(`Akun dengan ID ${id} telah dihapus.`);
-  // Di sini bisa ditambahkan pemanggilan API jika diperlukan
+const handleDeleteAccount = async (id: string) => {
+  await toggleStatusAkun(id)
+
+  window.location.reload()
 };
 
 export const columns: ColumnDef<Account>[] = [
@@ -50,7 +52,7 @@ export const columns: ColumnDef<Account>[] = [
     ),
   },
   {
-    accessorKey: "nama",
+    accessorKey: "nama_lengkap",
     header: "Nama",
   },
   {
@@ -62,14 +64,31 @@ export const columns: ColumnDef<Account>[] = [
     header: "Nomor HP",
   },
   {
-    accessorKey: "alamat",
-    header: "Alamat",
+    accessorKey: "status",
+    header: "Status",
+    cell: ({ row }) => {
+      const status = row.original.status;
+
+      const displayStatus = status === "verif" ? "Diverifikasi" : "Belum Verifikasi";
+
+      return <span>{displayStatus}</span>;
+    },
   },
   {
     id: "aksi",
     header: "Aksi",
     cell: ({ row }) => {
       const account = row.original;
+
+      const status = account.status
+
+      const finalStatus = () => {
+        if (status == 'belum_verif') {
+          return 'Verifikasi'
+        } else if (status == 'verif') {
+          return 'Batalkan Verifikasi'
+        }
+      }
 
       return (
         <AlertDialog>
@@ -86,10 +105,10 @@ export const columns: ColumnDef<Account>[] = [
           <AlertDialogContent className="bg-slate-50 border-red-100 dark:bg-slate-600 dark:border-red-50">
             <AlertDialogHeader>
               <AlertDialogTitle className="text-red-800 dark:text-slate-100">
-                Apakah Anda yakin ingin menghapus akun ini?
+                Apakah Anda yakin ingin mengubah status akun ini?
               </AlertDialogTitle>
               <AlertDialogDescription className="text-slate-800 dark:text-slate-300">
-                Aksi ini tidak dapat dibatalkan. Akun akan dihapus secara permanen dan tidak bisa dipulihkan kembali.
+                Perubahan status akun pemerintah akan diterapkan. Pastikan Anda telah memverifikasi keputusan ini.
               </AlertDialogDescription>
             </AlertDialogHeader>
             <AlertDialogFooter>
@@ -100,7 +119,7 @@ export const columns: ColumnDef<Account>[] = [
                 className="bg-red-600 text-white hover:bg-red-700"
                 onClick={() => handleDeleteAccount(account.id)}
               >
-                Hapus Permanen
+                {`${finalStatus()}`}
               </AlertDialogAction>
             </AlertDialogFooter>
           </AlertDialogContent>

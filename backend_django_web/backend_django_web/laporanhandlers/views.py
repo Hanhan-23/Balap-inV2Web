@@ -28,6 +28,7 @@ def cardLaporan(request):
         for l in laporan:
             result.append({
                 'id': str(l.id),
+                'gambar': l.gambar,
                 'judul': l.judul,
                 'jenis': l.jenis,
                 'cuaca': l.cuaca,

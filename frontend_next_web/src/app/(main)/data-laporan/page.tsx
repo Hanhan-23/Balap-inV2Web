@@ -1,6 +1,5 @@
 import { Recommended, columns } from "../../../components/data_laporan/columns";
 import { DataTable } from "../../../components/data_laporan/data-table";
-import { cardLaporan } from "@/types/data-laporan";
 import { getCardLaporan } from "@/services/datalaporanservices";
 
 const getData = async (): Promise<Recommended[]> => {
