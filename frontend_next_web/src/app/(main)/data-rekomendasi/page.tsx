@@ -1,200 +1,220 @@
-import { Recommended, columns } from "./columns";
-import { DataTable } from "./data-table";
+import {
+  Recommended,
+  columns,
+} from "../../../components/data_rekomendasi/columns";
+import { DataTable } from "../../../components/data_rekomendasi/data-table";
 
 const getData = async (): Promise<Recommended[]> => {
   return [
     {
-    id: 1,
-    judul: "Jalan berlubang besar",
-    deskripsi: "Terdapat lubang besar di Jl. Ahmad Yani, membahayakan kendaraan.",
-    cuaca: "Hujan",
-    nilai_kerusakan: "80%",
-    alamat: "Jl. Ahmad Yani",
-    status: "Sedang Diproses"
-  },
-  {
-    id: 2,
-    judul: "Lampu jalan mati total",
-    deskripsi: "Lampu jalan di Jl. Sudirman mati sejak seminggu lalu.",
-    cuaca: "Cerah",
-    nilai_kerusakan: "40%",
-    alamat: "Jl. Sudirman No. 12",
-    status: "Belum Divalidasi"
-  },
-  {
-    id: 3,
-    judul: "Retakan jalan",
-    deskripsi: "Jalan di Jl. Merdeka No. 45 mengalami retakan memanjang.",
-    cuaca: "Berawan",
-    nilai_kerusakan: "60%",
-    alamat: "Jl. Merdeka No. 45",
-    status: "Divalidasi"
-  },
-  {
-    id: 4,
-    judul: "Lampu jalan tidak menyala",
-    deskripsi: "Beberapa lampu jalan di Jl. Kartini No. 5 mati.",
-    cuaca: "Cerah",
-    nilai_kerusakan: "20%",
-    alamat: "Jl. Kartini No. 5",
-    status: "Sedang Diproses"
-  },
-  {
-    id: 5,
-    judul: "Jalan bergelombang",
-    deskripsi: "Permukaan jalan di Jl. Imam Bonjol bergelombang dan licin.",
-    cuaca: "Hujan",
-    nilai_kerusakan: "60%",
-    alamat: "Jl. Imam Bonjol No. 10",
-    status: "Divalidasi"
-  },
-  {
-    id: 6,
-    judul: "Lampu jalan rusak",
-    deskripsi: "Lampu jalan di Jl. Soekarno Hatta mati dan kabel terbuka.",
-    cuaca: "Cerah",
-    nilai_kerusakan: "100%",
-    alamat: "Jl. Soekarno Hatta",
-    status: "Sedang Diproses"
-  },
-  {
-    id: 7,
-    judul: "Aspal mengelupas",
-    deskripsi: "Aspal di Jl. Diponegoro No. 9 mengelupas akibat air hujan.",
-    cuaca: "Hujan",
-    nilai_kerusakan: "100%",
-    alamat: "Jl. Diponegoro No. 9",
-    status: "Belum Divalidasi"
-  },
-  {
-    id: 8,
-    judul: "Lampu jalan padam sebagian",
-    deskripsi: "Sebagian lampu jalan di Jl. Pelita No. 22 tidak berfungsi.",
-    cuaca: "Berawan",
-    nilai_kerusakan: "80%",
-    alamat: "Jl. Pelita No. 22",
-    status: "Sedang Diproses"
-  },
-  {
-    id: 9,
-    judul: "Jalan rusak parah",
-    deskripsi: "Jalan di Jl. Teuku Umar No. 8 dipenuhi lubang dan aspal retak.",
-    cuaca: "Cerah",
-    nilai_kerusakan: "100%",
-    alamat: "Jl. Teuku Umar No. 8",
-    status: "Divalidasi"
-  },
-  {
-    id: 10,
-    judul: "Lampu jalan korslet",
-    deskripsi: "Lampu jalan di Jl. Gajah Mada No. 14 korslet saat hujan.",
-    cuaca: "Hujan",
-    nilai_kerusakan: "80%",
-    alamat: "Jl. Gajah Mada No. 14",
-    status: "Belum Divalidasi"
-  },
-  {
-    id: 11,
-    judul: "Permukaan jalan rusak",
-    deskripsi: "Jalan di Jl. Cempaka No. 1 tidak rata dan membahayakan.",
-    cuaca: "Cerah",
-    nilai_kerusakan: "20%",
-    alamat: "Jl. Cempaka No. 1",
-    status: "Divalidasi"
-  },
-  {
-    id: 12,
-    judul: "Lampu jalan kedap-kedip",
-    deskripsi: "Lampu jalan di Jl. Bukit Indah menyala tidak stabil.",
-    cuaca: "Berawan",
-    nilai_kerusakan: "20%",
-    alamat: "Jl. Raya Bukit Indah",
-    status: "Sedang Diproses"
-  },
-  {
-    id: 13,
-    judul: "Aspal retak dan berlubang",
-    deskripsi: "Kerusakan aspal di Jl. Bunga Mawar No. 7 cukup parah.",
-    cuaca: "Cerah",
-    nilai_kerusakan: "80%",
-    alamat: "Jl. Bunga Mawar No. 7",
-    status: "Sedang Diproses"
-  },
-  {
-    id: 14,
-    judul: "Lampu jalan jatuh",
-    deskripsi: "Tiang lampu jalan di Jl. Pemuda No. 33 tumbang.",
-    cuaca: "Angin kencang",
-    nilai_kerusakan: "60%",
-    alamat: "Jl. Pemuda No. 33",
-    status: "Sedang Diproses"
-  },
-  {
-    id: 15,
-    judul: "Jalan berlubang kecil",
-    deskripsi: "Lubang kecil muncul di Jl. Teratai Putih setelah hujan deras.",
-    cuaca: "Hujan",
-    nilai_kerusakan: "40%",
-    alamat: "Jl. Teratai Putih",
-    status: "Divalidasi"
-  },
-  {
-    id: 16,
-    judul: "Lampu jalan menyala siang hari",
-    deskripsi: "Lampu jalan di Jl. Mangga Besar tidak mati di siang hari.",
-    cuaca: "Cerah",
-    nilai_kerusakan: "100%",
-    alamat: "Jl. Mangga Besar",
-    status: "Sedang Diproses"
-  },
-  {
-    id: 17,
-    judul: "Jalan menurun licin",
-    deskripsi: "Jl. Melati Indah licin dan tanpa tanda peringatan.",
-    cuaca: "Hujan",
-    nilai_kerusakan: "100%",
-    alamat: "Jl. Melati Indah",
-    status: "Sedang Diproses"
-  },
-  {
-    id: 18,
-    judul: "Lampu jalan tidak stabil",
-    deskripsi: "Lampu di Jl. Cemara No. 18 menyala-mati secara acak.",
-    cuaca: "Berawan",
-    nilai_kerusakan: "80%",
-    alamat: "Jl. Cemara No. 18",
-    status: "Belum Divalidasi"
-  },
-  {
-    id: 19,
-    judul: "Jalan retak akibat truk berat",
-    deskripsi: "Jl. Pahlawan No. 22 retak karena sering dilalui truk.",
-    cuaca: "Cerah",
-    nilai_kerusakan: "40%",
-    alamat: "Jl. Pahlawan No. 22",
-    status: "Sedang Diproses"
-  },
-  {
-    id: 20,
-    judul: "Lampu jalan nyala hanya sebagian",
-    deskripsi: "Sebagian lampu jalan di Jl. Rajawali No. 40 tidak menyala.",
-    cuaca: "Berawan",
-    nilai_kerusakan: "100%",
-    alamat: "Jl. Rajawali No. 40",
-    status: "Divalidasi"
-  }
+      id: 1,
+      judul: "Jalan berlubang besar",
+      jenis: "jalan",
+      alamat: "Jl. Ahmad Yani",
+      cuaca: "hujan",
+      status_rekom: "diproses",
+      status_urgent: "80%",
+      tingkat_urgent: "tinggi",
+    },
+    {
+      id: 2,
+      judul: "Lampu jalan mati total",
+      jenis: "lampu_jalan",
+      alamat: "Jl. Sudirman No. 12",
+      cuaca: "cerah",
+      status_rekom: "belum_divalidasi",
+      status_urgent: "40%",
+      tingkat_urgent: "rendah",
+    },
+    {
+      id: 3,
+      judul: "Retakan jalan",
+      jenis: "jalan",
+      alamat: "Jl. Merdeka No. 45",
+      cuaca: "hujan",
+      status_rekom: "divalidasi",
+      status_urgent: "60%",
+      tingkat_urgent: "sedang",
+    },
+    {
+      id: 4,
+      judul: "Lampu jalan tidak menyala",
+      jenis: "lampu_jalan",
+      alamat: "Jl. Kartini No. 5",
+      cuaca: "cerah",
+      status_rekom: "diproses",
+      status_urgent: "20%",
+      tingkat_urgent: "rendah",
+    },
+    {
+      id: 5,
+      judul: "Jalan bergelombang",
+      jenis: "jalan",
+      alamat: "Jl. Imam Bonjol No. 10",
+      cuaca: "hujan",
+      status_rekom: "divalidasi",
+      status_urgent: "60%",
+      tingkat_urgent: "sedang",
+    },
+    {
+      id: 6,
+      judul: "Lampu jalan rusak",
+      jenis: "lampu_jalan",
+      alamat: "Jl. Soekarno Hatta",
+      cuaca: "cerah",
+      status_rekom: "diproses",
+      status_urgent: "100%",
+      tingkat_urgent: "tinggi",
+    },
+    {
+      id: 7,
+      judul: "Aspal mengelupas",
+      jenis: "jalan",
+      alamat: "Jl. Diponegoro No. 9",
+      cuaca: "hujan",
+      status_rekom: "belum_divalidasi",
+      status_urgent: "100%",
+      tingkat_urgent: "tinggi",
+    },
+    {
+      id: 8,
+      judul: "Lampu jalan padam sebagian",
+      jenis: "lampu_jalan",
+      alamat: "Jl. Pelita No. 22",
+      cuaca: "hujan",
+      status_rekom: "diproses",
+      status_urgent: "80%",
+      tingkat_urgent: "tinggi",
+    },
+    {
+      id: 9,
+      judul: "Jalan rusak parah",
+      jenis: "jalan",
+      alamat: "Jl. Teuku Umar No. 8",
+      cuaca: "cerah",
+      status_rekom: "divalidasi",
+      status_urgent: "100%",
+      tingkat_urgent: "tinggi",
+    },
+    {
+      id: 10,
+      judul: "Lampu jalan korslet",
+      jenis: "lampu_jalan",
+      alamat: "Jl. Gajah Mada No. 14",
+      cuaca: "hujan",
+      status_rekom: "belum_divalidasi",
+      status_urgent: "80%",
+      tingkat_urgent: "tinggi",
+    },
+    {
+      id: 11,
+      judul: "Permukaan jalan rusak",
+      jenis: "jalan",
+      alamat: "Jl. Cempaka No. 1",
+      cuaca: "cerah",
+      status_rekom: "divalidasi",
+      status_urgent: "20%",
+      tingkat_urgent: "rendah",
+    },
+    {
+      id: 12,
+      judul: "Lampu jalan kedap-kedip",
+      jenis: "lampu_jalan",
+      alamat: "Jl. Raya Bukit Indah",
+      cuaca: "hujan",
+      status_rekom: "diproses",
+      status_urgent: "20%",
+      tingkat_urgent: "rendah",
+    },
+    {
+      id: 13,
+      judul: "Aspal retak dan berlubang",
+      jenis: "jalan",
+      alamat: "Jl. Bunga Mawar No. 7",
+      cuaca: "cerah",
+      status_rekom: "diproses",
+      status_urgent: "80%",
+      tingkat_urgent: "tinggi",
+    },
+    {
+      id: 14,
+      judul: "Lampu jalan jatuh",
+      jenis: "lampu_jalan",
+      alamat: "Jl. Pemuda No. 33",
+      cuaca: "angin_kencang",
+      status_rekom: "diproses",
+      status_urgent: "60%",
+      tingkat_urgent: "sedang",
+    },
+    {
+      id: 15,
+      judul: "Jalan berlubang kecil",
+      jenis: "jalan",
+      alamat: "Jl. Teratai Putih",
+      cuaca: "hujan",
+      status_rekom: "divalidasi",
+      status_urgent: "40%",
+      tingkat_urgent: "rendah",
+    },
+    {
+      id: 16,
+      judul: "Lampu jalan menyala siang hari",
+      jenis: "lampu_jalan",
+      alamat: "Jl. Mangga Besar",
+      cuaca: "cerah",
+      status_rekom: "diproses",
+      status_urgent: "100%",
+      tingkat_urgent: "tinggi",
+    },
+    {
+      id: 17,
+      judul: "Jalan menurun licin",
+      jenis: "jalan",
+      alamat: "Jl. Melati Indah",
+      cuaca: "hujan",
+      status_rekom: "diproses",
+      status_urgent: "100%",
+      tingkat_urgent: "tinggi",
+    },
+    {
+      id: 18,
+      judul: "Lampu jalan tidak stabil",
+      jenis: "lampu_jalan",
+      alamat: "Jl. Cemara No. 18",
+      cuaca: "hujan",
+      status_rekom: "belum_divalidasi",
+      status_urgent: "80%",
+      tingkat_urgent: "tinggi",
+    },
+    {
+      id: 19,
+      judul: "Jalan retak akibat truk berat",
+      jenis: "jalan",
+      alamat: "Jl. Pahlawan No. 22",
+      cuaca: "cerah",
+      status_rekom: "diproses",
+      status_urgent: "40%",
+      tingkat_urgent: "rendah",
+    },
+    {
+      id: 20,
+      judul: "Jembatan berlubang di bagian tengah",
+      jenis: "jembatan",
+      alamat: "Jl. Rajawali No. 40",
+      cuaca: "hujan",
+      status_rekom: "divalidasi",
+      status_urgent: "100%",
+      tingkat_urgent: "tinggi",
+    },
   ];
 };
 
 const RecommendedPage = async () => {
   const data = await getData();
   return (
-    <div className="">
-      <div className="mb-8 px-4 py-2 bg-red-300 rounded-md dark:bg-red-950">
-        <h1 className="font-semibold">Rekomendasi Perbaikan</h1>
-      </div>
-      <DataTable columns={columns} data={data}/>
-    </div>
+    <>
+      <DataTable columns={columns} data={data} />
+    </>
   );
 };
 

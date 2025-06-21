@@ -138,12 +138,12 @@ export const columns: ColumnDef<z.infer<typeof schema>>[] = [
 
       return (
         <div className="w-full">
-          <button
+          <Button
             onClick={() => setOpen(true)}
             className="text-left hover:underline"
           >
             {truncateText(judul)}
-          </button>
+          </Button>
         </div>
       );
     },
@@ -152,7 +152,6 @@ export const columns: ColumnDef<z.infer<typeof schema>>[] = [
     accessorKey: "jenisInfrastruktur",
     header: "Jenis Infrastruktur",
     cell: ({ row }) => {
-      const [open, setOpen] = useState(false);
       const jenisInfrastruktur = row.getValue("jenisInfrastruktur") as string;
 
       return (
@@ -185,7 +184,6 @@ export const columns: ColumnDef<z.infer<typeof schema>>[] = [
       );
     },
   },
-
   {
     accessorKey: "cuaca",
     header: "Cuaca",
