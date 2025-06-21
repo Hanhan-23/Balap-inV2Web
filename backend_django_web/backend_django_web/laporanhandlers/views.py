@@ -30,6 +30,7 @@ def cardLaporan(request):
                 'id': str(l.id),
                 'judul': l.judul,
                 'jenis': l.jenis,
+                'cuaca': l.cuaca,
                 'persentase': l.persentase,
                 'status': l.status,
                 'tgl_lapor': l.tgl_lapor,

@@ -57,23 +57,23 @@ import { Textarea } from "@/components/ui/textarea";
 
 export type Recommended = {
   id: string;
-  tanggal: string;
+  tgl_lapor: string;
   judul: string;
-  jenisInfrastruktur: string;
+  jenis: string;
   cuaca: string;
-  kerusakan: string;
-  lokasi: string;
-  status: "selesai" | "disembunyikan";
+  persentase: string;
+  alamat: string;
+  status: string;
 };
 
 export const schema = z.object({
   id: z.string(),
-  tanggal: z.string(),
+  tgl_lapor: z.string(),
   judul: z.string(),
-  jenisInfrastruktur: z.string(),
+  jenis: z.string(),
   cuaca: z.string(),
-  kerusakan: z.string(),
-  lokasi: z.string(),
+  persentase: z.string(),
+  alamat: z.string(),
   status: z.string(),
 });
 
@@ -113,7 +113,7 @@ export const columns: ColumnDef<z.infer<typeof schema>>[] = [
     enableHiding: false,
   },
   {
-    accessorKey: "tanggal",
+    accessorKey: "tgl_lapor",
     header: ({ column }) => (
       <Button
         variant="ghost"
@@ -150,10 +150,10 @@ export const columns: ColumnDef<z.infer<typeof schema>>[] = [
     },
   },
   {
-    accessorKey: "jenisInfrastruktur",
+    accessorKey: "jenis",
     header: "Jenis Infrastruktur",
     cell: ({ row }) => {
-      const jenisInfrastruktur = row.getValue("jenisInfrastruktur") as string;
+      const jenis = row.getValue("jenis") as string;
 
       return (
         <div className="w-full">
@@ -162,24 +162,24 @@ export const columns: ColumnDef<z.infer<typeof schema>>[] = [
               "inline-flex items-center gap-1 px-2 py-1 text-muted-foreground text-xs capitalize border border-slate-300 rounded-full"
             }
           >
-            {jenisInfrastruktur === "jalan" && (
+            {jenis === "jalan" && (
               <RoadHorizonIcon
                 size={14}
                 weight="bold"
                 className="text-stone-600"
               />
             )}
-            {jenisInfrastruktur === "lampu_jalan" && (
+            {jenis === "lampu_jalan" && (
               <LightbulbIcon
                 size={14}
                 weight="bold"
                 className="text-yellow-500"
               />
             )}
-            {jenisInfrastruktur === "jembatan" && (
+            {jenis === "jembatan" && (
               <BridgeIcon size={14} weight="bold" className="text-amber-600" />
             )}
-            {jenisInfrastruktur.replace("_", " ")}
+            {jenis.replace("_", " ")}
           </div>
         </div>
       );
@@ -211,7 +211,7 @@ export const columns: ColumnDef<z.infer<typeof schema>>[] = [
     },
   },
   {
-    accessorKey: "kerusakan",
+    accessorKey: "persentase",
     header: ({ column }) => (
       <Button
         variant="ghost"
@@ -227,11 +227,11 @@ export const columns: ColumnDef<z.infer<typeof schema>>[] = [
     cell: ({ getValue }) => <p>{getValue() as string}</p>,
   },
   {
-    accessorKey: "lokasi",
+    accessorKey: "alamat",
     header: "Lokasi",
     cell: ({ row }) => {
       const [open, setOpen] = useState(false);
-      const lokasi = row.getValue("lokasi") as string;
+      const alamat = row.getValue("alamat") as string;
 
       return (
         <div className="w-full">
@@ -239,7 +239,7 @@ export const columns: ColumnDef<z.infer<typeof schema>>[] = [
             onClick={() => setOpen(true)}
             className="text-left hover:underline"
           >
-            {truncateText(lokasi)}
+            {truncateText(alamat)}
           </button>
         </div>
       );
@@ -303,7 +303,7 @@ function TableCellViewer({ item }: { item: z.infer<typeof schema> }) {
     <Drawer direction={isMobile ? "bottom" : "right"}>
       <DrawerTrigger asChild>
         <Button variant="link" className="text-foreground w-fit px-0 text-left">
-          {item.tanggal}
+          {item.tgl_lapor.substring(0, 10)}
         </Button>
       </DrawerTrigger>
       <DrawerContent>
@@ -330,7 +330,7 @@ function TableCellViewer({ item }: { item: z.infer<typeof schema> }) {
                 <Label htmlFor="jenisInfrastruktur">Jenis Infrastruktur</Label>
                 <Input
                   id="jenisInfrastruktur"
-                  defaultValue={item.jenisInfrastruktur}
+                  defaultValue={item.jenis}
                   className="capitalize"
                   readOnly
                 />
@@ -359,10 +359,10 @@ function TableCellViewer({ item }: { item: z.infer<typeof schema> }) {
                 </Select>
               </div>
               <div className="flex flex-col gap-3">
-                <Label htmlFor="kerusakan">Kerusakan</Label>
+                <Label htmlFor="persentase">Kerusakan</Label>
                 <Input
-                  id="kerusakan"
-                  defaultValue={item.kerusakan}
+                  id="persentase"
+                  defaultValue={item.persentase}
                   className="capitalize"
                   readOnly
                 />
@@ -370,8 +370,8 @@ function TableCellViewer({ item }: { item: z.infer<typeof schema> }) {
             </div>
 
             <div className="flex flex-col gap-3">
-              <Label htmlFor="lokasi">Lokasi</Label>
-              <Textarea value={item.lokasi} className="resize-none" readOnly />
+              <Label htmlFor="alamat">Lokasi</Label>
+              <Textarea value={item.alamat} className="resize-none" readOnly />
             </div>
 
             {/* peta lokasi */}

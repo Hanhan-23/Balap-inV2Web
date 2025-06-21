@@ -11,7 +11,7 @@ import {
 const chartConfig = {
   visitors: {
     label: "Jumlah Laporan Terkini",
-    color: "#60a5fa",
+    color: "#bfdbfe",
   },
   chrome: {
     label: "Rekomendasi Terkini",
@@ -27,15 +27,25 @@ const chartConfig = {
   },
 } satisfies ChartConfig;
 
-const chartData = [
-  { browser: "Jumlah Laporan Terkini", visitors: 30, fill: "#60a5fa" },
-  { browser: "Rekomendasi Terkini", visitors: 4, fill: "#c4b5fd" },
-  { browser: "Rekomendasi Tervalidasi", visitors: 9, fill: "#86efac" },
-  { browser: "Rekomendasi Butuh Validasi", visitors: 12, fill: "#fde68a" },
-];
+type PieChartData = {
+  name: string;
+  value: number;
+  color: string;
+};
 
-const AppPieChart = () => {
-  const totalVisitors = chartData.reduce((acc, curr) => acc + curr.visitors, 0);
+type AppPieChartProps = {
+  data: PieChartData[];
+};
+
+const AppPieChart: React.FC<AppPieChartProps> = ({ data }) => {
+  // Transform the incoming data to match the expected format
+  const chartData = data.map(item => ({
+    browser: item.name,
+    visitors: item.value,
+    fill: item.color
+  }));
+  
+  const totalVisitors = data.reduce((acc, curr) => acc + curr.value, 0);
   
   return (
     <div className="">

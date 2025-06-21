@@ -43,8 +43,11 @@ export function LoginForm({
         if (status_pemerintah == 'belum_verif') {
           console.log(`akun anda belum diverifikasi mohon menunggu`)
         } else if (status_pemerintah == 'verif') {
-          const access_token = response.access_token
-          const refresh_token = response.refresh_token
+          const access_token = await response.access_token
+          const refresh_token = await response.refresh_token
+
+          localStorage.setItem('access_token', access_token)
+          localStorage.setItem('refresh_token', refresh_token)
 
           console.log(`login sukses`)
           router.push('/dashboard');
