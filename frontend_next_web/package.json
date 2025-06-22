@@ -9,6 +9,8 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@googlemaps/react-wrapper": "^1.2.0",
+    "@googlemaps/typescript-guards": "^2.0.3",
     "@hookform/resolvers": "^5.0.1",
     "@phosphor-icons/react": "^2.1.10",
     "@radix-ui/react-alert-dialog": "^1.1.13",
@@ -27,6 +29,7 @@
     "@radix-ui/react-slot": "^1.2.0",
     "@radix-ui/react-tooltip": "^1.2.0",
     "@tanstack/react-table": "^8.21.3",
+    "@vis.gl/react-google-maps": "^1.5.3",
     "axios": "^1.10.0",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",

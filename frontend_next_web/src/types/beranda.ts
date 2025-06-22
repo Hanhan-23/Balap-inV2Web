@@ -8,7 +8,7 @@ export interface empatAnalisis {
 export interface rekomendasiBeranda {
     id: string;
 	jumlah_laporan: number;
-	status_urgent: string;
+	status_urgent: number;
 	tingkat_urgent: any;
 	laporan: {
 		id_laporan: string;

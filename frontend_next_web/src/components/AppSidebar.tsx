@@ -1,18 +1,10 @@
 "use client";
 
 import { usePathname } from "next/navigation"; // Add this import
-import {
-  LayoutGrid,
-  FileText,
-  Users,
-  ChartLine,
-  User2,
-  ChevronUp,
-} from "lucide-react";
+import { LayoutDashboard, FileUser, Users, ChartNoAxesCombined } from "lucide-react";
 import {
   Sidebar,
   SidebarContent,
-  SidebarFooter,
   SidebarGroup,
   SidebarGroupContent,
   SidebarHeader,
@@ -24,23 +16,17 @@ import {
 } from "./ui/sidebar";
 import Link from "next/link";
 import Image from "next/image";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from "./ui/dropdown-menu";
 
 const items = [
   {
     title: "Dashboard",
     url: "/dashboard",
-    icon: LayoutGrid,
+    icon: LayoutDashboard,
   },
   {
     title: "Data Laporan",
     url: "/data-laporan",
-    icon: FileText,
+    icon: FileUser,
   },
   {
     title: "Data Akun",
@@ -50,7 +36,7 @@ const items = [
   {
     title: "Data Rekomendasi",
     url: "/data-rekomendasi",
-    icon: ChartLine,
+    icon: ChartNoAxesCombined,
   },
 ];
 
@@ -89,7 +75,7 @@ const AppSidebar = () => {
                   <SidebarMenuItem key={item.title}>
                     <SidebarMenuButton 
                       asChild
-                      className={isActive ? "bg-blue-200 hover:bg-blue-200 dark:bg-blue-900/30" : ""}
+                      className={isActive ? "bg-blue-200 dark:bg-blue-900/30" : ""}
                     >
                       <Link href={item.url}>
                         <item.icon className={isActive ? "text-blue-600 dark:text-blue-400" : ""} />
@@ -108,29 +94,6 @@ const AppSidebar = () => {
           </SidebarGroupContent>
         </SidebarGroup>
       </SidebarContent>
-
-      {/* Footer remains the same */}
-      <SidebarFooter className="border-t border-muted bg-background">
-        <SidebarMenu>
-          <SidebarMenuItem>
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <SidebarMenuButton>
-                  <User2 /> Pemerintah <ChevronUp className="ml-auto" />
-                </SidebarMenuButton>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent align="end">
-                <Link href="/main/profile" className="items-center gap-2">
-                <DropdownMenuItem>Profil</DropdownMenuItem>
-                </Link>
-                <Link href="/login" className="items-center gap-2">
-                  <DropdownMenuItem>Keluar</DropdownMenuItem>
-                </Link>
-              </DropdownMenuContent>
-            </DropdownMenu>
-          </SidebarMenuItem>
-        </SidebarMenu>
-      </SidebarFooter>
     </Sidebar>
   );
 };
