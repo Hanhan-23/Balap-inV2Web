@@ -2,7 +2,6 @@
 
 import { TrendingUp } from "lucide-react"
 import { Pie, PieChart } from "recharts"
-// import AppPieChart from '@/components/AppPieChart';
 
 import {
   Card,
@@ -19,12 +18,12 @@ import {
 
 export const description = "A pie chart with a label"
 
-const chartData = [
-  { browser: "JLT", visitors: 20, fill: "var(--color-JLT)" },
-  { browser: "RK", visitors: 89, fill: "var(--color-RK)" },
-  { browser: "RT", visitors: 18, fill: "var(--color-RT)" },
-  { browser: "RBV", visitors: 73, fill: "var(--color-RBV)" },
-]
+// const chartData = [
+//   { browser: "JLT", visitors: 20, fill: "var(--color-JLT)" },
+//   { browser: "RK", visitors: 89, fill: "var(--color-RK)" },
+//   { browser: "RT", visitors: 18, fill: "var(--color-RT)" },
+//   { browser: "RBV", visitors: 73, fill: "var(--color-RBV)" },
+// ]
 
 const chartConfig = {
   visitors: {
@@ -48,7 +47,7 @@ const chartConfig = {
   },
 } satisfies ChartConfig
 
-export function AppPieChart() {
+export function AppPieChart({ data }) {
   return (
     <Card className="flex flex-col">
       <CardHeader className="items-center pb-0">
@@ -66,7 +65,7 @@ export function AppPieChart() {
         >
           <PieChart>
             <ChartTooltip content={<ChartTooltipContent hideLabel />} />
-            <Pie data={chartData} dataKey="visitors" label nameKey="browser" />
+            <Pie data={data} dataKey="visitors" label nameKey="browser" />
           </PieChart>
         </ChartContainer>
       </CardContent>
