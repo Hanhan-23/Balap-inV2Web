@@ -1,5 +1,6 @@
 "use client";
 
+import { ReactNode } from "react";
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
@@ -7,8 +8,6 @@ import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
   DropdownMenuSub,
   DropdownMenuSubContent,
   DropdownMenuSubTrigger,
@@ -17,11 +16,8 @@ import {
 import { cn } from "@/lib/utils";
 import { ColumnDef } from "@tanstack/react-table";
 import { ArrowUpDown, MoreHorizontal } from "lucide-react";
-import { DetailsDialog } from "./details-dialog";
 
 import {
-  CloudRainIcon,
-  SunIcon,
   RoadHorizonIcon,
   LightbulbIcon,
   BridgeIcon,
@@ -31,14 +27,12 @@ import {
   Drawer,
   DrawerClose,
   DrawerContent,
-  DrawerDescription,
   DrawerFooter,
   DrawerHeader,
   DrawerTitle,
   DrawerTrigger,
 } from "@/components/ui/drawer";
 
-import { Separator } from "@/components/ui/separator";
 import { Label } from "@/components/ui/label";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { z } from "zod";
@@ -55,18 +49,7 @@ import Image from "next/image";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { toggleStatusLaporan } from "@/services/datalaporanservices";
-
-export type Recommended = {
-  id: string;
-  gambar:string;
-  tgl_lapor: string;
-  judul: string;
-  jenis: string;
-  cuaca: string;
-  persentase: string;
-  alamat: string;
-  status: string;
-};
+import { Item } from "@radix-ui/react-dropdown-menu";
 
 export const schema = z.object({
   id: z.string(),
@@ -74,7 +57,6 @@ export const schema = z.object({
   tgl_lapor: z.string(),
   judul: z.string(),
   jenis: z.string(),
-  cuaca: z.string(),
   persentase: z.string(),
   alamat: z.string(),
   status: z.string(),
@@ -89,10 +71,10 @@ const truncateText = (text: string, maxLength: number = 25) => {
 };
 
 const handleStatus = async (id: string) => {
-    await toggleStatusLaporan(id)
+  await toggleStatusLaporan(id);
 
-    window.location.reload()
-}
+  window.location.reload();
+};
 
 export const columns: ColumnDef<z.infer<typeof schema>>[] = [
   {
@@ -135,7 +117,18 @@ export const columns: ColumnDef<z.infer<typeof schema>>[] = [
         </div>
       </Button>
     ),
-    cell: ({ row }) => <TableCellViewer item={row.original} />,
+    cell: ({ row }) => 
+    <TableCellViewer
+      item={row.original}
+      triggerContent={
+        <Button
+          variant="link"
+          className="hover:underline p-0 h-auto"
+        >
+          {row.original.tgl_lapor.substring(0, 10)}
+        </Button>
+      }
+    />,
     enableHiding: false,
   },
   {
@@ -148,7 +141,7 @@ export const columns: ColumnDef<z.infer<typeof schema>>[] = [
       return (
         <div className="w-full">
           <Button
-          variant={"ghost"}
+            variant={"ghost"}
             onClick={() => setOpen(true)}
             className="text-left hover:underline"
           >
@@ -189,31 +182,6 @@ export const columns: ColumnDef<z.infer<typeof schema>>[] = [
               <BridgeIcon size={14} weight="bold" className="text-amber-600" />
             )}
             {jenis.replace("_", " ")}
-          </div>
-        </div>
-      );
-    },
-  },
-  {
-    accessorKey: "cuaca",
-    header: "Cuaca",
-    cell: ({ row }) => {
-      const cuaca = row.getValue("cuaca") as string;
-
-      return (
-        <div className="w-full">
-          <div
-            className={
-              "inline-flex gap-1 items-center px-2 py-1 text-left text-xs text-muted-foreground capitalize border border-slate-300 rounded-full "
-            }
-          >
-            {cuaca === "cerah" && (
-              <SunIcon size={14} weight="bold" className="text-yellow-500" />
-            )}
-            {cuaca === "hujan" && (
-              <CloudRainIcon size={14} weight="bold" className="text-sky-600" />
-            )}
-            {cuaca as string}
           </div>
         </div>
       );
@@ -282,14 +250,14 @@ export const columns: ColumnDef<z.infer<typeof schema>>[] = [
     cell: ({ row }: any) => {
       const item = row.original;
 
-      const status = item.status
+      const status = item.status;
       const finalStatus = () => {
-        if (status == 'selesai') {
-          return 'Sembunyikan'
-        } else if (status == 'disembunyikan') {
-          return 'Tampilkan'
+        if (status == "selesai") {
+          return "Sembunyikan";
+        } else if (status == "disembunyikan") {
+          return "Tampilkan";
         }
-      }
+      };
 
       return (
         <>
@@ -305,10 +273,14 @@ export const columns: ColumnDef<z.infer<typeof schema>>[] = [
               <DropdownMenuSub>
                 <DropdownMenuSubTrigger>Change Status</DropdownMenuSubTrigger>
                 <DropdownMenuSubContent>
-                  <DropdownMenuItem onClick={() => {
-                    console.log(item.id)
-                    handleStatus(item.id)
-                  }}>{finalStatus()}</DropdownMenuItem>
+                  <DropdownMenuItem
+                    onClick={() => {
+                      console.log(item.id);
+                      handleStatus(item.id);
+                    }}
+                  >
+                    {finalStatus()}
+                  </DropdownMenuItem>
                 </DropdownMenuSubContent>
               </DropdownMenuSub>
             </DropdownMenuContent>
@@ -319,15 +291,16 @@ export const columns: ColumnDef<z.infer<typeof schema>>[] = [
   },
 ];
 
-function TableCellViewer({ item }: { item: z.infer<typeof schema> }) {
+type TableCellViewerProps = {
+  item: z.infer<typeof schema>;
+  triggerContent: ReactNode;
+};
+
+function TableCellViewer({ item, triggerContent }: TableCellViewerProps) {
   const isMobile = useIsMobile();
   return (
     <Drawer direction={isMobile ? "bottom" : "right"}>
-      <DrawerTrigger asChild>
-        <Button variant="link" className="text-foreground w-fit px-0 text-left">
-          {item.tgl_lapor.substring(0, 10)}
-        </Button>
-      </DrawerTrigger>
+      <DrawerTrigger asChild>{triggerContent}</DrawerTrigger>
       <DrawerContent>
         <DrawerHeader className="gap-1">
           <DrawerTitle>{item.judul}</DrawerTitle>
@@ -358,17 +331,6 @@ function TableCellViewer({ item }: { item: z.infer<typeof schema> }) {
                 />
               </div>
               <div className="flex flex-col gap-3">
-                <Label htmlFor="cuaca">Cuaca</Label>
-                <Input
-                  id="cuaca"
-                  defaultValue={item.cuaca}
-                  className="capitalize"
-                  readOnly
-                />
-              </div>
-            </div>
-            <div className="grid grid-cols-2 gap-4">
-              <div className="flex flex-col gap-3">
                 <Label htmlFor="status">Status</Label>
                 <Select defaultValue={item.status}>
                   <SelectTrigger id="status" className="w-full">
@@ -380,6 +342,8 @@ function TableCellViewer({ item }: { item: z.infer<typeof schema> }) {
                   </SelectContent>
                 </Select>
               </div>
+            </div>
+            <div className="grid grid-cols-2 gap-4">
               <div className="flex flex-col gap-3">
                 <Label htmlFor="persentase">Kerusakan</Label>
                 <Input

@@ -94,13 +94,13 @@ def ubahStatusUrgentRekomendasi(request, id):
         try:
             rekomendasi = RekomendasiModel.objects.get(id=ObjectId(id))
 
-            new_status = request.data.get('status_urgent')
+            new_status = request.data.get('status_rekom')
 
             allowed_statuses = ['belum_valid', 'valid', 'proses', 'selesai']
             if new_status not in allowed_statuses:
                 return Response({'message': 'Status tidak valid. Pilihan: belum_valid, valid, proses, selesai.'}, status=400)
 
-            RekomendasiModel.objects(id=ObjectId(id)).update(set__status_urgent=new_status)
+            RekomendasiModel.objects(id=ObjectId(id)).update(set__status_rekom=new_status)
 
             return Response({'message': 'Status urgent berhasil diubah', 'status_baru': new_status})
 

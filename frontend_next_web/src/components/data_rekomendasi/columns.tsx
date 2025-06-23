@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { ArrowUpDown, MoreHorizontal } from "lucide-react";
 import { ColumnDef } from "@tanstack/react-table";
+import { StatusRekom } from "@/types/data-rekomendasi";
 
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
@@ -42,8 +43,6 @@ import {
 } from "@/components/ui/select";
 
 import {
-  CloudRainIcon,
-  SunIcon,
   RoadHorizonIcon,
   LightbulbIcon,
   BridgeIcon,
@@ -52,33 +51,43 @@ import { cn } from "@/lib/utils";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { z } from "zod";
 import { Label } from "@/components/ui/label";
-
-export type Recommended = {
-  id: number;
-  judul: string;
-  jenis: string;
-  alamat: string;
-  cuaca: string;
-  tingkat_urgent: "tinggi" | "sedang" | "rendah";
-  status_rekom: "belum_divalidasi" | "divalidasi" | "diproses" | "selesai";
-  status_urgent: string;
-};
+import { updateStatusRekomendasi } from "@/services/datarekomendasiservices";
 
 export const schema = z.object({
-  id: z.number(),
-  judul: z.string(),
-  jenis: z.string(),
-  alamat: z.string(),
-  cuaca: z.string(),
-  tingkat_urgent: z.string(),
-  status_rekom: z.string(),
+  id: z.string(),
+  jumlah_laporan: z.number(),
   status_urgent: z.string(),
+  tingkat_urgent: z.number(), // kamu bisa pakai z.any() kalau masih fleksibel
+  status_rekom: z.string(),
+  laporan: z.object({
+    judul: z.string(),
+    jenis: z.string(),
+    alamat: z.string(),
+  }),
 });
 
-const handleStatusChange = (id: number, newStatus: string) => {
-  // Implementasi logika untuk mengubah status pengaduan
-  console.log(`Mengubah status pengaduan ${id} menjadi ${newStatus}`);
-  // Biasanya di sini akan ada API call untuk update status
+const truncateText = (text: string, maxLength: number = 25) => {
+  if (!text) return "";
+  if (text.length > maxLength) {
+    return text.substring(0, maxLength) + "...";
+  }
+  return text;
+};
+
+const handleStatusChange = async (
+  id: string,
+  status: StatusRekom,
+  onUpdated?: () => void
+) => {
+  try {
+    await updateStatusRekomendasi(id, { status_rekom: status });
+    console.log(`Status ${id} berhasil diubah menjadi ${status}`);
+    onUpdated?.(); // contoh: refetch()
+    window.location.reload();
+  } catch (err) {
+    console.error("Gagal update status:", err);
+    alert("Gagal mengubah status");
+  }
 };
 
 export const columns: ColumnDef<z.infer<typeof schema>>[] = [
@@ -101,27 +110,27 @@ export const columns: ColumnDef<z.infer<typeof schema>>[] = [
     ),
   },
   {
-      accessorKey: "judul",
-      header: ({ column }) => (
-        <Button
-          variant="ghost"
-          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-          className="!p-0 hover:bg-transparent"
-        >
-          Judul
-          <div className="p-2 hover:bg-slate-100 rounded-full">
-            <ArrowUpDown className="size-3.5" />
-          </div>
-        </Button>
-      ),
-      cell: ({ row }) => <TableCellViewer item={row.original} />,
-      enableHiding: false,
-    },
+    accessorKey: "judul",
+    header: ({ column }) => (
+      <Button
+        variant="ghost"
+        onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+        className="!p-0 hover:bg-transparent"
+      >
+        Judul
+        <div className="p-2 hover:bg-slate-100 rounded-full">
+          <ArrowUpDown className="size-3.5" />
+        </div>
+      </Button>
+    ),
+    cell: ({ row }) => <TableCellViewer item={row.original} />,
+    enableHiding: false,
+  },
   {
-    accessorKey: "jenis",
+    accessorKey: "laporan.jenis",
     header: "Jenis Infrastruktur",
-    cell: ({ row }) => {
-      const jenis = row.getValue("jenis") as string;
+    cell: ({ getValue }) => {
+      const jenis = getValue() as string;
 
       return (
         <div className="w-full">
@@ -147,43 +156,23 @@ export const columns: ColumnDef<z.infer<typeof schema>>[] = [
             {jenis === "jembatan" && (
               <BridgeIcon size={14} weight="bold" className="text-amber-600" />
             )}
-            {jenis.replace("_", " ")}
+            {jenis.replace(/_/g, " ")}
           </div>
         </div>
       );
     },
   },
   {
-    accessorKey: "cuaca",
-    header: "Cuaca",
-    cell: ({ row }) => {
-      const cuaca = row.getValue("cuaca") as string;
-
-      return (
-        <div className="w-full">
-          <div
-            className={
-              "inline-flex gap-1 items-center px-2 py-1 text-left text-xs text-muted-foreground capitalize border border-slate-300 rounded-full "
-            }
-          >
-            {cuaca === "cerah" && (
-              <SunIcon size={14} weight="bold" className="text-yellow-500" />
-            )}
-            {cuaca === "hujan" && (
-              <CloudRainIcon size={14} weight="bold" className="text-sky-600" />
-            )}
-            {cuaca as string}
-          </div>
-        </div>
-      );
-    },
-  },
-  {
-    accessorKey: "alamat",
+    accessorKey: "laporan.alamat",
     header: "Alamat",
+    cell: ({ getValue }) => {
+      const alamat = getValue() as string;
+
+      return truncateText(alamat);
+    },
   },
   {
-    accessorKey: "status_urgent",
+    accessorKey: "tingkat_urgent",
     header: ({ column }) => (
       <div className="flex justify-center w-full">
         <Button
@@ -196,30 +185,37 @@ export const columns: ColumnDef<z.infer<typeof schema>>[] = [
         </Button>
       </div>
     ),
-    cell: ({ getValue }) => (
-      <div className="text-center w-full">{getValue() as string}</div>
-    ),
+    cell: ({ getValue }) => {
+      const tingkatUrgensi = getValue() as number;
+      const persen = (tingkatUrgensi * 100).toFixed(2) + "%";
+
+      return (
+        <div className="text-center w-full capitalize line-clamp-1">
+          {persen}
+        </div>
+      );
+    },
   },
   {
-    accessorKey: "tingkat_urgent",
-    header: "Tingkat Urgensi ",
-    cell: ({ row }) => {
-      const status = row.getValue("tingkat_urgent") as string;
+    accessorKey: "status_urgent",
+    header: "Status Urgensi ",
+    cell: ({ getValue }) => {
+      const statusUrgensi = getValue() as string;
 
       return (
         <div className="flex items-center gap-2">
           <div
             className={cn(
               "px-1.5 py-1 rounded-full w-max text-xs capitalize",
-              status === "tinggi" &&
+              statusUrgensi === "tinggi" &&
                 "bg-red-200 text-red-600 dark:bg-red-300/50 dark:text-slate-50",
-              status === "sedang" &&
+              statusUrgensi === "sedang" &&
                 "bg-orange-200 text-orange-600 dark:bg-indigo-300/50 dark:text-slate-50",
-              status === "rendah" &&
+              statusUrgensi === "rendah" &&
                 "bg-green-200 text-green-800 dark:bg-orange-300/50 dark:text-slate-50"
             )}
           >
-            {status}
+            {statusUrgensi}
           </div>
         </div>
       );
@@ -256,6 +252,9 @@ export const columns: ColumnDef<z.infer<typeof schema>>[] = [
     id: "actions",
     cell: ({ row }) => {
       const pengaduan = row.original;
+      const statusList = [
+        'belum_valid', 'valid', 'proses', 'selesai',
+      ] as const;
 
       return (
         <DropdownMenu>
@@ -279,22 +278,16 @@ export const columns: ColumnDef<z.infer<typeof schema>>[] = [
             <DropdownMenuSub>
               <DropdownMenuSubTrigger>Change Status</DropdownMenuSubTrigger>
               <DropdownMenuSubContent>
-                {["belum_divalidasi", "divalidasi", "diproses", "selesai"].map(
-                  (status) => (
-                    <DropdownMenuItem
-                      key={status}
-                      onClick={() => {
-                        if (!pengaduan?.id) return;
-                        handleStatusChange(
-                          pengaduan.id,
-                          status as Recommended["status_rekom"]
-                        );
-                      }}
-                    >
-                      {status.replaceAll("_", " ")}
-                    </DropdownMenuItem>
-                  )
-                )}
+                {statusList.map((status) => (
+                  <DropdownMenuItem
+                    key={status}
+                    onClick={() => handleStatusChange(pengaduan.id, status)}
+                  >
+                    <span className="capitalize">
+                      {status.replace(/_/g, " ")}
+                    </span>
+                  </DropdownMenuItem>
+                ))}
               </DropdownMenuSubContent>
             </DropdownMenuSub>
           </DropdownMenuContent>
@@ -310,12 +303,12 @@ function TableCellViewer({ item }: { item: z.infer<typeof schema> }) {
     <Drawer direction={isMobile ? "bottom" : "right"}>
       <DrawerTrigger asChild>
         <Button variant="link" className="text-foreground w-fit px-0 text-left">
-          {item.judul}
+          {truncateText(item.laporan.judul)}
         </Button>
       </DrawerTrigger>
       <DrawerContent>
         <DrawerHeader className="gap-1">
-          <DrawerTitle>{item.judul}</DrawerTitle>
+          <DrawerTitle>{item.laporan.judul}</DrawerTitle>
           <div>
             <Image
               src={"/jembatan_rusak.jpg"}
@@ -330,29 +323,18 @@ function TableCellViewer({ item }: { item: z.infer<typeof schema> }) {
           <form className="flex flex-col gap-4">
             <div className="flex flex-col gap-3">
               <Label htmlFor="judul">Judul Pengaduan</Label>
-              <Input id="judul" defaultValue={item.judul} />
+              <Input id="judul" defaultValue={item.laporan.judul} />
             </div>
             <div className="grid grid-cols-2 gap-4">
               <div className="flex flex-col gap-3">
                 <Label htmlFor="jenisInfrastruktur">Jenis Infrastruktur</Label>
                 <Input
                   id="jenisInfrastruktur"
-                  defaultValue={item.jenis}
+                  defaultValue={item.laporan.jenis}
                   className="capitalize"
                   readOnly
                 />
               </div>
-              <div className="flex flex-col gap-3">
-                <Label htmlFor="cuaca">Cuaca</Label>
-                <Input
-                  id="cuaca"
-                  defaultValue={item.cuaca}
-                  className="capitalize"
-                  readOnly
-                />
-              </div>
-            </div>
-            <div className="grid grid-cols-2 gap-4">
               <div className="flex flex-col gap-3">
                 <Label htmlFor="status_rekom">Status</Label>
                 <Select defaultValue={item.status_rekom}>
@@ -360,13 +342,17 @@ function TableCellViewer({ item }: { item: z.infer<typeof schema> }) {
                     <SelectValue placeholder="Select a type" />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="belum_divalidasi">Belum Divalidasi</SelectItem>
-                    <SelectItem value="divalidasi">Divalidasi</SelectItem>
+                    <SelectItem value="belum_divalidasi">
+                      Belum Divalidasi
+                    </SelectItem>
+                    <SelectItem value="valid">Divalidasi</SelectItem>
                     <SelectItem value="diproses">Diproses</SelectItem>
                     <SelectItem value="selesai">Selesai</SelectItem>
                   </SelectContent>
                 </Select>
-              </div>
+              </div>{" "}
+            </div>
+            <div className="grid grid-cols-2 gap-4">
               <div className="flex flex-col gap-3">
                 <Label htmlFor="status_urgent">Status Urgensi</Label>
                 <Input
@@ -380,7 +366,11 @@ function TableCellViewer({ item }: { item: z.infer<typeof schema> }) {
 
             <div className="flex flex-col gap-3">
               <Label htmlFor="lokasi">Alamat</Label>
-              <Textarea value={item.alamat} className="resize-none" readOnly />
+              <Textarea
+                value={item.laporan.alamat}
+                className="resize-none"
+                readOnly
+              />
             </div>
 
             {/* peta lokasi */}
