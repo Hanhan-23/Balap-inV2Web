@@ -1,6 +1,5 @@
 "use client";
 
-import { useState } from "react";
 import { ArrowUpDown, MoreHorizontal } from "lucide-react";
 import { ColumnDef } from "@tanstack/react-table";
 import { StatusRekom } from "@/types/data-rekomendasi";
@@ -90,7 +89,9 @@ const handleStatusChange = async (
   }
 };
 
-export const columns: ColumnDef<z.infer<typeof schema>>[] = [
+export const columns = (
+  onStatusUpdated: (id: string, newStatus: StatusRekom) => void
+): ColumnDef<z.infer<typeof schema>>[] => [
   {
     id: "select",
     header: ({ table }) => (
@@ -232,12 +233,12 @@ export const columns: ColumnDef<z.infer<typeof schema>>[] = [
           <div
             className={cn(
               "px-1.5 py-1 rounded-full w-max text-xs capitalize",
-              status === "belum_divalidasi" &&
-                "bg-zinc-200 text-zinc-700 dark:bg-zinc-400/20 dark:text-zinc-100",
-              status === "divalidasi" &&
+              status === "belum_valid" &&
+                "bg-purple-200 text-purple-600 dark:bg-zinc-400/20 dark:text-zinc-100",
+              status === "valid" &&
                 "bg-indigo-200 text-indigo-700 dark:bg-indigo-400/20 dark:text-indigo-100",
-              status === "diproses" &&
-                "bg-blue-200 text-blue-700 dark:bg-blue-400/20 dark:text-blue-100",
+              status === "proses" &&
+                "bg-yellow-200 text-yellow-700 dark:bg-blue-400/20 dark:text-blue-100",
               status === "selesai" &&
                 "bg-teal-200 text-teal-800 dark:bg-teal-400/20 dark:text-teal-100"
             )}
@@ -252,9 +253,25 @@ export const columns: ColumnDef<z.infer<typeof schema>>[] = [
     id: "actions",
     cell: ({ row }) => {
       const pengaduan = row.original;
-      const statusList = [
-        'belum_valid', 'valid', 'proses', 'selesai',
-      ] as const;
+      const statusList: StatusRekom[] = [
+        "belum_valid",
+        "valid",
+        "proses",
+        "selesai",
+      ];
+
+      const handleStatusChange = async (newStatus: StatusRekom) => {
+        try {
+          await updateStatusRekomendasi(pengaduan.id, {
+            status_rekom: newStatus,
+          });
+          onStatusUpdated(pengaduan.id, newStatus);
+          console.log("Status updated!");
+        } catch (err) {
+          console.error("Failed to update status:", err);
+          alert("Gagal update status");
+        }
+      };
 
       return (
         <DropdownMenu>
@@ -271,7 +288,7 @@ export const columns: ColumnDef<z.infer<typeof schema>>[] = [
                 navigator.clipboard.writeText(pengaduan.id.toString())
               }
             >
-              Copy Pengaduan ID
+              Copy ID
             </DropdownMenuItem>
             <DropdownMenuSeparator />
             <DropdownMenuItem>View details</DropdownMenuItem>
@@ -281,7 +298,7 @@ export const columns: ColumnDef<z.infer<typeof schema>>[] = [
                 {statusList.map((status) => (
                   <DropdownMenuItem
                     key={status}
-                    onClick={() => handleStatusChange(pengaduan.id, status)}
+                    onClick={() => handleStatusChange(status)}
                   >
                     <span className="capitalize">
                       {status.replace(/_/g, " ")}
@@ -337,7 +354,7 @@ function TableCellViewer({ item }: { item: z.infer<typeof schema> }) {
               </div>
               <div className="flex flex-col gap-3">
                 <Label htmlFor="status_rekom">Status</Label>
-                <Select defaultValue={item.status_rekom}>
+                <Select defaultValue={item.status_rekom.replace(/_/g, " ")}>
                   <SelectTrigger id="status_rekom" className="w-full">
                     <SelectValue placeholder="Select a type" />
                   </SelectTrigger>
@@ -367,7 +384,7 @@ function TableCellViewer({ item }: { item: z.infer<typeof schema> }) {
             <div className="flex flex-col gap-3">
               <Label htmlFor="lokasi">Alamat</Label>
               <Textarea
-                value={item.laporan.alamat}
+                defaultValue={item.laporan.alamat}
                 className="resize-none"
                 readOnly
               />
