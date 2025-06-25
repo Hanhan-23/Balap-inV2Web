@@ -1,9 +1,7 @@
-// components/data_laporan/TableCellViewer.tsx
 "use client";
 
 import {
   Drawer,
-  DrawerTrigger,
   DrawerContent,
   DrawerHeader,
   DrawerTitle,
@@ -12,91 +10,90 @@ import {
 } from "@/components/ui/drawer";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { z } from "zod";
 import { schemaLaporan } from "@/types/laporan-schema";
 import Image from "next/image";
-import { ReactNode } from "react";
+import { toggleStatusLaporan } from "@/services/datalaporanservices";
 
 interface TableCellViewerProps {
   item: z.infer<typeof schemaLaporan>;
-  triggerContent: ReactNode;
+  open: boolean;
+  onOpenChange: (open: boolean) => void;
+  onStatusUpdated: (id: string, status: string) => void;
 }
 
 export default function TableCellViewer({
   item,
-  triggerContent,
+  open,
+  onOpenChange,
+  onStatusUpdated,
 }: TableCellViewerProps) {
   const isMobile = useIsMobile();
 
+  const handleConfirmStatus = async () => {
+    const nextStatus = item.status === "selesai" ? "disembunyikan" : "selesai";
+    try {
+      await toggleStatusLaporan(item.id);
+      onStatusUpdated(item.id, nextStatus);
+      onOpenChange(false);
+    } catch (error) {
+      console.error("Gagal update status:", error);
+      alert("Gagal update status laporan.");
+    }
+  };
+
   return (
-    <Drawer direction={isMobile ? "bottom" : "right"}>
-      <DrawerTrigger asChild>{triggerContent}</DrawerTrigger>
+    <Drawer
+      open={open}
+      onOpenChange={onOpenChange}
+      direction={isMobile ? "bottom" : "right"}
+    >
       <DrawerContent>
         <DrawerHeader className="gap-1">
           <DrawerTitle>{item.judul}</DrawerTitle>
-          <div>
-            <Image
-              src={item.gambar || "/placeholder.jpg"}
-              width={100}
-              height={100}
-              className="w-full aspect-video rounded-xl object-cover object-center"
-              alt="gambar pengaduan"
-            />
-          </div>
+          <Image
+            src={item.gambar || "/placeholder.jpg"}
+            width={100}
+            height={100}
+            alt="Gambar Laporan"
+            className="w-full aspect-video rounded-xl object-cover"
+          />
         </DrawerHeader>
 
-        <div className="flex flex-col gap-4 px-4 pb-4 text-sm">
+        <div className="p-4 text-sm flex flex-col gap-4">
           <form className="flex flex-col gap-4">
             <div className="flex flex-col gap-3">
-              <Label htmlFor="judul">Judul Pengaduan</Label>
-              <Input id="judul" defaultValue={item.judul} readOnly />
+              <Label htmlFor="judul">Judul</Label>
+              <Input id="judul" value={item.judul} readOnly />
             </div>
-
             <div className="grid grid-cols-2 gap-4">
               <div className="flex flex-col gap-3">
                 <Label htmlFor="jenis">Jenis Infrastruktur</Label>
-                <Input id="jenis" defaultValue={item.jenis} readOnly />
+                <Input
+                  id="jenis"
+                  value={item.jenis}
+                  readOnly
+                  className="capitalize"
+                />
               </div>
               <div className="flex flex-col gap-3">
                 <Label htmlFor="status">Status</Label>
-                <Select defaultValue={item.status}>
-                  <SelectTrigger>
-                    <SelectValue placeholder="Pilih status" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="selesai">Selesai</SelectItem>
-                    <SelectItem value="disembunyikan">Disembunyikan</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-            </div>
-
-            <div className="grid grid-cols-2 gap-4">
-              <div className="flex flex-col gap-3">
-                <Label htmlFor="persentase">Kerusakan</Label>
                 <Input
-                  id="persentase"
-                  defaultValue={item.persentase}
+                  id="status"
+                  value={item.status}
                   readOnly
+                  className="capitalize"
                 />
               </div>
             </div>
-
             <div className="flex flex-col gap-3">
               <Label htmlFor="alamat">Lokasi</Label>
               <Textarea
                 id="alamat"
-                defaultValue={item.alamat}
+                value={item.alamat}
                 readOnly
                 className="resize-none"
               />
@@ -105,7 +102,9 @@ export default function TableCellViewer({
         </div>
 
         <DrawerFooter>
-          <Button variant="blue">Konfirmasi</Button>
+          <Button variant="blue" onClick={handleConfirmStatus}>
+            Konfirmasi
+          </Button>
           <DrawerClose asChild>
             <Button variant="outline">Selesai</Button>
           </DrawerClose>

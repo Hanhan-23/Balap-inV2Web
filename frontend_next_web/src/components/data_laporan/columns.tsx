@@ -1,10 +1,9 @@
-// components/data_laporan/columns.tsx
 "use client";
 
+import { useState } from "react";
 import { ColumnDef } from "@tanstack/react-table";
 import { ArrowUpDown, MoreHorizontal } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { Checkbox } from "@/components/ui/checkbox";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -17,15 +16,14 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 
-import { toggleStatusLaporan } from "@/services/datalaporanservices";
 import { laporan } from "@/types/laporan-schema";
-
 import TableCellViewer from "./table-cell-viewer";
 import StatusBadge from "./status-badge";
 import JenisBadge from "./jenis-badge";
+import { updateLaporanStatus } from "@/lib/update-status";
 
 export const columns = (
-  onStatusUpdated?: (id: string, status: string) => void
+  onStatusUpdated: (id: string, status: string) => void
 ): ColumnDef<laporan>[] => [
   {
     accessorKey: "tgl_lapor",
@@ -39,16 +37,26 @@ export const columns = (
         <ArrowUpDown className="ml-2 h-4 w-4" />
       </Button>
     ),
-    cell: ({ row }) => (
-      <TableCellViewer
-        item={row.original}
-        triggerContent={
-          <Button variant="link" className="hover:underline p-0 h-auto">
+    cell: ({ row }) => {
+      const [open, setOpen] = useState(false);
+      return (
+        <>
+          <Button
+            variant="link"
+            className="hover:underline p-0 h-auto"
+            onClick={() => setOpen(true)}
+          >
             {row.original.tgl_lapor.substring(0, 10)}
           </Button>
-        }
-      />
-    ),
+          <TableCellViewer
+            item={row.original}
+            open={open}
+            onOpenChange={setOpen}
+            onStatusUpdated={onStatusUpdated ?? (() => {})}
+          />
+        </>
+      );
+    },
     enableHiding: false,
   },
   {
@@ -85,7 +93,6 @@ export const columns = (
       const alamat = getValue() as string;
       return alamat.length > 25 ? `${alamat.slice(0, 25)}...` : alamat;
     },
-    enableHiding: false,
   },
   {
     accessorKey: "status",
@@ -96,18 +103,7 @@ export const columns = (
     id: "actions",
     cell: ({ row }) => {
       const item = row.original;
-      const isSelesai = item.status === "selesai";
-      const nextStatus = isSelesai ? "disembunyikan" : "selesai";
-      const label = isSelesai ? "Sembunyikan" : "Tampilkan";
-
-      const handleStatusChange = async () => {
-        try {
-          await toggleStatusLaporan(item.id);
-          onStatusUpdated?.(item.id, nextStatus);
-        } catch (err) {
-          console.error("Gagal mengubah status:", err);
-        }
-      };
+      const label = item.status === "selesai" ? "Sembunyikan" : "Tampilkan";
 
       return (
         <DropdownMenu>
@@ -123,7 +119,11 @@ export const columns = (
             <DropdownMenuSub>
               <DropdownMenuSubTrigger>Ubah Status</DropdownMenuSubTrigger>
               <DropdownMenuSubContent>
-                <DropdownMenuItem onClick={handleStatusChange}>
+                <DropdownMenuItem
+                  onClick={() =>
+                    updateLaporanStatus(item.id, item.status, onStatusUpdated)
+                  }
+                >
                   {label}
                 </DropdownMenuItem>
               </DropdownMenuSubContent>
