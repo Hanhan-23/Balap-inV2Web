@@ -5,7 +5,7 @@ export interface rekomendasi {
   jumlah_laporan: number;
   status_urgent: string;
   tingkat_urgent: any;
-  status_rekom: string;
+  status_rekom: StatusRekom;
   laporan: {
     judul: string;
     jenis: string;

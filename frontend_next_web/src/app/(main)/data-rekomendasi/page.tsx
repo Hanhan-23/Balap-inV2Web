@@ -2,15 +2,14 @@
 
 import { useEffect, useState } from "react";
 import { getDataRekomendasi } from "@/services/datarekomendasiservices";
-import { DataTable } from "../../../components/data_rekomendasi/data-table";
-import { rekomendasi } from "@/types/data-rekomendasi";
-import { columns } from "../../../components/data_rekomendasi/columns";
+import { DataTable } from "@/components/data_rekomendasi/data-table";
+import { columns } from "@/components/data_rekomendasi/columns";
+import { rekomendasi } from "@/types/rekomendasi-schema";
 
 const RecommendedPage = () => {
   const [data, setData] = useState<rekomendasi[]>([]);
   const [isLoading, setIsLoading] = useState(true);
 
-  // ambil data dari backend
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -22,10 +21,10 @@ const RecommendedPage = () => {
         setIsLoading(false);
       }
     };
+
     fetchData();
   }, []);
 
-  // handler untuk update status di UI setelah berhasil update ke backend
   const handleStatusUpdate = (id: string, newStatus: string) => {
     setData((prev) =>
       prev.map((item) =>
@@ -37,7 +36,7 @@ const RecommendedPage = () => {
   return (
     <div className="p-4">
       {isLoading ? (
-        <p>Loading...</p>
+        <p className="text-center">Memuat data...</p>
       ) : (
         <DataTable columns={columns(handleStatusUpdate)} data={data} />
       )}
