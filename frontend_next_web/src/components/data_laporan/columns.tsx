@@ -5,7 +5,17 @@ import { ColumnDef } from "@tanstack/react-table";
 import { ArrowUpDown, MoreHorizontal } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuSub, DropdownMenuSubContent, DropdownMenuSubTrigger, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuSub,
+  DropdownMenuSubContent,
+  DropdownMenuSubTrigger,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 
 import { toggleStatusLaporan } from "@/services/datalaporanservices";
 import { laporan } from "@/types/laporan-schema";
@@ -17,28 +27,6 @@ import JenisBadge from "./jenis-badge";
 export const columns = (
   onStatusUpdated?: (id: string, status: string) => void
 ): ColumnDef<laporan>[] => [
-  {
-    id: "select",
-    header: ({ table }) => (
-      <Checkbox
-        checked={
-          table.getIsAllPageRowsSelected() ||
-          (table.getIsSomePageRowsSelected() && "indeterminate")
-        }
-        onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
-        aria-label="Select all"
-      />
-    ),
-    cell: ({ row }) => (
-      <Checkbox
-        checked={row.getIsSelected()}
-        onCheckedChange={(value) => row.toggleSelected(!!value)}
-        aria-label="Select row"
-      />
-    ),
-    enableSorting: false,
-    enableHiding: false,
-  },
   {
     accessorKey: "tgl_lapor",
     header: ({ column }) => (
@@ -66,9 +54,10 @@ export const columns = (
   {
     accessorKey: "judul",
     header: "Judul Pengaduan",
-    cell: ({ row }) => row.original.judul.length > 25
-      ? `${row.original.judul.slice(0, 25)}...`
-      : row.original.judul,
+    cell: ({ row }) =>
+      row.original.judul.length > 25
+        ? `${row.original.judul.slice(0, 25)}...`
+        : row.original.judul,
   },
   {
     accessorKey: "jenis",

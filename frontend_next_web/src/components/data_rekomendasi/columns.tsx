@@ -29,24 +29,6 @@ export const columns = (
   onStatusUpdated: (id: string, newStatus: string) => void
 ): ColumnDef<rekomendasi>[] => [
   {
-    id: "select",
-    header: ({ table }) => (
-      <Checkbox
-        checked={
-          table.getIsAllPageRowsSelected() ||
-          (table.getIsSomePageRowsSelected() && "indeterminate")
-        }
-        onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
-      />
-    ),
-    cell: ({ row }) => (
-      <Checkbox
-        checked={row.getIsSelected()}
-        onCheckedChange={(value) => row.toggleSelected(!!value)}
-      />
-    ),
-  },
-  {
     accessorKey: "laporan.judul",
     header: ({ column }) => (
       <Button
@@ -107,7 +89,12 @@ export const columns = (
     id: "actions",
     cell: ({ row }) => {
       const item = row.original;
-      const statusList: StatusRekom[] = ["belum_valid", "valid", "proses", "selesai"];
+      const statusList: StatusRekom[] = [
+        "belum_valid",
+        "valid",
+        "proses",
+        "selesai",
+      ];
 
       const handleChangeStatus = async (status: StatusRekom) => {
         try {
