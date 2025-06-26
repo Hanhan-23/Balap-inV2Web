@@ -67,8 +67,8 @@ export const columns = (
       </Button>
     ),
     cell: ({ getValue }) => {
-      const val = getValue() as number;
-      return <div className="text-center">{(val * 100).toFixed(2)}%</div>;
+      const value = getValue() as number;
+      return <div className="text-center">{(value * 100).toFixed(2)}%</div>;
     },
   },
   {
