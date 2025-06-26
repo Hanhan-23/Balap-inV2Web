@@ -1,9 +1,10 @@
-export interface cardLaporan {
-    id: string;
-    judul: string;
-    jenis: string;
-    persentase: any;
-    status: string;
-    tgl_lapor: string;
-    alamat: string;
-}
+export type Laporan = {
+  id: string;
+  gambar: string;
+  tgl_lapor: string;
+  judul: string;
+  jenis: string;
+  persentase: string;
+  alamat: string;
+  status: string;
+};

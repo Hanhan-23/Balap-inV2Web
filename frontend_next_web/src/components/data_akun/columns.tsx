@@ -1,56 +1,24 @@
+// components/data_akun/columns.tsx
 "use client";
 
-import { Trash2 } from "lucide-react";
+import { DotsThreeIcon } from "@phosphor-icons/react";
 import { ColumnDef } from "@tanstack/react-table";
 import { Button } from "@/components/ui/button";
-import { Checkbox } from "@/components/ui/checkbox";
-import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-  AlertDialogTrigger,
-} from "@/components/ui/alert-dialog";
-import { cn } from "@/lib/utils";
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { toggleStatusAkun } from "@/services/akunservices";
+import StatusBadge from "./status-badge";
 
 export type Account = {
   id: string;
   nama_lengkap: string;
   email: string;
   no_telp: string;
-  status: string;
+  status: "verif" | "belum_verif";
 };
 
-const handleDeleteAccount = async (id: string) => {
-  await toggleStatusAkun(id)
-
-  window.location.reload()
-};
-
-export const columns: ColumnDef<Account>[] = [
-  {
-    id: "select",
-    header: ({ table }) => (
-      <Checkbox
-        onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
-        checked={
-          table.getIsAllPageRowsSelected() ||
-          (table.getIsSomePageRowsSelected() && "indeterminate")
-        }
-      />
-    ),
-    cell: ({ row }) => (
-      <Checkbox
-        onCheckedChange={(value) => row.toggleSelected(!!value)}
-        checked={row.getIsSelected()}
-      />
-    ),
-  },
+export const columns = (
+  onStatusUpdated: (id: string, status: Account["status"]) => void
+): ColumnDef<Account>[] => [
   {
     accessorKey: "nama_lengkap",
     header: "Nama",
@@ -64,66 +32,48 @@ export const columns: ColumnDef<Account>[] = [
     header: "Nomor HP",
   },
   {
-    accessorKey: "status",
-    header: "Status",
-    cell: ({ row }) => {
-      const status = row.original.status;
-
-      const displayStatus = status === "verif" ? "Diverifikasi" : "Belum Verifikasi";
-
-      return <span>{displayStatus}</span>;
-    },
+  accessorKey: "status",
+  header: "Status",
+  cell: ({ row }) => {
+    const status = row.original.status;
+    return <StatusBadge value={status} />;
   },
+},
   {
     id: "aksi",
     header: "Aksi",
     cell: ({ row }) => {
       const account = row.original;
+      const isVerified = account.status === "verif";
+      const nextStatus: Account["status"] = isVerified ? "belum_verif" : "verif";
+      const actionLabel = isVerified ? "Batalkan Verifikasi" : "Verifikasi";
 
-      const status = account.status
-
-      const finalStatus = () => {
-        if (status == 'belum_verif') {
-          return 'Verifikasi'
-        } else if (status == 'verif') {
-          return 'Batalkan Verifikasi'
+      const handleToggleStatus = async () => {
+        try {
+          await toggleStatusAkun(account.id);
+          onStatusUpdated(account.id, nextStatus);
+        } catch (err) {
+          console.error("Gagal mengubah status akun:", err);
+          alert("Gagal mengubah status akun.");
         }
-      }
+      };
 
       return (
-        <AlertDialog>
-          <AlertDialogTrigger asChild>
-            <Button
-              variant="ghost"
-              size="icon"
-              className="text-red-600 hover:text-red-800"
-            >
-              <Trash2 className="w-5 h-5" />
-              <span className="sr-only">Hapus akun</span>
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <Button variant="ghost" size="icon">
+              <DotsThreeIcon weight="bold" className="size-6" />
+              <span className="sr-only">Opsi</span>
             </Button>
-          </AlertDialogTrigger>
-          <AlertDialogContent className="bg-slate-50 border-red-100 dark:bg-slate-600 dark:border-red-50">
-            <AlertDialogHeader>
-              <AlertDialogTitle className="text-red-800 dark:text-slate-100">
-                Apakah Anda yakin ingin mengubah status akun ini?
-              </AlertDialogTitle>
-              <AlertDialogDescription className="text-slate-800 dark:text-slate-300">
-                Perubahan status akun pemerintah akan diterapkan. Pastikan Anda telah memverifikasi keputusan ini.
-              </AlertDialogDescription>
-            </AlertDialogHeader>
-            <AlertDialogFooter>
-              <AlertDialogCancel className="bg-white text-black dark:text-white hover:bg-gray-200">
-                Batal
-              </AlertDialogCancel>
-              <AlertDialogAction
-                className="bg-red-600 text-white hover:bg-red-700"
-                onClick={() => handleDeleteAccount(account.id)}
-              >
-                {`${finalStatus()}`}
-              </AlertDialogAction>
-            </AlertDialogFooter>
-          </AlertDialogContent>
-        </AlertDialog>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent align="end" className="w-48">
+            <DropdownMenuLabel>Aksi Akun</DropdownMenuLabel>
+            <DropdownMenuSeparator />
+            <DropdownMenuItem onClick={handleToggleStatus}>
+              {actionLabel}
+            </DropdownMenuItem>
+          </DropdownMenuContent>
+        </DropdownMenu>
       );
     },
   },

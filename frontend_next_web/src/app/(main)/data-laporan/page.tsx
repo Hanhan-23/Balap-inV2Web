@@ -1,19 +1,48 @@
-import { Recommended, columns } from "../../../components/data_laporan/columns";
-import { DataTable } from "../../../components/data_laporan/data-table";
+// app/(dashboard)/laporan/page.tsx
+"use client";
+
+import { useEffect, useState } from "react";
 import { getCardLaporan } from "@/services/datalaporanservices";
+import { DataTable } from "@/components/data_laporan/data-table";
+import { columns } from "@/components/data_laporan/columns";
+import { Laporan } from "@/types/data-laporan";
 
-const getData = async (): Promise<Recommended[]> => {
-  const data = await getCardLaporan('')
-  return data
-};
+const LaporanPage = () => {
+  const [data, setData] = useState<Laporan[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
 
-const RecommendedPage = async () => {
-  const data = await getData();
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const result = await getCardLaporan("");
+        setData(result);
+      } catch (error) {
+        console.error("Gagal mengambil data laporan:", error);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchData();
+  }, []);
+
+  const handleStatusUpdate = (id: string, newStatus: string) => {
+    setData((prev) =>
+      prev.map((item) =>
+        item.id === id ? { ...item, status: newStatus } : item
+      )
+    );
+  };
+
   return (
-    <>
-      <DataTable columns={columns} data={data} />
-    </>
+    <div className="p-4">
+      {isLoading ? (
+        <p className="text-center">Memuat data laporan...</p>
+      ) : (
+        <DataTable columns={columns(handleStatusUpdate)} data={data} />
+      )}
+    </div>
   );
 };
 
-export default RecommendedPage;
+export default LaporanPage;

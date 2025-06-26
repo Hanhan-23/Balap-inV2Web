@@ -62,8 +62,6 @@ const AppSidebar = () => {
         </SidebarMenu>
       </SidebarHeader>
 
-      <SidebarSeparator />
-
       {/* Main Content */}
       <SidebarContent className="flex-1 overflow-y-auto">
         <SidebarGroup>

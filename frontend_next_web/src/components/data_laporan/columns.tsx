@@ -1,8 +1,9 @@
 "use client";
 
 import { useState } from "react";
+import { ColumnDef } from "@tanstack/react-table";
+import { ArrowUpDown, MoreHorizontal } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { Checkbox } from "@/components/ui/checkbox";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -14,113 +15,16 @@ import {
   DropdownMenuSubTrigger,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { cn } from "@/lib/utils";
-import { ColumnDef } from "@tanstack/react-table";
-import { ArrowUpDown, MoreHorizontal } from "lucide-react";
-import { DetailsDialog } from "./details-dialog";
 
-import {
-  CloudRainIcon,
-  SunIcon,
-  RoadHorizonIcon,
-  LightbulbIcon,
-  BridgeIcon,
-} from "@phosphor-icons/react";
+import { laporan } from "@/types/laporan-schema";
+import TableCellViewer from "./table-cell-viewer";
+import StatusBadge from "./status-badge";
+import JenisBadge from "./jenis-badge";
+import { updateLaporanStatus } from "@/lib/update-status";
 
-import {
-  Drawer,
-  DrawerClose,
-  DrawerContent,
-  DrawerDescription,
-  DrawerFooter,
-  DrawerHeader,
-  DrawerTitle,
-  DrawerTrigger,
-} from "@/components/ui/drawer";
-
-import { Separator } from "@/components/ui/separator";
-import { Label } from "@/components/ui/label";
-import { useIsMobile } from "@/hooks/use-mobile";
-import { z } from "zod";
-
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
-
-import Image from "next/image";
-import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
-import { toggleStatusLaporan } from "@/services/datalaporanservices";
-
-export type Recommended = {
-  id: string;
-  gambar:string;
-  tgl_lapor: string;
-  judul: string;
-  jenis: string;
-  cuaca: string;
-  persentase: string;
-  alamat: string;
-  status: string;
-};
-
-export const schema = z.object({
-  id: z.string(),
-  gambar: z.string(),
-  tgl_lapor: z.string(),
-  judul: z.string(),
-  jenis: z.string(),
-  cuaca: z.string(),
-  persentase: z.string(),
-  alamat: z.string(),
-  status: z.string(),
-});
-
-const truncateText = (text: string, maxLength: number = 25) => {
-  if (!text) return "";
-  if (text.length > maxLength) {
-    return text.substring(0, maxLength) + "...";
-  }
-  return text;
-};
-
-const handleStatus = async (id: string) => {
-    await toggleStatusLaporan(id)
-
-    window.location.reload()
-}
-
-export const columns: ColumnDef<z.infer<typeof schema>>[] = [
-  {
-    id: "select",
-    header: ({ table }) => (
-      <div className="flex items-center justify-center">
-        <Checkbox
-          checked={
-            table.getIsAllPageRowsSelected() ||
-            (table.getIsSomePageRowsSelected() && "indeterminate")
-          }
-          onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
-          aria-label="Select all"
-        />
-      </div>
-    ),
-    cell: ({ row }) => (
-      <div className="flex items-center justify-center">
-        <Checkbox
-          checked={row.getIsSelected()}
-          onCheckedChange={(value) => row.toggleSelected(!!value)}
-          aria-label="Select row"
-        />
-      </div>
-    ),
-    enableSorting: false,
-    enableHiding: false,
-  },
+export const columns = (
+  onStatusUpdated: (id: string, status: string) => void
+): ColumnDef<laporan>[] => [
   {
     accessorKey: "tgl_lapor",
     header: ({ column }) => (
@@ -130,94 +34,43 @@ export const columns: ColumnDef<z.infer<typeof schema>>[] = [
         className="!p-0 hover:bg-transparent"
       >
         Tanggal
-        <div className="p-2 hover:bg-slate-100 rounded-full">
-          <ArrowUpDown className="size-3.5" />
-        </div>
+        <ArrowUpDown className="ml-2 h-4 w-4" />
       </Button>
     ),
-    cell: ({ row }) => <TableCellViewer item={row.original} />,
+    cell: ({ row }) => {
+      const [open, setOpen] = useState(false);
+      return (
+        <>
+          <Button
+            variant="link"
+            className="hover:underline p-0 h-auto"
+            onClick={() => setOpen(true)}
+          >
+            {row.original.tgl_lapor.substring(0, 10)}
+          </Button>
+          <TableCellViewer
+            item={row.original}
+            open={open}
+            onOpenChange={setOpen}
+            onStatusUpdated={onStatusUpdated ?? (() => {})}
+          />
+        </>
+      );
+    },
     enableHiding: false,
   },
   {
     accessorKey: "judul",
     header: "Judul Pengaduan",
-    cell: ({ row }) => {
-      const [open, setOpen] = useState(false);
-      const judul = row.getValue("judul") as string;
-
-      return (
-        <div className="w-full">
-          <Button
-          variant={"ghost"}
-            onClick={() => setOpen(true)}
-            className="text-left hover:underline"
-          >
-            {truncateText(judul)}
-          </Button>
-        </div>
-      );
-    },
+    cell: ({ row }) =>
+      row.original.judul.length > 25
+        ? `${row.original.judul.slice(0, 25)}...`
+        : row.original.judul,
   },
   {
     accessorKey: "jenis",
     header: "Jenis Infrastruktur",
-    cell: ({ row }) => {
-      const jenis = row.getValue("jenis") as string;
-
-      return (
-        <div className="w-full">
-          <div
-            className={
-              "inline-flex items-center gap-1 px-2 py-1 text-muted-foreground text-xs capitalize border border-slate-300 rounded-full"
-            }
-          >
-            {jenis === "jalan" && (
-              <RoadHorizonIcon
-                size={14}
-                weight="bold"
-                className="text-stone-600"
-              />
-            )}
-            {jenis === "lampu_jalan" && (
-              <LightbulbIcon
-                size={14}
-                weight="bold"
-                className="text-yellow-500"
-              />
-            )}
-            {jenis === "jembatan" && (
-              <BridgeIcon size={14} weight="bold" className="text-amber-600" />
-            )}
-            {jenis.replace("_", " ")}
-          </div>
-        </div>
-      );
-    },
-  },
-  {
-    accessorKey: "cuaca",
-    header: "Cuaca",
-    cell: ({ row }) => {
-      const cuaca = row.getValue("cuaca") as string;
-
-      return (
-        <div className="w-full">
-          <div
-            className={
-              "inline-flex gap-1 items-center px-2 py-1 text-left text-xs text-muted-foreground capitalize border border-slate-300 rounded-full "
-            }
-          >
-            {cuaca === "cerah" && (
-              <SunIcon size={14} weight="bold" className="text-yellow-500" />
-            )}
-            {cuaca === "hujan" && (
-              <CloudRainIcon size={14} weight="bold" className="text-sky-600" />
-            )}
-            {cuaca as string}
-          </div>
-        </div>
-      );
-    },
+    cell: ({ getValue }) => <JenisBadge jenis={getValue() as string} />,
   },
   {
     accessorKey: "persentase",
@@ -225,187 +78,59 @@ export const columns: ColumnDef<z.infer<typeof schema>>[] = [
       <Button
         variant="ghost"
         onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-        className="hover:bg-transparent !p-0"
+        className="!p-0 hover:bg-transparent"
       >
         Kerusakan
-        <div className="p-2 hover:bg-slate-100 rounded-full">
-          <ArrowUpDown className="size-3.5" />
-        </div>
+        <ArrowUpDown className="ml-2 h-4 w-4" />
       </Button>
     ),
-    cell: ({ getValue }) => <p>{getValue() as string}</p>,
+    cell: ({ getValue }) => `${getValue() as string}`,
   },
   {
     accessorKey: "alamat",
     header: "Lokasi",
-    cell: ({ row }) => {
-      const [open, setOpen] = useState(false);
-      const alamat = row.getValue("alamat") as string;
-
-      return (
-        <div className="w-full">
-          <button
-            onClick={() => setOpen(true)}
-            className="text-left hover:underline"
-          >
-            {truncateText(alamat)}
-          </button>
-        </div>
-      );
+    cell: ({ getValue }) => {
+      const alamat = getValue() as string;
+      return alamat.length > 25 ? `${alamat.slice(0, 25)}...` : alamat;
     },
-    enableHiding: false,
   },
   {
     accessorKey: "status",
     header: "Status",
-    cell: ({ row }) => {
-      const status = row.getValue("status");
-      return (
-        <div className="w-full">
-          <div
-            className={cn(
-              "px-2 py-1 text-left text-xs capitalize rounded-full inline-block",
-              status === "selesai" &&
-                "bg-green-200 text-green-600 dark:bg-red-300/50 dark:text-slate-50",
-              status === "disembunyikan" &&
-                "bg-gray-200 text-gray-600 dark:bg-stone-800 dark:text-neutral-300"
-            )}
-          >
-            {status as string}
-          </div>
-        </div>
-      );
-    },
+    cell: ({ getValue }) => <StatusBadge value={getValue() as string} />,
   },
   {
     id: "actions",
-    cell: ({ row }: any) => {
+    cell: ({ row }) => {
       const item = row.original;
-
-      const status = item.status
-      const finalStatus = () => {
-        if (status == 'selesai') {
-          return 'Sembunyikan'
-        } else if (status == 'disembunyikan') {
-          return 'Tampilkan'
-        }
-      }
+      const label = item.status === "selesai" ? "Sembunyikan" : "Tampilkan";
 
       return (
-        <>
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button variant="ghost" className="h-8 w-8 p-0">
-                <span className="sr-only">Open menu</span>
-                <MoreHorizontal className="h-4 w-4" />
-              </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent className="w-40" align="end">
-              <DropdownMenuItem>View details</DropdownMenuItem>
-              <DropdownMenuSub>
-                <DropdownMenuSubTrigger>Change Status</DropdownMenuSubTrigger>
-                <DropdownMenuSubContent>
-                  <DropdownMenuItem onClick={() => {
-                    console.log(item.id)
-                    handleStatus(item.id)
-                  }}>{finalStatus()}</DropdownMenuItem>
-                </DropdownMenuSubContent>
-              </DropdownMenuSub>
-            </DropdownMenuContent>
-          </DropdownMenu>
-        </>
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <Button variant="ghost" className="h-8 w-8 p-0">
+              <MoreHorizontal className="h-4 w-4" />
+            </Button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent align="end">
+            <DropdownMenuLabel>Aksi</DropdownMenuLabel>
+            <DropdownMenuItem>Detail</DropdownMenuItem>
+            <DropdownMenuSeparator />
+            <DropdownMenuSub>
+              <DropdownMenuSubTrigger>Ubah Status</DropdownMenuSubTrigger>
+              <DropdownMenuSubContent>
+                <DropdownMenuItem
+                  onClick={() =>
+                    updateLaporanStatus(item.id, item.status, onStatusUpdated)
+                  }
+                >
+                  {label}
+                </DropdownMenuItem>
+              </DropdownMenuSubContent>
+            </DropdownMenuSub>
+          </DropdownMenuContent>
+        </DropdownMenu>
       );
     },
   },
 ];
-
-function TableCellViewer({ item }: { item: z.infer<typeof schema> }) {
-  const isMobile = useIsMobile();
-  return (
-    <Drawer direction={isMobile ? "bottom" : "right"}>
-      <DrawerTrigger asChild>
-        <Button variant="link" className="text-foreground w-fit px-0 text-left">
-          {item.tgl_lapor.substring(0, 10)}
-        </Button>
-      </DrawerTrigger>
-      <DrawerContent>
-        <DrawerHeader className="gap-1">
-          <DrawerTitle>{item.judul}</DrawerTitle>
-          <div>
-            <Image
-              src={`${item.gambar}`}
-              width={100}
-              height={100}
-              className="w-full aspect-video rounded-xl object-cover object-center pointer-events-none"
-              alt="..."
-            />
-          </div>
-        </DrawerHeader>
-        <div className="flex flex-col gap-4 overflow-y-auto px-4 text-sm">
-          <form className="flex flex-col gap-4">
-            <div className="flex flex-col gap-3">
-              <Label htmlFor="judul">Judul Pengaduan</Label>
-              <Input id="judul" defaultValue={item.judul} />
-            </div>
-            <div className="grid grid-cols-2 gap-4">
-              <div className="flex flex-col gap-3">
-                <Label htmlFor="jenisInfrastruktur">Jenis Infrastruktur</Label>
-                <Input
-                  id="jenisInfrastruktur"
-                  defaultValue={item.jenis}
-                  className="capitalize"
-                  readOnly
-                />
-              </div>
-              <div className="flex flex-col gap-3">
-                <Label htmlFor="cuaca">Cuaca</Label>
-                <Input
-                  id="cuaca"
-                  defaultValue={item.cuaca}
-                  className="capitalize"
-                  readOnly
-                />
-              </div>
-            </div>
-            <div className="grid grid-cols-2 gap-4">
-              <div className="flex flex-col gap-3">
-                <Label htmlFor="status">Status</Label>
-                <Select defaultValue={item.status}>
-                  <SelectTrigger id="status" className="w-full">
-                    <SelectValue placeholder="Select a type" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="selesai">Selesai</SelectItem>
-                    <SelectItem value="disembunyikan">Disembunyikan</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-              <div className="flex flex-col gap-3">
-                <Label htmlFor="persentase">Kerusakan</Label>
-                <Input
-                  id="persentase"
-                  defaultValue={item.persentase}
-                  className="capitalize"
-                  readOnly
-                />
-              </div>
-            </div>
-
-            <div className="flex flex-col gap-3">
-              <Label htmlFor="alamat">Lokasi</Label>
-              <Textarea value={item.alamat} className="resize-none" readOnly />
-            </div>
-
-            {/* peta lokasi */}
-          </form>
-        </div>
-        <DrawerFooter>
-          <Button variant={"blue"}>Konfirmasi</Button>
-          <DrawerClose asChild>
-            <Button variant="outline">Selesai</Button>
-          </DrawerClose>
-        </DrawerFooter>
-      </DrawerContent>
-    </Drawer>
-  );
-}
