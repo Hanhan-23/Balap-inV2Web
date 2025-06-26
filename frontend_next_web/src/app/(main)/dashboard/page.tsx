@@ -7,14 +7,16 @@ import MapComponent from "@/components/dashboard/Map";
 // Statistik
 import { ChartAreaInteractive } from "@/components/dashboard/ChartStatistic";
 import { useState, useEffect } from "react";
-import { empatAnalisis, rekomendasiBeranda, statistikBeranda } from "@/types/beranda";
-import { getEmpatAnalisis, getRekomendasiBeranda, getStatistikBeranda } from "@/services/berandaservices";
-import { APIProvider, Map } from "@vis.gl/react-google-maps";
+import { empatAnalisis, rekomendasiBeranda, statistikBeranda, petaBeranda } from "@/types/beranda";
+import { getEmpatAnalisis, getRekomendasiBeranda, getStatistikBeranda, getPetaBeranda } from "@/services/berandaservices";
+// import { APIProvider, Map } from "@vis.gl/react-google-maps";
+
 
 const SingleUserPage = () => {
   const [ empatAnalisis, setEmpatAnalisis ] = useState<empatAnalisis>()
   const [ rekomendasiBeranda, setRekomendasiBeranda ] = useState<rekomendasiBeranda[]>([]);
   const [ statistikBeranda, setStatistikBeranda ] = useState<statistikBeranda[]>([]);
+  const [ petaBeranda, setPetaBeranda ] = useState<petaBeranda[]>([]);
 
   useEffect(() => {
     getEmpatAnalisis()
@@ -40,6 +42,16 @@ const SingleUserPage = () => {
     getStatistikBeranda()
     .then((data) => {
       setStatistikBeranda(data);
+    })
+    .catch((error) => {
+      console.error(`error fetching data: ${error}`);
+    });
+  }, []);
+
+  useEffect(() => {
+    getPetaBeranda()
+    .then((data) => {
+      setPetaBeranda(data);
     })
     .catch((error) => {
       console.error(`error fetching data: ${error}`);
@@ -114,7 +126,7 @@ const SingleUserPage = () => {
           {/* Map */}
           <div className="bg-white rounded-xl shadow p-4">
             <div className="w-full h-[550px] md:h-[450px]">
-              <MapComponent />
+              <MapComponent markersBeranda={petaBeranda}/>
             </div>
           </div>
         </div>

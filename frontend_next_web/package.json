@@ -9,7 +9,7 @@
     "lint": "next lint"
   },
   "dependencies": {
-    "@googlemaps/react-wrapper": "^1.2.0",
+
     "@googlemaps/typescript-guards": "^2.0.3",
     "@hookform/resolvers": "^5.0.1",
     "@phosphor-icons/react": "^2.1.10",

@@ -8,25 +8,32 @@ export interface empatAnalisis {
 export interface rekomendasiBeranda {
     id: string;
 	jumlah_laporan: number;
-	status_urgent: number;
+	status_urgent: string;
 	tingkat_urgent: any;
 	laporan: {
 		id_laporan: string;
 		judul: string;
 		gambar: string;
 		alamat: string;
+		lat: string;
+		long: string;
     }
 }
-// export interface statistikBeranda {
-// 	laporan: {
-// 		tgl_lapor: string;
-// 		jenis: string;
-// 	}
-// }
-
 export interface statistikBeranda {
   date: string;
   jalan: number;
   lampu: number;
   jembatan: number;
+}
+
+export interface petaBeranda {
+	id: string;
+	status_urgent: string;
+	status_rekom: string;
+	laporan: {
+		id: string;
+		judul: string;
+		latitude: string;
+		longitude: string;
+	}
 }

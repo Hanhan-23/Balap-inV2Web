@@ -1,44 +1,26 @@
-import React, { useEffect, useState } from "react";
-import { Status, Wrapper } from "@googlemaps/react-wrapper";
-import { MyMap } from "./MyMap";
-import { Marker } from "./Marker";
+// import {  } from "@/types/beranda";
+import { APIProvider, Map, Marker } from "@vis.gl/react-google-maps";
 
-const render = (status: Status) => {
-  return <h1>{status}</h1>;
-};
-const MapComponent: React.FC = () => {
-  const [clicks, setClicks] = React.useState<google.maps.LatLng>();
-  const [zoom, setZoom] = React.useState(12); // initial zoom
-  const [center, setCenter] = React.useState<google.maps.LatLngLiteral>({
-    lat: 1.0452, 
-    lng: 104.0305 
-  });
-  const initialValue = {
-    lat: 1.0452, 
-    lng: 104.0305 
-  };
-  const [location, setLocation] = useState<{ lat: number; lng: number }>();
+  const MapComponent = ({ markersBeranda = [] }) => {
+  const markers = markersBeranda; 
 
-  useEffect(() => {
-    if (initialValue) {
-      setCenter(initialValue);
-    }
-  }, []);
+const batamCenter = { 
+          lat: 1.0452, 
+          lng: 104.0305 
+      };
 
-  const onClick = (e: google.maps.MapMouseEvent) => {
-    // avoid directly mutating state
-    setClicks(e.latLng!);
-    setLocation(e.latLng!.toJSON());
-  };
+const getMarkerIcon = (status: string) => {
+    switch (status) {
+      case "tinggi":
+        return "http://maps.google.com/mapfiles/ms/icons/red-dot.png";
+      case "sedang":
+        return "http://maps.google.com/mapfiles/ms/icons/yellow-dot.png";
+      case "rendah":
+        return "http://maps.google.com/mapfiles/ms/icons/green-dot.png";
+      default:
+        return "http://maps.google.com/mapfiles/ms/icons/blue-dot.png"; 
+    }}
 
-  const onIdle = (m: google.maps.Map) => {
-    setZoom(m.getZoom()!);
-    setCenter(m.getCenter()!.toJSON());
-  };
-
-  const render = (status: Status) => {
-    return <h1>{status}</h1>;
-  };
   return (
     <div className="mb-4">
       <div className={`mb-2`}>
@@ -47,27 +29,29 @@ const MapComponent: React.FC = () => {
         </label>
       </div>
       <div className="w-full h-[300px] sm:h-[350px] md:h-[400px]">
-        <Wrapper
+        <APIProvider
           apiKey={process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY!}
-          render={render}
         >
-          <MyMap
-            center={center}
-            onClick={onClick}
-            onIdle={onIdle}
-            zoom={zoom}
+          <Map
             style={{ width: "100%", height: "100%" }}
+            defaultCenter={batamCenter}
+            defaultZoom={12}
           >
-            <Marker position={clicks ? clicks : initialValue} />
-          </MyMap>
-        </Wrapper>
-      </div>
+            {markers.map((marker) => (
+              <Marker
+              key={marker['id']}
+              position={{ lat: marker['laporan']['latitude'], lng: marker['laporan']['longitude'] }}
+              title={marker['judul_laporan']}
+              icon={{
+                url: getMarkerIcon(marker["status_urgent"]),
+              }}
+              />
+              ))}
 
-      {/* {location?.lat && location?.lng && (
-        <h2>
-          You're marked at : {location?.lat} {location?.lng}
-        </h2>
-      )} */}
+              
+          </Map>
+        </APIProvider>
+      </div>
     </div>
   );
 };
