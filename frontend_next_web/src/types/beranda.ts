@@ -17,3 +17,16 @@ export interface rekomendasiBeranda {
 		alamat: string;
     }
 }
+// export interface statistikBeranda {
+// 	laporan: {
+// 		tgl_lapor: string;
+// 		jenis: string;
+// 	}
+// }
+
+export interface statistikBeranda {
+  date: string;
+  jalan: number;
+  lampu: number;
+  jembatan: number;
+}

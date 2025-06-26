@@ -7,18 +7,14 @@ import MapComponent from "@/components/dashboard/Map";
 // Statistik
 import { ChartAreaInteractive } from "@/components/dashboard/ChartStatistic";
 import { useState, useEffect } from "react";
-import { empatAnalisis, rekomendasiBeranda } from "@/types/beranda";
-import { getEmpatAnalisis, getRekomendasiBeranda } from "@/services/berandaservices";
+import { empatAnalisis, rekomendasiBeranda, statistikBeranda } from "@/types/beranda";
+import { getEmpatAnalisis, getRekomendasiBeranda, getStatistikBeranda } from "@/services/berandaservices";
 import { APIProvider, Map } from "@vis.gl/react-google-maps";
-
-// export default function DashboardPage() {
-//   const [statistikLaporan, setStatistikLaporan] = useState<
-//     StatistikLaporanUtama[]
-//   >([]);
 
 const SingleUserPage = () => {
   const [ empatAnalisis, setEmpatAnalisis ] = useState<empatAnalisis>()
   const [ rekomendasiBeranda, setRekomendasiBeranda ] = useState<rekomendasiBeranda[]>([]);
+  const [ statistikBeranda, setStatistikBeranda ] = useState<statistikBeranda[]>([]);
 
   useEffect(() => {
     getEmpatAnalisis()
@@ -40,50 +36,31 @@ const SingleUserPage = () => {
     });
   }, []);
 
-  // ambil data bagian pie chart
+  useEffect(() => {
+    getStatistikBeranda()
+    .then((data) => {
+      setStatistikBeranda(data);
+    })
+    .catch((error) => {
+      console.error(`error fetching data: ${error}`);
+    });
+  }, []);
+  
+      // ambil data bagian pie chart
       const chartData = [
       { browser: "JLT", visitors: empatAnalisis?.jumlah_laporan_terkini, fill: "var(--color-JLT)" },
       { browser: "RK", visitors: empatAnalisis?.total_rekomendasi_terkini, fill: "var(--color-RK)" },
       { browser: "RT", visitors: empatAnalisis?.total_rekomendasi_tervalidasi, fill: "var(--color-RT)" },
       { browser: "RBV", visitors: empatAnalisis?.total_rekomendasi_butuh_validasi, fill: "var(--color-RBV)" },
     ]
-    const dummyData = [
-      { date: "2024-04-01", desktop: 10, mobile: 150, device:2 },
-      { date: "2024-04-02", desktop: 97, mobile: 12, device:10 },
-      { date: "2024-04-03", desktop: 167, mobile: 120, device:30 },
-      { date: "2024-04-04", desktop: 22, mobile: 150, device:2 },
-      { date: "2024-04-05", desktop: 97, mobile: 12, device:10 },
-      { date: "2024-04-06", desktop: 167, mobile: 90, device:30 },
-      { date: "2024-04-07", desktop: 22, mobile: 13, device:2 },
-      { date: "2024-04-08", desktop: 97, mobile: 12, device:10 },
-      { date: "2024-04-09", desktop: 117, mobile: 10, device:30 },
-      { date: "2024-04-10", desktop: 122, mobile: 13, device:2 },
-      { date: "2024-04-11", desktop: 97, mobile: 12, device:10 },
-      { date: "2024-04-12", desktop: 167, mobile: 20, device:30 },
-      { date: "2024-04-13", desktop: 22, mobile: 13, device:2 },
-      { date: "2024-04-14", desktop: 97, mobile: 12, device:10 },
-      { date: "2024-04-15", desktop: 17, mobile: 120, device:30 },
-      { date: "2024-04-16", desktop: 97, mobile: 12, device:10 },
-      { date: "2024-04-17", desktop: 16, mobile: 120, device:30 },
-      { date: "2024-04-18", desktop: 22, mobile: 13, device:2 },
-      { date: "2024-04-19", desktop: 7, mobile: 12, device:10 },
-      { date: "2024-04-20", desktop: 17, mobile: 120, device:30 },
-      { date: "2024-04-21", desktop: 222, mobile: 150, device:2 },
-      { date: "2024-04-22", desktop: 97, mobile: 80, device:10 },
-      { date: "2024-04-23", desktop: 167, mobile: 120, device:30 },
-      { date: "2024-04-24", desktop: 97, mobile: 10, device:10 },
-      { date: "2024-04-25", desktop: 167, mobile: 120, device:30 },
-      { date: "2024-04-26", desktop: 222, mobile: 10, device:2 },
-      { date: "2024-04-27", desktop: 97, mobile: 12, device:10 },
-      { date: "2024-04-28", desktop: 7, mobile: 19, device:3 },
-      { date: "2024-04-29", desktop: 22, mobile: 50, device:21 },
-      { date: "2024-04-30", desktop: 97, mobile: 12, device:10 },
-      { date: "2024-05-01", desktop: 17, mobile: 10, device:35 },
-      { date: "2024-05-02", desktop: 17, mobile: 12, device:10 },
-      { date: "2024-05-03", desktop: 44, mobile: 120, device:30 },
-      { date: "2024-05-04", desktop: 97, mobile: 12, device:10 },
-      { date: "2024-05-05", desktop: 16, mobile: 120, device:30 },
-    ];
+
+    // ambil data statistik
+    const dummyData = statistikBeranda.map((item) => ({
+      date: item.date,
+      desktop: item.jalan,
+      mobile: item.lampu,
+      device: item.jembatan
+    }));
 
   return (
     <div className="space-y-4">
