@@ -4,7 +4,6 @@
 import { useEffect, useState } from "react";
 import { getCardLaporan } from "@/services/datalaporanservices";
 import { DataTable } from "@/components/data_laporan/data-table";
-import { columns } from "@/components/data_laporan/columns";
 import { Laporan } from "@/types/data-laporan";
 
 const LaporanPage = () => {
@@ -39,7 +38,7 @@ const LaporanPage = () => {
       {isLoading ? (
         <p className="text-center">Memuat data laporan...</p>
       ) : (
-        <DataTable columns={columns(handleStatusUpdate)} data={data} />
+        <DataTable data={data} onStatusUpdated={handleStatusUpdate} />
       )}
     </div>
   );

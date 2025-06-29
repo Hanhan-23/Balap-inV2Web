@@ -1,42 +1,62 @@
-// components/data_rekomendasi/TableCellViewer.tsx
 "use client";
-
+import { useState } from "react";
+import { rekomendasi, StatusRekom } from "@/types/data-rekomendasi";
+import { updateStatusRekomendasi } from "@/services/datarekomendasiservices";
 import Image from "next/image";
 import { useIsMobile } from "@/hooks/use-mobile";
-import { rekomendasi } from "@/types/rekomendasi-schema";
-import { Button } from "@/components/ui/button";
 import {
-  Drawer,
-  DrawerClose,
-  DrawerContent,
-  DrawerFooter,
-  DrawerHeader,
-  DrawerTitle,
-  DrawerTrigger,
+  Drawer, DrawerClose, DrawerContent, DrawerFooter, DrawerHeader, DrawerTitle,
 } from "@/components/ui/drawer";
+import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
+  Select, SelectContent, SelectItem, SelectTrigger, SelectValue,
 } from "@/components/ui/select";
 
-export default function TableCellViewer({ item }: { item: rekomendasi }) {
+interface TableCellViewerProps {
+  item: rekomendasi;
+  open: boolean;
+  onOpenChange: (open: boolean) => void;
+  onStatusUpdated: (id: string, status: StatusRekom) => void;
+}
+
+const statusList: StatusRekom[] = ["belum_valid", "valid", "proses", "selesai"];
+
+export default function TableCellViewer({
+  item,
+  open,
+  onOpenChange,
+  onStatusUpdated,
+}: TableCellViewerProps) {
   const isMobile = useIsMobile();
+  const [status, setStatus] = useState<StatusRekom>(item.status_rekom);
+  const [loading, setLoading] = useState(false);
+
+  const handleUpdate = async () => {
+    if (status === item.status_rekom) {
+      onOpenChange(false);
+      return;
+    }
+    setLoading(true);
+    try {
+      await updateStatusRekomendasi(item.id, { status_rekom: status });
+      onStatusUpdated(item.id, status);
+      onOpenChange(false);
+    } catch {
+      alert("Gagal update status rekomendasi");
+    } finally {
+      setLoading(false);
+    }
+  };
 
   return (
-    <Drawer direction={isMobile ? "bottom" : "right"}>
-      <DrawerTrigger asChild>
-        <Button variant="link" className="text-left p-0">
-          {item.laporan.judul.length > 25
-            ? item.laporan.judul.slice(0, 25) + "..."
-            : item.laporan.judul}
-        </Button>
-      </DrawerTrigger>
+    <Drawer
+      open={open}
+      onOpenChange={onOpenChange}
+      direction={isMobile ? "bottom" : "right"}
+    >
       <DrawerContent>
         <DrawerHeader>
           <DrawerTitle>{item.laporan.judul}</DrawerTitle>
@@ -51,37 +71,40 @@ export default function TableCellViewer({ item }: { item: rekomendasi }) {
         <div className="p-4 text-sm flex flex-col gap-4">
           <div className="flex flex-col gap-3">
             <Label htmlFor="judul">Judul Pengaduan</Label>
-            <Input id="judul" defaultValue={item.laporan.judul} readOnly />
+            <Input id="judul" value={item.laporan.judul} readOnly />
           </div>
           <div className="grid grid-cols-2 gap-4">
             <div className="flex flex-col gap-3">
               <Label htmlFor="jenis">Jenis Infrastruktur</Label>
-              <Input id="jenis" defaultValue={item.laporan.jenis} readOnly />
+              <Input id="jenis" value={item.laporan.jenis} readOnly />
             </div>
             <div className="flex flex-col gap-3">
               <Label htmlFor="status">Status</Label>
-              <Select defaultValue={item.status_rekom}>
+              <Select value={status} onValueChange={val => setStatus(val as StatusRekom)}>
                 <SelectTrigger>
                   <SelectValue placeholder="Pilih status" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="belum_valid">Belum Valid</SelectItem>
-                  <SelectItem value="valid">Valid</SelectItem>
-                  <SelectItem value="proses">Proses</SelectItem>
-                  <SelectItem value="selesai">Selesai</SelectItem>
+                  {statusList.map(s => (
+                    <SelectItem key={s} value={s}>
+                      {s.replace(/_/g, " ").replace(/\b\w/g, l => l.toUpperCase())}
+                    </SelectItem>
+                  ))}
                 </SelectContent>
               </Select>
             </div>
           </div>
           <div className="flex flex-col gap-3">
             <Label htmlFor="alamat">Alamat</Label>
-            <Textarea defaultValue={item.laporan.alamat} readOnly />
+            <Textarea value={item.laporan.alamat} readOnly />
           </div>
         </div>
         <DrawerFooter>
-          <Button variant="blue">Konfirmasi</Button>
+          <Button variant="blue" onClick={handleUpdate} disabled={loading}>
+            {loading ? "Menyimpan..." : "Konfirmasi"}
+          </Button>
           <DrawerClose asChild>
-            <Button variant="outline">Selesai</Button>
+            <Button variant="outline" disabled={loading}>Selesai</Button>
           </DrawerClose>
         </DrawerFooter>
       </DrawerContent>
