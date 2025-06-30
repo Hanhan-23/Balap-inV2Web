@@ -1,7 +1,5 @@
 "use client";
-
 import {
-  ColumnDef,
   flexRender,
   getCoreRowModel,
   getPaginationRowModel,
@@ -10,14 +8,6 @@ import {
   useReactTable,
 } from "@tanstack/react-table";
 import { useState } from "react";
-import { ColumnsIcon, CaretDownIcon } from "@phosphor-icons/react";
-
-import {
-  DropdownMenu,
-  DropdownMenuCheckboxItem,
-  DropdownMenuContent,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
 import {
   Table,
   TableBody,
@@ -26,34 +16,42 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { Button } from "@/components/ui/button";
 import { DataTablePagination } from "@/components/TablePagination";
+import TableCellViewer from "./table-cell-viewer";
+import { getColumns } from "./columns";
+import { rekomendasi } from "@/types/rekomendasi-schema";
+import { Button } from "@/components/ui/button";
+import { ColumnsIcon, CaretDownIcon } from "@phosphor-icons/react";
+import {
+  DropdownMenu,
+  DropdownMenuCheckboxItem,
+  DropdownMenuContent,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import { StatusRekom } from "@/types/data-rekomendasi";
 
-interface DataTableProps<TData, TValue> {
-  columns: ColumnDef<TData, TValue>[];
-  data: TData[];
+interface DataTableProps {
+  data: rekomendasi[];
+  onStatusUpdated: (id: string, newStatus: StatusRekom) => void;
 }
 
-export function DataTable<TData, TValue>({
-  columns,
-  data,
-}: DataTableProps<TData, TValue>) {
+export function DataTable({ data, onStatusUpdated }: DataTableProps) {
   const [sorting, setSorting] = useState<SortingState>([]);
-  const [rowSelection, setRowSelection] = useState({});
+  const [openDrawerId, setOpenDrawerId] = useState<string | null>(null);
+
+  const columns = getColumns(onStatusUpdated, setOpenDrawerId);
 
   const table = useReactTable({
     data,
     columns,
+    state: { sorting },
+    onSortingChange: setSorting,
     getCoreRowModel: getCoreRowModel(),
     getPaginationRowModel: getPaginationRowModel(),
     getSortedRowModel: getSortedRowModel(),
-    onSortingChange: setSorting,
-    onRowSelectionChange: setRowSelection,
-    state: {
-      sorting,
-      rowSelection,
-    },
   });
+
+  const openItem = data.find((d) => d.id === openDrawerId) || null;
 
   return (
     <div className="flex flex-col gap-6">
@@ -61,7 +59,6 @@ export function DataTable<TData, TValue>({
         <h1 className="font-bold text-2xl">Data Rekomendasi</h1>
         <ColumnToggle table={table} />
       </div>
-
       <div className="rounded-md border overflow-x-auto">
         <Table>
           <TableHeader>
@@ -111,6 +108,17 @@ export function DataTable<TData, TValue>({
         </Table>
         <DataTablePagination table={table} />
       </div>
+      {/* Drawer cuma satu di luar tabel */}
+      {openItem && (
+        <TableCellViewer
+          item={openItem}
+          open={!!openDrawerId}
+          onOpenChange={(open) => {
+            if (!open) setOpenDrawerId(null);
+          }}
+          onStatusUpdated={onStatusUpdated} // <-- ini WAJIB!
+        />
+      )}
     </div>
   );
 }

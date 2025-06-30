@@ -9,7 +9,7 @@ export interface rekomendasiBeranda {
     id: string;
 	jumlah_laporan: number;
 	status_urgent: string;
-	tingkat_urgent: any;
+	tingkat_urgent: number;
 	laporan: {
 		id_laporan: string;
 		judul: string;

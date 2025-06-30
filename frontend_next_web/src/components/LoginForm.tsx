@@ -1,15 +1,23 @@
 "use client";
+
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-// import Link from "next/link";
-import React, { HtmlHTMLAttributes, useState } from "react";
+import React, { useState } from "react";
 import { Eye, EyeOff } from "lucide-react";
 import { loginAkunPemerintah } from "@/services/authservices";
 import { useRouter } from "next/navigation";
-// import { Progress } from "@/components/ui/progress"
+import Image from "next/image";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
+import { CheckCircle, AlertTriangle } from "lucide-react";
 
 export function LoginForm({
   className,
@@ -17,56 +25,96 @@ export function LoginForm({
 }: React.ComponentProps<"div">) {
   const router = useRouter();
 
-  const [showPassword, setShowPassword] = useState(false); // mendeklarasikan state untuk password visibility
-  const [login, setLogin] = useState({
-    email: '',
-    password: '',
-  })
+  const [showPassword, setShowPassword] = useState(false);
 
-  const onHandleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement >) => {
+  const [showDialog, setShowDialog] = useState(false);
+  const [dialogTitle, setDialogTitle] = useState("");
+  const [dialogMessage, setDialogMessage] = useState("");
+  const [dialogType, setDialogType] = useState<"success" | "error">("success");
+
+  const [login, setLogin] = useState({
+    email: "",
+    password: "",
+  });
+
+  const onHandleChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+  ) => {
     setLogin({
       ...login,
-      [e.target.name]: e.target.value 
-    })
-  }
+      [e.target.name]: e.target.value,
+    });
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+
     try {
-      const response = await loginAkunPemerintah({
-        ...login,
-      });
+      const response = await loginAkunPemerintah({ ...login });
 
-      if (response.status == 'login_success') {
-        const status_pemerintah = response.status_pemerintah
+      if (response.status === "login_success") {
+  const status_pemerintah = response.status_pemerintah;
 
-        if (status_pemerintah == 'belum_verif') {
-          console.log(`akun anda belum diverifikasi mohon menunggu`)
-        } else if (status_pemerintah == 'verif') {
-          const access_token = await response.access_token
-          const refresh_token = await response.refresh_token
+  if (status_pemerintah === "belum_verif") {
+    setDialogTitle("Akun Belum Diverifikasi");
+    setDialogMessage("Akun anda belum diverifikasi, silahkan hubungi rekan DBMSDA anda");
+    setDialogType("error");
+    setShowDialog(true);
+    return;
+  }
 
-          localStorage.setItem('access_token', access_token)
-          localStorage.setItem('refresh_token', refresh_token)
+  if (status_pemerintah === "verif") {
+    const access_token = response.access_token;
+    const refresh_token = response.refresh_token;
 
-          console.log(`login sukses`)
-          router.push('/dashboard');
-        }
-      }
+    localStorage.setItem("access_token", access_token);
+    localStorage.setItem("refresh_token", refresh_token);
+
+    setDialogTitle("Login Berhasil");
+    setDialogMessage(
+      `Hai, ${login.email} anda berhasil masuk ke dashboard Dinas Bina Marga dan Sumber Daya Air`
+    );
+    setDialogType("success");
+    setShowDialog(true);
+
+    setTimeout(() => {
+      router.push("/dashboard");
+    }, 1500);
+  }
+}
 
     } catch (error: any) {
-      const errors = error.response.data.status
+      const errors = error?.response?.data?.status;
 
-      if (errors == 'password_salah') {
-        console.log('password anda salah')
-      } else if (errors == 'invalid_account') {
-        console.log('Akun pemerintah tidak ditemukan')
+      if (errors === "password_salah") {
+        setDialogTitle("Login Gagal");
+        setDialogMessage("Password salah!");
+        setDialogType("error");
+        setShowDialog(true);
+      } else if (errors === "invalid_account") {
+        setDialogTitle("Login Gagal");
+        setDialogMessage(
+          "Email yang anda input tidak terdaftar di sistem, periksa ulang atau buat akun!"
+        );
+        setDialogType("error");
+        setShowDialog(true);
+      } else {
+        setDialogTitle("Terjadi Kesalahan");
+        setDialogMessage("Gagal login. Silakan coba lagi nanti.");
+        setDialogType("error");
+        setShowDialog(true);
       }
     }
-  }
-  
+  };
+
   return (
-    <div className={cn("flex-col gap-6 flex min-h-screen items-center justify-center", className)} {...props}>
+    <div
+      className={cn(
+        "flex-col gap-6 flex min-h-screen items-center justify-center",
+        className
+      )}
+      {...props}
+    >
       <Card className="overflow-hidden p-0">
         <CardContent className="grid p-0 md:grid-cols-2">
           <form onSubmit={handleSubmit} className="p-6 md:p-8">
@@ -79,43 +127,98 @@ export function LoginForm({
               </div>
               <div className="grid gap-3">
                 <Label htmlFor="email">Email</Label>
-                <Input id="email" name="email" onChange={onHandleChange} type="email" placeholder="m@gmail.com" required/>
+                <Input
+                  id="email"
+                  name="email"
+                  onChange={onHandleChange}
+                  type="email"
+                  placeholder="m@gmail.com"
+                  required
+                />
               </div>
-              
+
               <div className="grid gap-3">
                 <Label htmlFor="password">Password</Label>
                 <div className="flex items-center">
                   <div className="relative w-full max-w-sm">
-                    <Input id="password" name="password" onChange={onHandleChange} type={showPassword ? "text" : "password"} required className="pr-10"/>
-                    <button type="button" onClick={() => setShowPassword(!showPassword)} className="absolute right-2 top-2.5 text-muted-foreground">
-                      {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
+                    <Input
+                      id="password"
+                      name="password"
+                      onChange={onHandleChange}
+                      type={showPassword ? "text" : "password"}
+                      required
+                      className="pr-10"
+                    />
+                    <button
+                      type="button"
+                      onClick={() => setShowPassword(!showPassword)}
+                      className="absolute right-2 top-2.5 text-muted-foreground"
+                    >
+                      {showPassword ? (
+                        <EyeOff size={20} />
+                      ) : (
+                        <Eye size={20} />
+                      )}
                     </button>
                   </div>
                 </div>
               </div>
-    
+
               <Button type="submit" className="w-full">
-                Login
+                Masuk
               </Button>
-              
+
               <div className="text-center text-sm">
                 <div className="text-muted-foreground flex justify-center gap-1">
                   <span>Belum memiliki akun?</span>
-                  <a href="/registration" className="underline underline-offset-4 text-blue-600 hover:text-blue-800">
+                  <a
+                    href="/registration"
+                    className="underline underline-offset-4 text-blue-600 hover:text-blue-800"
+                  >
                     Daftar
                   </a>
                 </div>
               </div>
-
             </div>
           </form>
-          
+
           <div className="bg-muted relative hidden md:block">
-            <img src="/login.svg" alt="Image" className="absolute inset-0 h-full w-full object-contain dark:brightness-[0.2] dark:grayscale"/>
+            <Image
+      src="/login.svg"
+      alt="Image"
+      fill
+      className="dark:brightness-[0.2] dark:grayscale"
+      style={{ objectFit: "contain" }}
+      priority
+    />
           </div>
         </CardContent>
       </Card>
+
+      {/* MODAL POPUP */}
+      <Dialog open={showDialog} onOpenChange={setShowDialog}>
+        <DialogContent className="sm:max-w-md">
+          <DialogHeader>
+            <div className="flex items-center gap-3">
+              {dialogType === "success" ? (
+                <CheckCircle className="text-green-500" />
+              ) : (
+                <AlertTriangle className="text-red-500" />
+              )}
+              <div>
+                <DialogTitle
+                  className={dialogType === "error" ? "text-red-600" : "text-green-600"}
+                >
+                  {dialogTitle}
+                </DialogTitle>
+                <DialogDescription className="text-muted-foreground mt-1">
+                  {dialogMessage}
+                </DialogDescription>
+              </div>
+            </div>
+          </DialogHeader>
+        </DialogContent>
+      </Dialog>
     </div>
-  
   );
 }

@@ -45,6 +45,7 @@ urlpatterns = [
     path('akun', viewsakun.cardAkunPemerintah, name='akun'),
     path('akun/toggle-status/<str:id>', viewsakun.toggleStatusPemerintah, name='togglestatusakun'),
     path('akun/update/<str:id>', viewsakun.updateAkunPemerintah, name='updateakun'),
+    path('akun/detail/<str:id>', viewsauth.getAkunPemerintah, name='getakun'),
 
     #Akun Rekomendasi
     path('rekomendasi', viewsrekomendasi.cardRekomendasi, name='rekomendasi'),

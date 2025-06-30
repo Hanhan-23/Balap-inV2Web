@@ -1,4 +1,3 @@
-// components/data_rekomendasi/StatusBadge.tsx
 import { cn } from "@/lib/utils";
 
 interface Props {

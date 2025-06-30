@@ -81,3 +81,28 @@ def refresh_token_view(request):
         return Response({'error': 'Refresh token expired'}, status=status.HTTP_401_UNAUTHORIZED)
     except jwt.InvalidTokenError:
         return Response({'error': 'Invalid token'}, status=status.HTTP_401_UNAUTHORIZED)
+
+
+@api_view(['GET'])
+def getAkunPemerintah(request, id):
+    try:
+        pemerintah = Pemerintah.objects.get(id=id)
+        serializer = PemerintahSerializer(pemerintah)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+    except Pemerintah.DoesNotExist:
+        return Response({'error': 'Pemerintah tidak ditemukan'}, status=status.HTTP_404_NOT_FOUND)
+    
+
+@api_view(['PUT'])
+def updateAkunPemerintah(request, id):
+    try:
+        pemerintah = Pemerintah.objects.get(id=id)
+    except Pemerintah.DoesNotExist:
+        return Response({'error': 'Akun tidak ditemukan'}, status=status.HTTP_404_NOT_FOUND)
+
+    serializer = PemerintahSerializer(pemerintah, data=request.data, partial=True)
+    if serializer.is_valid():
+        serializer.save()
+        return Response({'message': 'Akun berhasil diperbarui'})
+    
+    return Response({'error': serializer.errors}, status=status.HTTP_400_BAD_REQUEST)

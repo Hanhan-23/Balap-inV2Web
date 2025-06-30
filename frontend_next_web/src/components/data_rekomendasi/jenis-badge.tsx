@@ -1,4 +1,3 @@
-// components/data_rekomendasi/JenisBadge.tsx
 import React from "react";
 import { RoadHorizonIcon, LightbulbIcon, BridgeIcon } from "@phosphor-icons/react";
 

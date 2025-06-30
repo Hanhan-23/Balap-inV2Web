@@ -14,7 +14,6 @@ import {
   ChartConfig,
   ChartContainer,
   ChartLegend,
-  // ChartLegendContent,
   ChartTooltip,
   ChartTooltipContent,
 } from "@/components/ui/chart";
@@ -25,7 +24,6 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select"
-// import { rekomendasiBeranda } from "@/types/beranda";
 
 export const description = "An interactive area chart";
   const chartConfig = {

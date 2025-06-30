@@ -126,6 +126,7 @@ const SingleUserPage = () => {
           {/* Map */}
           <div className="bg-white rounded-xl shadow p-4">
             <div className="w-full h-[550px] md:h-[450px]">
+              <h3>Peta Laporan Infrastruktur Jalan Batam</h3>
               <MapComponent markersBeranda={petaBeranda}/>
             </div>
           </div>

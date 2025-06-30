@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import { getDataRekomendasi } from "@/services/datarekomendasiservices";
 import { DataTable } from "@/components/data_rekomendasi/data-table";
-import { columns } from "@/components/data_rekomendasi/columns";
+import { getColumns } from "@/components/data_rekomendasi/columns";
 import { rekomendasi } from "@/types/rekomendasi-schema";
 
 const RecommendedPage = () => {
@@ -38,7 +38,7 @@ const RecommendedPage = () => {
       {isLoading ? (
         <p className="text-center">Memuat data...</p>
       ) : (
-        <DataTable columns={columns(handleStatusUpdate)} data={data} />
+        <DataTable columns={getColumns(handleStatusUpdate)} data={data} />
       )}
     </div>
   );
