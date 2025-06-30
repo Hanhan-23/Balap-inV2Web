@@ -19,9 +19,10 @@ import JenisBadge from "./jenis-badge";
 import { updateLaporanStatus } from "@/lib/update-status";
 import { ColumnDef } from "@tanstack/react-table";
 
+// Ganti setOpenDrawerId menjadi openDrawerHandler (sesuai handler dari DataTable)
 export const getColumns = (
   onStatusUpdated: (id: string, status: string) => void,
-  setOpenDrawerId: (id: string | null) => void
+  openDrawerHandler: (id: string | null) => void
 ): ColumnDef<Laporan>[] => [
   {
     accessorKey: "tgl_lapor",
@@ -100,7 +101,7 @@ export const getColumns = (
           <DropdownMenuContent align="end">
             <DropdownMenuLabel>Aksi</DropdownMenuLabel>
             <DropdownMenuSeparator />
-            <DropdownMenuItem asChild onClick={() => setOpenDrawerId(item.id)}>
+            <DropdownMenuItem asChild onClick={() => openDrawerHandler(item.id)}>
               <span>Detail</span>
             </DropdownMenuItem>
             <DropdownMenuSub>
