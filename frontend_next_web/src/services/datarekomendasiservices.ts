@@ -9,6 +9,11 @@ export async function getDataRekomendasi(
   return response.data;
 }
 
+export async function getDetailRekomendasi(id: string) {
+  const response = await api.get(`/rekomendasi/detail/${id}`);
+  return response.data;
+}
+
 export async function updateStatusRekomendasi(
   id: string,
   payload: { status_rekom: StatusRekom }

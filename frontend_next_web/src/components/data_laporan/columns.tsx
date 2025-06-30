@@ -1,71 +1,55 @@
 "use client";
 
-import { useState } from "react";
-import { ColumnDef } from "@tanstack/react-table";
 import { ArrowUpDown, MoreHorizontal } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
+  DropdownMenuTrigger,
   DropdownMenuContent,
-  DropdownMenuItem,
   DropdownMenuLabel,
+  DropdownMenuItem,
   DropdownMenuSeparator,
   DropdownMenuSub,
-  DropdownMenuSubContent,
   DropdownMenuSubTrigger,
-  DropdownMenuTrigger,
+  DropdownMenuSubContent,
 } from "@/components/ui/dropdown-menu";
-
-import { laporan } from "@/types/laporan-schema";
-import TableCellViewer from "./table-cell-viewer";
+import { Laporan } from "@/types/data-laporan";
 import StatusBadge from "./status-badge";
 import JenisBadge from "./jenis-badge";
 import { updateLaporanStatus } from "@/lib/update-status";
+import { ColumnDef } from "@tanstack/react-table";
 
-export const columns = (
-  onStatusUpdated: (id: string, status: string) => void
-): ColumnDef<laporan>[] => [
+// Ganti setOpenDrawerId menjadi openDrawerHandler (sesuai handler dari DataTable)
+export const getColumns = (
+  onStatusUpdated: (id: string, status: string) => void,
+  openDrawerHandler: (id: string | null) => void
+): ColumnDef<Laporan>[] => [
   {
     accessorKey: "tgl_lapor",
     header: ({ column }) => (
       <Button
         variant="ghost"
         onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-        className="!p-0 hover:bg-transparent"
+        className="!p-0"
       >
-        Tanggal
-        <ArrowUpDown className="ml-2 h-4 w-4" />
+        Tanggal <ArrowUpDown className="ml-2 h-4 w-4" />
       </Button>
     ),
     cell: ({ row }) => {
-      const [open, setOpen] = useState(false);
-      return (
-        <>
-          <Button
-            variant="link"
-            className="hover:underline p-0 h-auto"
-            onClick={() => setOpen(true)}
-          >
-            {row.original.tgl_lapor.substring(0, 10)}
-          </Button>
-          <TableCellViewer
-            item={row.original}
-            open={open}
-            onOpenChange={setOpen}
-            onStatusUpdated={onStatusUpdated ?? (() => {})}
-          />
-        </>
-      );
+      const item = row.original
+      return item.tgl_lapor.slice(0, 10);
     },
     enableHiding: false,
   },
   {
     accessorKey: "judul",
     header: "Judul Pengaduan",
-    cell: ({ row }) =>
-      row.original.judul.length > 25
-        ? `${row.original.judul.slice(0, 25)}...`
-        : row.original.judul,
+    cell: ({ row }) => {
+      const item = row.original
+      return item.judul.length > 25
+        ? `${item.judul.slice(0, 25)}…`
+        : row.original.judul
+    },
   },
   {
     accessorKey: "jenis",
@@ -78,20 +62,23 @@ export const columns = (
       <Button
         variant="ghost"
         onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-        className="!p-0 hover:bg-transparent"
+        className="!p-0"
       >
-        Kerusakan
-        <ArrowUpDown className="ml-2 h-4 w-4" />
+        Kerusakan <ArrowUpDown className="ml-2 h-4 w-4" />
       </Button>
     ),
-    cell: ({ getValue }) => `${getValue() as string}`,
+    cell: ({ getValue }) => (
+      <div className="text-center">
+        {((getValue() as number) * 100).toFixed(0)}%
+      </div>
+    ),
   },
   {
     accessorKey: "alamat",
     header: "Lokasi",
     cell: ({ getValue }) => {
-      const alamat = getValue() as string;
-      return alamat.length > 25 ? `${alamat.slice(0, 25)}...` : alamat;
+      const a = getValue() as string;
+      return a.length > 25 ? `${a.slice(0, 25)}…` : a;
     },
   },
   {
@@ -104,7 +91,6 @@ export const columns = (
     cell: ({ row }) => {
       const item = row.original;
       const label = item.status === "selesai" ? "Sembunyikan" : "Tampilkan";
-
       return (
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
@@ -114,15 +100,21 @@ export const columns = (
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end">
             <DropdownMenuLabel>Aksi</DropdownMenuLabel>
-            <DropdownMenuItem>Detail</DropdownMenuItem>
             <DropdownMenuSeparator />
+            <DropdownMenuItem asChild onClick={() => openDrawerHandler(item.id)}>
+              <span>Detail</span>
+            </DropdownMenuItem>
             <DropdownMenuSub>
               <DropdownMenuSubTrigger>Ubah Status</DropdownMenuSubTrigger>
               <DropdownMenuSubContent>
                 <DropdownMenuItem
-                  onClick={() =>
-                    updateLaporanStatus(item.id, item.status, onStatusUpdated)
-                  }
+                  onClick={async () => {
+                    await updateLaporanStatus(
+                      item.id,
+                      item.status,
+                      onStatusUpdated
+                    );
+                  }}
                 >
                   {label}
                 </DropdownMenuItem>

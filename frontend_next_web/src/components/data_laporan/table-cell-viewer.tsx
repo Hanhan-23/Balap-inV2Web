@@ -13,13 +13,12 @@ import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { useIsMobile } from "@/hooks/use-mobile";
-import { z } from "zod";
-import { schemaLaporan } from "@/types/laporan-schema";
 import Image from "next/image";
 import { toggleStatusLaporan } from "@/services/datalaporanservices";
+import { LaporanDetail } from "@/types/data-laporan";
 
 interface TableCellViewerProps {
-  item: z.infer<typeof schemaLaporan>;
+  item: LaporanDetail;
   open: boolean;
   onOpenChange: (open: boolean) => void;
   onStatusUpdated: (id: string, status: string) => void;
@@ -63,11 +62,21 @@ export default function TableCellViewer({
           />
         </DrawerHeader>
 
-        <div className="p-4 text-sm flex flex-col gap-4">
+        <div className="flex-1 overflow-y-auto max-h-[70vh] p-4 text-sm flex flex-col gap-4">
           <form className="flex flex-col gap-4">
             <div className="flex flex-col gap-3">
               <Label htmlFor="judul">Judul</Label>
               <Input id="judul" value={item.judul} readOnly />
+            </div>
+            <div className="flex flex-col gap-3">
+              <Label htmlFor="deskripsi">Deskripsi</Label>
+              <Textarea
+                id="deskripsi"
+                value={item.deskripsi}
+                readOnly
+                className="resize-none"
+                rows={3}
+              />
             </div>
             <div className="grid grid-cols-2 gap-4">
               <div className="flex flex-col gap-3">
@@ -93,7 +102,7 @@ export default function TableCellViewer({
               <Label htmlFor="alamat">Lokasi</Label>
               <Textarea
                 id="alamat"
-                value={item.alamat}
+                value={item.alamat || ""}
                 readOnly
                 className="resize-none"
               />

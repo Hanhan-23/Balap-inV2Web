@@ -5,8 +5,7 @@ export const schemaRekomendasi = z.object({
   jumlah_laporan: z.number(),
   status_urgent: z.string(),
   tingkat_urgent: z.number(),
-  status_rekom: z.string(),
-  laporan: z.object({
+  status_rekom: z.enum(["belum_valid", "valid", "proses", "selesai"]),  laporan: z.object({
     judul: z.string(),
     jenis: z.string(),
     alamat: z.string(),
