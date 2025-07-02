@@ -11,28 +11,22 @@ const RecommendedPage = () => {
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const res = await getDataRekomendasi("");
-        setData(res);
-      } catch (err) {
+    setIsLoading(true);
+    getDataRekomendasi("")
+      .then((res) => setData(res))
+      .catch((err) => {
         console.error("Gagal mengambil data rekomendasi:", err);
-      } finally {
-        setIsLoading(false);
-      }
-    };
-
-    fetchData();
+      })
+      .finally(() => setIsLoading(false));
   }, []);
 
   const handleStatusUpdate = (id: string, newStatus: StatusRekom) => {
-  setData((prev) =>
-    prev.map((item) =>
-      item.id === id ? { ...item, status_rekom: newStatus } : item
-    )
-  );
-};
-
+    setData((prev) =>
+      prev.map((item) =>
+        item.id === id ? { ...item, status_rekom: newStatus } : item
+      )
+    );
+  };
 
   return (
     <div className="p-4">

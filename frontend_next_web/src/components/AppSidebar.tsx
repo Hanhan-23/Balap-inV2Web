@@ -1,7 +1,12 @@
 "use client";
 
 import { usePathname } from "next/navigation"; // Add this import
-import { LayoutDashboard, FileUser, Users, ChartNoAxesCombined } from "lucide-react";
+import {
+  SquaresFourIcon,
+  FileTextIcon,
+  UsersThreeIcon,
+  ChartBarIcon,
+} from "@phosphor-icons/react";
 import {
   Sidebar,
   SidebarContent,
@@ -21,22 +26,22 @@ const items = [
   {
     title: "Dashboard",
     url: "/dashboard",
-    icon: LayoutDashboard,
+    icon: SquaresFourIcon,
   },
   {
     title: "Data Laporan",
     url: "/data-laporan",
-    icon: FileUser,
+    icon: FileTextIcon,
   },
   {
     title: "Data Akun",
     url: "/data-akun",
-    icon: Users,
+    icon: UsersThreeIcon,
   },
   {
     title: "Data Rekomendasi",
     url: "/data-rekomendasi",
-    icon: ChartNoAxesCombined,
+    icon: ChartBarIcon,
   },
 ];
 
@@ -51,17 +56,22 @@ const AppSidebar = () => {
           <SidebarMenuItem>
             <SidebarMenuButton asChild>
               <Link href="/" className="flex items-center gap-2">
-              <div className="rounded-lg overflow-hidden w-8 h-8 flex items-center justify-center">
-                <Image src="/logo.svg" alt="logo" width={30} 
-                height={30} className="object-contain"/>
+                <div className="rounded-lg overflow-hidden w-8 h-8 flex items-center justify-center">
+                  <Image
+                    src="/logo.svg"
+                    alt="logo"
+                    width={30}
+                    height={30}
+                    className="object-contain"
+                  />
                 </div>
                 <span className="font-bold">BALAP-IN</span>
-                </Link>
+              </Link>
             </SidebarMenuButton>
           </SidebarMenuItem>
         </SidebarMenu>
       </SidebarHeader>
-          <SidebarSeparator />
+      <SidebarSeparator />
 
       {/* Main Content */}
       <SidebarContent className="flex-1 overflow-y-auto">
@@ -72,13 +82,29 @@ const AppSidebar = () => {
                 const isActive = pathname === item.url; // Check if current path matches item URL
                 return (
                   <SidebarMenuItem key={item.title}>
-                    <SidebarMenuButton 
+                    <SidebarMenuButton
                       asChild
-                      className={isActive ? "bg-blue-200 dark:bg-blue-900/30" : ""}
+                      className={
+                        isActive
+                          ? "bg-blue-600 hover:bg-blue-600 active:bg-blue-700 dark:bg-blue-900/30 rounded-full  p-3"
+                          : ""
+                      }
                     >
                       <Link href={item.url}>
-                        <item.icon className={isActive ? "text-blue-600 dark:text-blue-400" : ""} />
-                        <span className={isActive ? "text-blue-600 dark:text-blue-400 font-medium" : ""}>
+                        <item.icon
+                          className={
+                            isActive
+                              ? "text-sm text-white hover:text-white dark:text-muted-foreground"
+                              : ""
+                          }
+                        />
+                        <span
+                          className={
+                            isActive
+                              ? "text-sm text-white hover:text-white dark:text-muted-foreground font-medium"
+                              : ""
+                          }
+                        >
                           {item.title}
                         </span>
                       </Link>

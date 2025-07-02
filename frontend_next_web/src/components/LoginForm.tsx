@@ -53,36 +53,37 @@ export function LoginForm({
       const response = await loginAkunPemerintah({ ...login });
 
       if (response.status === "login_success") {
-  const status_pemerintah = response.status_pemerintah;
+        const status_pemerintah = response.status_pemerintah;
 
-  if (status_pemerintah === "belum_verif") {
-    setDialogTitle("Akun Belum Diverifikasi");
-    setDialogMessage("Akun anda belum diverifikasi, silahkan hubungi rekan DBMSDA anda");
-    setDialogType("error");
-    setShowDialog(true);
-    return;
-  }
+        if (status_pemerintah === "belum_verif") {
+          setDialogTitle("Akun Belum Diverifikasi");
+          setDialogMessage(
+            "Akun anda belum diverifikasi, silahkan hubungi rekan DBMSDA anda"
+          );
+          setDialogType("error");
+          setShowDialog(true);
+          return;
+        }
 
-  if (status_pemerintah === "verif") {
-    const access_token = response.access_token;
-    const refresh_token = response.refresh_token;
+        if (status_pemerintah === "verif") {
+          const access_token = response.access_token;
+          const refresh_token = response.refresh_token;
 
-    localStorage.setItem("access_token", access_token);
-    localStorage.setItem("refresh_token", refresh_token);
+          localStorage.setItem("access_token", access_token);
+          localStorage.setItem("refresh_token", refresh_token);
 
-    setDialogTitle("Login Berhasil");
-    setDialogMessage(
-      `Hai, ${login.email} anda berhasil masuk ke dashboard Dinas Bina Marga dan Sumber Daya Air`
-    );
-    setDialogType("success");
-    setShowDialog(true);
+          setDialogTitle("Login Berhasil");
+          setDialogMessage(
+            `Hai, ${login.email} anda berhasil masuk ke dashboard Dinas Bina Marga dan Sumber Daya Air`
+          );
+          setDialogType("success");
+          setShowDialog(true);
 
-    setTimeout(() => {
-      router.push("/dashboard");
-    }, 1500);
-  }
-}
-
+          setTimeout(() => {
+            router.push("/dashboard");
+          }, 1500);
+        }
+      }
     } catch (error: any) {
       const errors = error?.response?.data?.status;
 
@@ -154,11 +155,7 @@ export function LoginForm({
                       onClick={() => setShowPassword(!showPassword)}
                       className="absolute right-2 top-2.5 text-muted-foreground"
                     >
-                      {showPassword ? (
-                        <EyeOff size={20} />
-                      ) : (
-                        <Eye size={20} />
-                      )}
+                      {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
                     </button>
                   </div>
                 </div>
@@ -184,13 +181,13 @@ export function LoginForm({
 
           <div className="bg-muted relative hidden md:block">
             <Image
-      src="/login.svg"
-      alt="Image"
-      fill
-      className="dark:brightness-[0.2] dark:grayscale"
-      style={{ objectFit: "contain" }}
-      priority
-    />
+              src="/login.svg"
+              alt="Image"
+              fill
+              className="dark:brightness-[0.2] dark:grayscale"
+              style={{ objectFit: "contain" }}
+              priority
+            />
           </div>
         </CardContent>
       </Card>
@@ -207,7 +204,9 @@ export function LoginForm({
               )}
               <div>
                 <DialogTitle
-                  className={dialogType === "error" ? "text-red-600" : "text-green-600"}
+                  className={
+                    dialogType === "error" ? "text-red-600" : "text-green-600"
+                  }
                 >
                   {dialogTitle}
                 </DialogTitle>

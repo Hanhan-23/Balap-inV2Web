@@ -37,7 +37,6 @@ import { StatusRekom } from "@/types/data-rekomendasi";
 import { cardDetailRekomendasi } from "@/types/data-rekomendasi";
 import { getDetailRekomendasi } from "@/services/datarekomendasiservices";
 
-// === Tambahan Search ===
 import { Input } from "@/components/ui/input";
 
 interface DataTableProps {
@@ -56,8 +55,8 @@ export function DataTable({ data, onStatusUpdated }: DataTableProps) {
 
   const filteredData = useMemo(() => {
     if (!search) return data;
-    return data.filter(
-      (item) => item.laporan.judul.toLowerCase().includes(search.toLowerCase())
+    return data.filter((item) =>
+      item.laporan.judul.toLowerCase().includes(search.toLowerCase())
     );
   }, [data, search]);
 
@@ -83,7 +82,7 @@ export function DataTable({ data, onStatusUpdated }: DataTableProps) {
   const columns = getColumns(onStatusUpdated, openDrawerHandler);
 
   const table = useReactTable({
-    data: filteredData, // <<< pakai filteredData!
+    data: filteredData,
     columns,
     state: { sorting },
     onSortingChange: setSorting,

@@ -38,10 +38,10 @@ export const getColumns = (
       </Button>
     ),
     cell: ({ row }) => {
-      const item = row.original
+      const item = row.original;
       return item.laporan.judul.length > 25
-          ? item.laporan.judul.slice(0, 25) + "..."
-          : item.laporan.judul
+        ? item.laporan.judul.slice(0, 25) + "..."
+        : item.laporan.judul;
     },
   },
   {
@@ -135,6 +135,7 @@ export const getColumns = (
                   <DropdownMenuItem
                     key={s}
                     onClick={() => handleChangeStatus(s)}
+                    className="capitalize"
                   >
                     {s.replace(/_/g, " ")}
                   </DropdownMenuItem>

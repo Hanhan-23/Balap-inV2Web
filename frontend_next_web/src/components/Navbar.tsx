@@ -15,10 +15,21 @@ import { Button } from "./ui/button";
 import { useTheme } from "next-themes";
 import { SidebarTrigger, useSidebar } from "./ui/sidebar";
 import { Separator } from "./ui/separator";
+import { useRouter } from "next/navigation";
 
 const Navbar = () => {
   const { theme, setTheme } = useTheme();
   const { toggleSidebar } = useSidebar();
+  const router = useRouter();
+
+  // Handler untuk logout
+  const handleLogout = () => {
+    // Hapus token dari localStorage
+    localStorage.removeItem("access_token");
+    localStorage.removeItem("refresh_token");
+    // Redirect ke halaman login
+    router.replace("/login");
+  };
   return (
     <nav className="px-4 h-16 flex items-center justify-between sticky top-0 bg-background z-10">
       {/* LEFT */}
@@ -54,7 +65,7 @@ const Navbar = () => {
               <span className="sr-only">Toggle theme</span>
             </Button>
           </DropdownMenuTrigger>
-          <DropdownMenuContent align="end">
+          <DropdownMenuContent side="bottom" align="end" sideOffset={10}>
             <DropdownMenuItem onClick={() => setTheme("light")}>
               Light
             </DropdownMenuItem>
@@ -74,17 +85,21 @@ const Navbar = () => {
               <AvatarFallback>CN</AvatarFallback>
             </Avatar>
           </DropdownMenuTrigger>
-          <DropdownMenuContent sideOffset={10}>
+          <DropdownMenuContent side="bottom" align="end" sideOffset={10}>
             <DropdownMenuLabel>Akun Saya</DropdownMenuLabel>
             <DropdownMenuSeparator />
-            <Link href="/main/profile">
+            <Link href="/profile">
               <DropdownMenuItem>
                 <User className="h-[1.2rem] w-[1.2rem] mr-2" />
                 Profil
               </DropdownMenuItem>
             </Link>
             <Link href="/login">
-              <DropdownMenuItem variant="destructive">
+              <DropdownMenuItem
+                variant="destructive"
+                onClick={handleLogout}
+                className="text-red-600 cursor-pointer"
+              >
                 <LogOut className="h-[1.2rem] w-[1.2rem] mr-2" />
                 Keluar
               </DropdownMenuItem>

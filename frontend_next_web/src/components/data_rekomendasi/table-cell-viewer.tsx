@@ -10,14 +10,17 @@ import {
   DrawerFooter,
   DrawerHeader,
   DrawerTitle,
-
 } from "@/components/ui/drawer";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import {
-  Select, SelectContent, SelectItem, SelectTrigger, SelectValue,
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
 } from "@/components/ui/select";
 
 import { APIProvider, Map, Marker } from "@vis.gl/react-google-maps";
@@ -29,15 +32,7 @@ interface TableCellViewerProps {
   onStatusUpdated: (id: string, status: StatusRekom) => void;
 }
 
-
-// const statusList: StatusRekom[] = ["belum_valid", "valid", "proses", "selesai"];
-
-const statusList: StatusRekom[] = [
-  "belum_valid",
-  "valid",
-  "proses",
-  "selesai",
-];
+const statusList: StatusRekom[] = ["belum_valid", "valid", "proses", "selesai"];
 
 const BATAM_DEFAULT_CENTER = {
   lat: 1.1187,
@@ -100,14 +95,14 @@ export default function TableCellViewer({
       return;
     }
     navigator.geolocation.getCurrentPosition(
-      pos => {
+      (pos) => {
         const { latitude, longitude } = pos.coords;
         if (mapRef.current) {
           mapRef.current.panTo({ lat: latitude, lng: longitude });
           mapRef.current.setZoom(16);
         }
       },
-      err => {
+      (err) => {
         alert("Gagal mengambil lokasi: " + err.message);
       },
       { enableHighAccuracy: true }
@@ -146,8 +141,8 @@ export default function TableCellViewer({
             <div
               ref={mapDivRef}
               className="relative border-none overflow-hidden aspect-video rounded-xl"
-              onPointerDown={e => e.stopPropagation()}
-              onTouchStart={e => e.stopPropagation()}
+              onPointerDown={(e) => e.stopPropagation()}
+              onTouchStart={(e) => e.stopPropagation()}
             >
               <Map
                 style={{ width: "100%", height: "100%" }}
@@ -205,7 +200,12 @@ export default function TableCellViewer({
           <div className="grid grid-cols-2 gap-4">
             <div className="flex flex-col gap-3">
               <Label htmlFor="jenis">Jenis Infrastruktur</Label>
-              <Input id="jenis" value={item.laporan.jenis.replace(/_/g, " ")} className="capitalize" readOnly />
+              <Input
+                id="jenis"
+                value={item.laporan.jenis.replace(/_/g, " ")}
+                className="capitalize"
+                readOnly
+              />
             </div>
             <div className="flex flex-col gap-3">
               <Label htmlFor="status">Status</Label>
@@ -213,7 +213,6 @@ export default function TableCellViewer({
                 value={status}
                 onValueChange={(val) => setStatus(val as StatusRekom)}
               >
-
                 <SelectTrigger>
                   <SelectValue placeholder="Pilih status" />
                 </SelectTrigger>
@@ -223,7 +222,6 @@ export default function TableCellViewer({
                       {s
                         .replace(/_/g, " ")
                         .replace(/\b\w/g, (l) => l.toUpperCase())}
-
                     </SelectItem>
                   ))}
                 </SelectContent>
@@ -234,7 +232,6 @@ export default function TableCellViewer({
             <Label htmlFor="alamat">Alamat</Label>
 
             <Textarea value={item.laporan.peta?.alamat || ""} readOnly />
-
           </div>
         </div>
         <DrawerFooter>
@@ -242,7 +239,6 @@ export default function TableCellViewer({
             {loading ? "Menyimpan..." : "Konfirmasi"}
           </Button>
           <DrawerClose asChild>
-
             <Button variant="outline" disabled={loading}>
               Selesai
             </Button>
