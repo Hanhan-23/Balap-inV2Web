@@ -83,7 +83,7 @@ export default function TableCellViewer({
                 <Label htmlFor="jenis">Jenis Infrastruktur</Label>
                 <Input
                   id="jenis"
-                  value={item.jenis}
+                  value={item.jenis.replace(/_/g, " ")}
                   readOnly
                   className="capitalize"
                 />

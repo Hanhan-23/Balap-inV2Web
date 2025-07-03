@@ -54,24 +54,26 @@ const AppSidebar = () => {
       <SidebarHeader className="py-4">
         <SidebarMenu>
           <SidebarMenuItem>
-            <SidebarMenuButton asChild>
-              <Link href="/" className="flex items-center gap-2">
-                <div className="rounded-lg overflow-hidden w-8 h-8 flex items-center justify-center">
-                  <Image
+          <SidebarMenuButton
+              size="lg"
+              className="data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground"
+            >
+              <div className="flex aspect-square size-8 items-center justify-center rounded-lg">
+                <Image
                     src="/logo.svg"
                     alt="logo"
                     width={30}
                     height={30}
-                    className="object-contain"
+                    className="object-contain rounded-md"
                   />
-                </div>
-                <span className="font-bold">BALAP-IN</span>
-              </Link>
+              </div>
+              <div className="flex-1 text-left text-sm leading-tight">
+                <Link href={"/beranda"} className="truncate font-medium">BALAP-IN</Link>
+              </div>
             </SidebarMenuButton>
           </SidebarMenuItem>
         </SidebarMenu>
       </SidebarHeader>
-      <SidebarSeparator />
 
       {/* Main Content */}
       <SidebarContent className="flex-1 overflow-y-auto">

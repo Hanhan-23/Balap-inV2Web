@@ -33,11 +33,10 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { StatusRekom } from "@/types/data-rekomendasi";
-
 import { cardDetailRekomendasi } from "@/types/data-rekomendasi";
 import { getDetailRekomendasi } from "@/services/datarekomendasiservices";
-
 import { Input } from "@/components/ui/input";
+import DataRekomendasiFilterDropdown from "@/components/data_rekomendasi/filter-rekomendasi";
 
 interface DataTableProps {
   data: rekomendasi[];
@@ -45,21 +44,57 @@ interface DataTableProps {
 }
 
 export function DataTable({ data, onStatusUpdated }: DataTableProps) {
-  const [sorting, setSorting] = useState<SortingState>([]);
-  const [openDrawerId, setOpenDrawerId] = useState<string | null>(null);
-  const [detailItem, setDetailItem] = useState<cardDetailRekomendasi | null>(
-    null
-  );
+  // --- Filter States
+  const [jenis, setJenis] = useState<string | null>(null);
+  const [tingkatUrgensi, setTingkatUrgensi] = useState<[number, number]>([1, 100]);
+  const [statusUrgensi, setStatusUrgensi] = useState<string | null>(null);
+  const [statusRekom, setStatusRekom] = useState<string | null>(null);
+  const onReset = () => {
+    setJenis(null);
+    setTingkatUrgensi([1, 100]);
+    setStatusUrgensi(null);
+    setStatusRekom(null);
+  };
 
+  // --- Search State
   const [search, setSearch] = useState("");
 
-  const filteredData = useMemo(() => {
-    if (!search) return data;
-    return data.filter((item) =>
-      item.laporan.judul.toLowerCase().includes(search.toLowerCase())
-    );
-  }, [data, search]);
+  // --- Drawer Detail State
+  const [sorting, setSorting] = useState<SortingState>([]);
+  const [openDrawerId, setOpenDrawerId] = useState<string | null>(null);
+  const [detailItem, setDetailItem] = useState<cardDetailRekomendasi | null>(null);
 
+  // --- Filtering Logic
+  const filteredData = useMemo(() => {
+    return data.filter((item) => {
+      // Search by judul (tambahkan field lain kalau perlu)
+      if (search && !item.laporan.judul.toLowerCase().includes(search.toLowerCase())) {
+        return false;
+      }
+      // Jenis Infrastruktur
+      if (jenis && item.laporan.jenis !== jenis) {
+        return false;
+      }
+      // Tingkat Urgensi (pastikan tipe number, 0-1 atau 1-100)
+      const persen = (typeof item.tingkat_urgent === "number"
+        ? item.tingkat_urgent * 100
+        : Number(item.tingkat_urgent));
+      if (persen < tingkatUrgensi[0] || persen > tingkatUrgensi[1]) {
+        return false;
+      }
+      // Status Urgensi
+      if (statusUrgensi && item.status_urgent !== statusUrgensi) {
+        return false;
+      }
+      // Status Rekomendasi
+      if (statusRekom && item.status_rekom !== statusRekom) {
+        return false;
+      }
+      return true;
+    });
+  }, [data, search, jenis, tingkatUrgensi, statusUrgensi, statusRekom]);
+
+  // --- Drawer Handler
   const handleOpenDrawer = async (id: string) => {
     setOpenDrawerId(id);
     try {
@@ -93,10 +128,10 @@ export function DataTable({ data, onStatusUpdated }: DataTableProps) {
 
   return (
     <div className="flex flex-col gap-6">
+      {/* --- Header: Heading + Filter + Search + ColumnToggle --- */}
       <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-2 md:gap-0">
         <h1 className="font-bold text-2xl">Data Rekomendasi</h1>
         <div className="flex items-center gap-2 w-full md:w-auto">
-          {/* Search with icon */}
           <div className="relative w-full max-w-xs">
             <MagnifyingGlassIcon
               className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"
@@ -107,14 +142,26 @@ export function DataTable({ data, onStatusUpdated }: DataTableProps) {
             <Input
               type="text"
               placeholder="Cari rekomendasi..."
-              className="pl-10 pr-3 text-xs sm:text-sm"
+              className="pl-10 pr-3 text-xs sm:text-sm rounded-full"
               value={search}
               onChange={(e) => setSearch(e.target.value)}
             />
           </div>
+          <DataRekomendasiFilterDropdown
+            jenis={jenis}
+            setJenis={setJenis}
+            tingkatUrgensi={tingkatUrgensi}
+            setTingkatUrgensi={setTingkatUrgensi}
+            statusUrgensi={statusUrgensi}
+            setStatusUrgensi={setStatusUrgensi}
+            statusRekom={statusRekom}
+            setStatusRekom={setStatusRekom}
+            onReset={onReset}
+          />
           <ColumnToggle table={table} />
         </div>
       </div>
+      {/* --- Tabel Data --- */}
       <div className="rounded-md border overflow-x-auto">
         <Table>
           <TableHeader>
@@ -164,7 +211,7 @@ export function DataTable({ data, onStatusUpdated }: DataTableProps) {
         </Table>
         <DataTablePagination table={table} />
       </div>
-      {/* Drawer hanya dirender jika detailItem SUDAH ADA */}
+      {/* --- Drawer hanya jika detail ada --- */}
       {openDrawerId && detailItem && (
         <TableCellViewer
           item={detailItem}
@@ -190,7 +237,7 @@ function ColumnToggle({
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <Button variant="outline" className="h-9">
+        <Button variant="outline" className="h-9 rounded-full">
           <ColumnsIcon className="mr-2 size-4" />
           Kustomisasi Kolom
           <CaretDownIcon className="ml-1 size-3" />

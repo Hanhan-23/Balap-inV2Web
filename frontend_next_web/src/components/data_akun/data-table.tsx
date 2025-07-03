@@ -21,6 +21,7 @@ import { DataTablePagination } from "@/components/TablePagination";
 import { useState, useMemo } from "react";
 import { MagnifyingGlassIcon } from "@phosphor-icons/react";
 import { Input } from "@/components/ui/input";
+import DataAkunFilterDropdown from "./filter-akun";
 
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];
@@ -35,14 +36,35 @@ export function DataTable<TData extends Record<string, any>, TValue>({
   const [rowSelection, setRowSelection] = useState({});
   const [search, setSearch] = useState("");
 
+  // Filter states
+  const [role, setRole] = useState<string | null>(null);
+  const [status, setStatus] = useState<string | null>(null);
+  const onReset = () => {
+    setRole(null);
+    setStatus(null);
+  };
+
+  // Filtering logic
   const filteredData = useMemo(() => {
-    if (!search) return data;
-    return data.filter((row) =>
-      Object.values(row)
-        .filter((v) => typeof v === "string")
-        .some((v) => (v as string).toLowerCase().includes(search.toLowerCase()))
-    );
-  }, [data, search]);
+    return data.filter((row) => {
+      // Search
+      if (
+        search &&
+        !Object.values(row)
+          .filter((v) => typeof v === "string")
+          .some((v) =>
+            (v as string).toLowerCase().includes(search.toLowerCase())
+          )
+      ) {
+        return false;
+      }
+      // Role
+      if (role && row.role !== role) return false;
+      // Status
+      if (status && row.status !== status) return false;
+      return true;
+    });
+  }, [data, search, role, status]);
 
   const table = useReactTable({
     data: filteredData,
@@ -62,19 +84,28 @@ export function DataTable<TData extends Record<string, any>, TValue>({
     <div className="flex flex-col gap-6">
       <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-2 md:gap-0">
         <h1 className="font-bold text-2xl">Data Akun</h1>
-        <div className="relative w-full max-w-xs">
-          <MagnifyingGlassIcon
-            className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"
-            size={18}
-            weight="regular"
-            aria-hidden="true"
-          />
-          <Input
-            type="text"
-            placeholder="Cari akun..."
-            className="pl-10 pr-3"
-            value={search}
-            onChange={e => setSearch(e.target.value)}
+        <div className="flex items-center gap-2 w-full md:w-auto">
+          <div className="relative w-full max-w-xs">
+            <MagnifyingGlassIcon
+              className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"
+              size={18}
+              weight="regular"
+              aria-hidden="true"
+            />
+            <Input
+              type="text"
+              placeholder="Cari akun..."
+              className="pl-10 pr-3"
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+            />
+          </div>
+          <DataAkunFilterDropdown
+            role={role}
+            setRole={setRole}
+            status={status}
+            setStatus={setStatus}
+            onReset={onReset}
           />
         </div>
       </div>
@@ -118,7 +149,10 @@ export function DataTable<TData extends Record<string, any>, TValue>({
               ))
             ) : (
               <TableRow>
-                <TableCell colSpan={columns.length} className="h-24 text-center">
+                <TableCell
+                  colSpan={columns.length}
+                  className="h-24 text-center"
+                >
                   No results.
                 </TableCell>
               </TableRow>
