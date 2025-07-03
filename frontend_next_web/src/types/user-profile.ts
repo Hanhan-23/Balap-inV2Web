@@ -1,4 +1,4 @@
-export interface UserProfile {
+export interface userProfile {
     id: string,
     alamat: string,
     nama_lengkap: string,
@@ -8,4 +8,11 @@ export interface UserProfile {
     password: string,
     status: string,
     tgl_pemerintah: string
+}
+
+export interface akunPemerintah{
+    id: string,
+    nama_lengkap: string,
+    email: string,
+    status: string
 }

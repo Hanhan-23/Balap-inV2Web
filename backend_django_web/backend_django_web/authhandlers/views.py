@@ -3,10 +3,11 @@ from rest_framework.response import Response
 from .models import Pemerintah
 from .serializers import PemerintahSerializer
 from rest_framework import status
-from django.contrib.auth.hashers import check_password
+from django.contrib.auth.hashers import make_password, check_password
 from .jwt_utils import generate_access_token, generate_refresh_token
 import jwt
 from .. import settings
+
 
 @api_view(['POST'])
 def pemerintahBuatAkun(request):
@@ -58,6 +59,75 @@ def pemerintahLoginAkun(request):
 
     return Response({'status': 'password_salah'}, status=status.HTTP_401_UNAUTHORIZED)
 
+@api_view(['GET'])
+def pemerintahMe(request):
+    auth_header = request.headers.get('Authorization')
+
+    if not auth_header:
+        return Response({'error': 'Authorization header missing'}, status=401)
+
+    try:
+        token_type, token = auth_header.split()
+        if token_type.lower() != 'bearer':
+            return Response({'error': 'Invalid token type'}, status=401)
+
+        payload = jwt.decode(token, settings.SECRET_KEY, algorithms=['HS256'])
+        pemerintah_id = payload.get('user_id')
+
+        pemerintah = Pemerintah.objects.get(id=pemerintah_id)
+
+        return Response({
+            'id': str(pemerintah['id']),
+            'nama_lengkap': pemerintah['nama_lengkap'],
+            'email': pemerintah['email'],
+            'no_pegawai': pemerintah['no_pegawai'],
+            'no_telp': pemerintah['no_telp'],
+            # 'password': pemerintah['password'],
+            'status': pemerintah['status'],
+            'tgl_pemerintah': pemerintah['tgl_pemerintah'],
+        })
+
+    except Exception as e:
+        return Response({'error': str(e)}, status=401)
+
+# handle update
+@api_view(['PUT'])
+def update_pemerintah(request, id):
+    try:
+        pemerintah = Pemerintah.objects.get(id=id)
+    except Pemerintah.DoesNotExist:
+        return Response({"error": "Data tidak ditemukan"}, status=404)
+
+    data = request.data
+
+    # Ambil nilai baru dari request
+    nama_lengkap = data.get('nama_lengkap')
+    no_telp = data.get('no_telp')
+    email = data.get('email')
+    password_lama = data.get('password_lama')
+    password_baru = data.get('password_baru')
+    konfirmasi_password = data.get('konfirmasi_password')
+
+    # Validasi password jika diubah
+    if password_lama or password_baru or konfirmasi_password:
+        if not (password_lama and password_baru and konfirmasi_password):
+            return Response({'error': 'Harap isi semua kolom password untuk mengganti password'}, status=400)
+        if not check_password(password_lama, pemerintah.password):
+            return Response({'error': 'Password lama salah'}, status=400)
+        if password_baru != konfirmasi_password:
+            return Response({'error': 'Password baru dan konfirmasi tidak cocok'}, status=400)
+        pemerintah.password = make_password(password_baru)
+
+    # Update field lain
+    if nama_lengkap:
+        pemerintah.nama_lengkap = nama_lengkap
+    if no_telp:
+        pemerintah.no_telp = no_telp
+    if email:
+        pemerintah.email = email
+
+    pemerintah.save()
+    return Response({"message": "Profil berhasil diperbarui"}, status=200)
 
 @api_view(['POST'])
 def refresh_token_view(request):
@@ -82,7 +152,7 @@ def refresh_token_view(request):
     except jwt.InvalidTokenError:
         return Response({'error': 'Invalid token'}, status=status.HTTP_401_UNAUTHORIZED)
 
-
+# ambil seluruh list data akun
 @api_view(['GET'])
 def getAkunPemerintah(request, id):
     try:

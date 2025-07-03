@@ -1,135 +1,123 @@
 "use client";
 
-import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Avatar, AvatarImage } from "@/components/ui/avatar";
 import { Pencil, Save, X } from "lucide-react";
 import AppSidebar from "@/components/AppSidebar";
+import { getAkunPemerintahMe, updateAkunPemerintah } from "@/services/profileservices";
+import { userProfile } from "@/types/user-profile";
+import { useState, useEffect } from "react";
 
 const ProfilePage = () => {
-  const [isEditing, setIsEditing] = useState(false);
-  const [profile, setProfile] = useState({
-    name: "Dinas Bina Marga dan Sumber Daya Air Kota Batam",
-    personName: "Yulia Pipka", // Added new field
-    email: "dbmsdakotabatam@gmail.com",
-    phone: "(021)82678824",
-    jabatan: "Sekretaris",
-    photo: "/logo-bdmsda.png",
-    password: "",
-    newPassword: "",
-    confirmPassword: ""
-  });
+  const [akun, setAkun] = useState<userProfile>();
+  const [isEditing, setIsEditing] = useState<boolean>(false);
+  const [newPassword, setNewPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
+  const [oldPassword, setOldPassword] = useState("");
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (!akun) return;
     const { name, value } = e.target;
-    setProfile(prev => ({ ...prev, [name]: value }));
+    setAkun({ ...akun, [name]: value });
   };
 
-  const handlePhotoUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (file) {
-      const reader = new FileReader();
-      reader.onload = (event) => {
-        if (event.target?.result) {
-          setProfile(prev => ({ ...prev, photo: event.target.result as string }));
-        }
-      };
-      reader.readAsDataURL(file);
-    }
-  };
+    const handleSave = async () => {
+  const access_token = localStorage.getItem("access_token");
+  if (!akun || !access_token) return;
 
-  const handleSave = () => {
-    console.log("Profile saved:", profile);
+  try {
+    const updatedData = {
+      nama_lengkap: akun.nama_lengkap,
+      no_telp: akun.no_telp,
+      email: akun.email,
+      password_lama: akun.password, // ambil dari input user (isi manual ya, bukan yang ada di data awal)
+      password_baru: newPassword,
+      konfirmasi_password: confirmPassword,
+    };
+
+    await updateAkunPemerintah(akun.id, updatedData, access_token);
     setIsEditing(false);
-  };
+    alert("Profil berhasil diperbarui");
+  } catch (err) {
+    console.error("Gagal update profile:", err);
+    alert("Gagal memperbarui profil. Periksa kembali password atau data lainnya.");
+  }
+};
+
+
+    // const updatedData = {
+    //   nama_lengkap: akun.nama_lengkap,
+    //   no_telp: akun.no_telp,
+    //   email: akun.email,
+    //   ...(newPassword && { password_lama: oldPassword, password_baru: newPassword }),
+    // };
+
+
+  useEffect(() => {
+    const fetchData = async () => {
+      const access_token = localStorage.getItem("access_token");
+      if (!access_token) return;
+
+      try {
+        const data = await getAkunPemerintahMe(access_token);
+        setAkun(data);
+      } catch (error) {
+        console.error("error fetching data:", error);
+      }
+    };
+
+    fetchData();
+  }, []);
 
   return (
     <div className="h-screen">
       <AppSidebar />
-      
+
       <div className="flex-1 p-4 pl-6 overflow-auto">
         <h1 className="text-2xl font-bold mb-4">Profil Saya</h1>
-        
+
         <div className="bg-white dark:bg-gray-800 rounded-lg shadow p-5">
           <div className="flex flex-col md:flex-row gap-6">
             <div className="flex flex-col items-center">
               <Avatar className="w-36 h-36 mb-3">
-                <AvatarImage src={'/logo-dbmsda.png'} />
+                <AvatarImage src={"/logo-dbmsda.png"} />
               </Avatar>
-              {isEditing && (
-                <div className="relative">
-                  <Button variant="outline" size="sm" className="mb-3">
-                    <Pencil className="mr-2 h-4 w-4" />
-                    Ubah Foto
-                  </Button>
-                  <Input
-                    type="file"
-                    accept="image/*"
-                    className="absolute inset-0 opacity-0 cursor-pointer"
-                    onChange={handlePhotoUpload}
-                  />
-                </div>
-              )}
             </div>
 
             <div className="flex-1 space-y-3">
               <div className="grid grid-cols-1 gap-3">
-                {/* Added Name field */}
                 <div>
                   <Label className="text-sm">Nama Anda</Label>
                   {isEditing ? (
                     <Input
-                      name="personName"
-                      value={profile.personName}
+                      name="nama_lengkap"
+                      value={akun?.nama_lengkap || ""}
                       onChange={handleChange}
-                      className="w-full"
                     />
                   ) : (
-                    <div className="p-2 border rounded-md text-sm">{profile.personName}</div>
+                    <div className="p-2 border rounded-md text-sm">
+                      {akun?.nama_lengkap}
+                    </div>
                   )}
                 </div>
 
                 <div>
-                  <Label className="text-sm">Nama Instansi</Label>
-                  {isEditing ? (
-                    <Input
-                      name="name"
-                      value={profile.name}
-                      disabled
-                      className="w-full bg-gray-100 dark:bg-gray-700 cursor-not-allowed"
-                    />
-                  ) : (
-                    <div className="p-2 border rounded-md text-sm">{profile.name}</div>
-                  )}
+                  <Label className="text-sm">Nomor Pegawai</Label>
+                  <div className="p-2 border rounded-md text-sm">{akun?.no_pegawai}</div>
                 </div>
 
                 <div>
                   <Label className="text-sm">Nomor Telepon</Label>
                   {isEditing ? (
                     <Input
-                      name="phone"
-                      value={profile.phone}
+                      name="no_telp"
+                      value={akun?.no_telp || ""}
                       onChange={handleChange}
-                      className="w-full"
                     />
                   ) : (
-                    <div className="p-2 border rounded-md text-sm">{profile.phone}</div>
-                  )}
-                </div>
-
-                <div>
-                  <Label className="text-sm">Jabatan</Label>
-                  {isEditing ? (
-                    <Input
-                      name="jabatan"
-                      value={profile.jabatan}
-                      disabled
-                      className="w-full bg-gray-100 dark:bg-gray-700 cursor-not-allowed"
-                    />
-                  ) : (
-                    <div className="p-2 border rounded-md text-sm">{profile.jabatan}</div>
+                    <div className="p-2 border rounded-md text-sm">{akun?.no_telp}</div>
                   )}
                 </div>
 
@@ -139,51 +127,45 @@ const ProfilePage = () => {
                     <Input
                       name="email"
                       type="email"
-                      value={profile.email}
+                      value={akun?.email || ""}
                       onChange={handleChange}
-                      className="w-full"
                     />
                   ) : (
-                    <div className="p-2 border rounded-md text-sm">{profile.email}</div>
+                    <div className="p-2 border rounded-md text-sm">{akun?.email}</div>
                   )}
                 </div>
               </div>
 
               {isEditing && (
-                <div className="pt-3 border-t mt-3 space-y-3">
-                  <h3 className="font-medium text-sm">Ubah Password</h3>
-                  <div>
-                    <Input
-                      name="password"
-                      type="password"
-                      placeholder="Password Saat Ini"
-                      value={profile.password}
-                      onChange={handleChange}
-                      className="w-full text-sm"
-                    />
-                  </div>
-                  <div>
-                    <Input
-                      name="newPassword"
-                      type="password"
-                      placeholder="Password Baru"
-                      value={profile.newPassword}
-                      onChange={handleChange}
-                      className="w-full text-sm"
-                    />
-                  </div>
-                  <div>
-                    <Input
-                      name="confirmPassword"
-                      type="password"
-                      placeholder="Konfirmasi Password Baru"
-                      value={profile.confirmPassword}
-                      onChange={handleChange}
-                      className="w-full text-sm"
-                    />
-                  </div>
+              <div className="pt-3 border-t mt-3 space-y-3">
+                <h3 className="font-medium text-sm">Ubah Password</h3>
+                <div>
+                  <Input
+                    type="password"
+                    placeholder="Password Lama"
+                    value={oldPassword}
+                    onChange={(e) => setOldPassword(e.target.value)}
+                  />
                 </div>
-              )}
+                <div>
+                  <Input
+                    type="password"
+                    placeholder="Password Baru"
+                    value={newPassword}
+                    onChange={(e) => setNewPassword(e.target.value)}
+                  />
+                </div>
+                <div>
+                  <Input
+                    type="password"
+                    placeholder="Konfirmasi Password Baru"
+                    value={confirmPassword}
+                    onChange={(e) => setConfirmPassword(e.target.value)}
+                  />
+                </div>
+              </div>
+            )}
+
 
               <div className="flex justify-end gap-2 pt-3">
                 {isEditing ? (
@@ -198,8 +180,7 @@ const ProfilePage = () => {
                     </Button>
                   </>
                 ) : (
-                  <Button size="sm" onClick={() => setIsEditing(true)}
-                  className="bg-blue-600 hover:bg-blue-700 text-white">
+                  <Button size="sm" onClick={() => setIsEditing(true)} className="bg-blue-600 hover:bg-blue-700 text-white">
                     <Pencil className="mr-1 h-3 w-3" />
                     Edit Profil
                   </Button>

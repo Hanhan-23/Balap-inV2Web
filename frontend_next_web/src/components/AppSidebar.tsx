@@ -71,6 +71,7 @@ const AppSidebar = () => {
                 <Link href={"/beranda"} className="truncate font-medium">BALAP-IN</Link>
               </div>
             </SidebarMenuButton>
+            <SidebarSeparator/>
           </SidebarMenuItem>
         </SidebarMenu>
       </SidebarHeader>

@@ -29,6 +29,7 @@ urlpatterns = [
     path('auth/buat', viewsauth.pemerintahBuatAkun, name='pemerintahbuatakun'),
     path('auth/login', viewsauth.pemerintahLoginAkun, name='pemerintahloginakun'),
     path('auth/refresh', viewsauth.refresh_token_view, name='pemerintahrefreshakun'),
+    path('auth/me', viewsauth.pemerintahMe, name='pemerintahMe'),
 
     #Beranda Handler
     path('beranda/empatanalisis', viewsberanda.empatAnalisis, name='berandaempatanalisis'),
