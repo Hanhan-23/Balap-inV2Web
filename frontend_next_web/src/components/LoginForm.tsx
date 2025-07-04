@@ -109,20 +109,14 @@ export function LoginForm({
   };
 
   return (
-    <div
-      className={cn(
-        "flex-col gap-6 flex min-h-screen items-center justify-center",
-        className
-      )}
-      {...props}
-    >
-      <Card className="overflow-hidden p-0">
-        <CardContent className="grid p-0 md:grid-cols-2">
-          <form onSubmit={handleSubmit} className="p-6 md:p-8">
+    <div className={cn("flex flex-col gap-6", className)} {...props}>
+      <Card className="overflow-hidden p-0 rounded-xl">
+        <CardContent className="grid p-3 md:grid-cols-2">
+          <form onSubmit={handleSubmit} className="p-6 md:p-12">
             <div className="flex flex-col gap-6">
               <div className="flex flex-col items-center text-center">
-                <h1 className="text-2xl font-bold">Welcome back to BALAP-IN</h1>
-                <p className="text-muted-foreground text-balance">
+                <h1 className="text-2xl font-bold mb-1">Masuk ke BALAP-IN</h1>
+                <p className="text-xs text-muted-foreground text-balance">
                   Batam Lapor Infrastruktur
                 </p>
               </div>
@@ -133,7 +127,7 @@ export function LoginForm({
                   name="email"
                   onChange={onHandleChange}
                   type="email"
-                  placeholder="m@gmail.com"
+                  placeholder="example@gmail.com"
                   required
                 />
               </div>
@@ -161,11 +155,14 @@ export function LoginForm({
                 </div>
               </div>
 
-              <Button type="submit" className="w-full">
+              <Button
+                type="submit"
+                className="w-full text-white bg-blue-500 rounded-full hover:bg-blue-600"
+              >
                 Masuk
               </Button>
 
-              <div className="text-center text-sm">
+              <div className="text-center text-xs">
                 <div className="text-muted-foreground flex justify-center gap-1">
                   <span>Belum memiliki akun?</span>
                   <a
@@ -179,13 +176,13 @@ export function LoginForm({
             </div>
           </form>
 
-          <div className="bg-muted relative hidden md:block">
+          <div className="h-full bg-muted relative rounded-sm hidden md:flex md:items-center md:justify-center">
             <Image
               src="/login.svg"
               alt="Image"
-              fill
-              className="dark:brightness-[0.2] dark:grayscale"
-              style={{ objectFit: "contain" }}
+              width={100}
+              height={100}
+              className="size-72 dark:brightness-[0.2] dark:grayscale"
               priority
             />
           </div>
