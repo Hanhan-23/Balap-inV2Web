@@ -68,22 +68,23 @@ def updateAkunPemerintah(request, id):
     if request.method == 'PUT':
         try:
             pemerintah = Pemerintah.objects.get(id=str(id))
-            
             data = request.data
             update_fields = {}
 
+            # Update field profil
             if 'nama_lengkap' in data:
                 update_fields['set__nama_lengkap'] = data['nama_lengkap']
             if 'email' in data:
+                # TODO: Cek email tidak duplikat!
                 update_fields['set__email'] = data['email']
             if 'no_pegawai' in data:
                 update_fields['set__no_pegawai'] = data['no_pegawai']
             if 'no_telp' in data:
                 update_fields['set__no_telp'] = data['no_telp']
 
+            # Update password jika dua-duanya dikirim
             old_password = data.get('old_password')
             new_password = data.get('new_password')
-
             if old_password and new_password:
                 if check_password(old_password, pemerintah.password):
                     update_fields['set__password'] = make_password(new_password)
