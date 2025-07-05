@@ -11,9 +11,14 @@ export async function getRekomendasiBeranda(): Promise<rekomendasiBeranda[]> {
     return response.data
 }
 
-export async function getStatistikBeranda(): Promise<statistikBeranda> {
-    const response = await api.get<statistikBeranda>('beranda/statistikberanda')
-    return response.data
+// export async function getStatistikBeranda(): Promise<statistikBeranda> {
+//     const response = await api.get<statistikBeranda>('beranda/statistikberanda')
+//     return response.data
+// }
+
+export async function getStatistikBeranda(): Promise<statistikBeranda[]> {
+  const response = await api.get<statistikBeranda[]>('/beranda/statistikberanda');
+  return response.data;
 }
 
 export async function getPetaBeranda(): Promise<petaBeranda[]> {
