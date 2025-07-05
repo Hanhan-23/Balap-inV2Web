@@ -31,7 +31,7 @@ const Navbar = () => {
     router.replace("/login");
   };
   return (
-    <nav className="px-4 shadow-md h-16 flex items-center justify-between sticky top-0 bg-background z-10">
+ <nav className="px-4 h-16 flex items-center justify-between sticky top-0 bg-background z-10 shadow-md dark:shadow-[0_8px_8px_rgba(255,255,255,0.08)] transition-shadow">
       {/* LEFT */}
       <div className="flex items-center gap-4">
         <SidebarTrigger />

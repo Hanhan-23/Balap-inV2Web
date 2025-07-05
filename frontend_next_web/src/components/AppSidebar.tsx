@@ -49,29 +49,32 @@ const AppSidebar = () => {
   const pathname = usePathname(); // Get current path
 
   return (
-    <Sidebar className="flex flex-col h-full" collapsible="icon">
+    <Sidebar className="flex flex-col h-full bg-white dark:bg-[#0f172a] text-black dark:text-slate-200 shadow-md dark:shadow-[2px_0_8px_rgba(255,255,255,0.05)] transition-colors" collapsible="icon">
+    {/* <Sidebar className="flex flex-col h-full" collapsible="icon"> */}
       {/* Header */}
       <SidebarHeader className="py-4">
-        <SidebarMenu>
+         <SidebarMenu>
           <SidebarMenuItem>
-          <SidebarMenuButton
+            <SidebarMenuButton
               size="lg"
               className="data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground"
             >
               <div className="flex aspect-square size-8 items-center justify-center rounded-lg">
                 <Image
-                    src="/logo.svg"
-                    alt="logo"
-                    width={30}
-                    height={30}
-                    className="object-contain rounded-md"
-                  />
+                  src="/logo.svg"
+                  alt="logo"
+                  width={30}
+                  height={30}
+                  className="object-contain rounded-md"
+                />
               </div>
               <div className="flex-1 text-left text-sm leading-tight">
-                <Link href={"/beranda"} className="truncate font-medium">BALAP-IN</Link>
+                <Link href={"/dashboard"} className="truncate font-medium dark:text-white">
+                  BALAP-IN
+                </Link>
               </div>
             </SidebarMenuButton>
-            <SidebarSeparator/>
+            <SidebarSeparator />
           </SidebarMenuItem>
         </SidebarMenu>
       </SidebarHeader>
@@ -82,31 +85,31 @@ const AppSidebar = () => {
           <SidebarGroupContent>
             <SidebarMenu>
               {items.map((item) => {
-                const isActive = pathname === item.url; // Check if current path matches item URL
+                const isActive = pathname === item.url;
                 return (
                   <SidebarMenuItem key={item.title}>
                     <SidebarMenuButton
                       asChild
-                      className={
+                      className={`transition-all ${
                         isActive
-                          ? "bg-blue-600 hover:bg-blue-600 active:bg-blue-700 dark:bg-blue-900/30 rounded-full  p-3"
-                          : ""
-                      }
+                          ? "bg-blue-600 hover:bg-blue-600 active:bg-blue-700 text-white dark:bg-blue-900/40 dark:hover:bg-blue-900/60 rounded-full p-3"
+                          : "hover:bg-slate-100 dark:hover:bg-slate-800 rounded-full"
+                      }`}
                     >
                       <Link href={item.url}>
                         <item.icon
-                          className={
+                          className={`text-[18px] ${
                             isActive
-                              ? "text-sm text-white hover:text-white dark:text-muted-foreground"
-                              : ""
-                          }
+                              ? "text-white dark:text-blue-100"
+                              : "text-muted-foreground"
+                          }`}
                         />
                         <span
-                          className={
+                          className={`text-sm ${
                             isActive
-                              ? "text-sm text-white hover:text-white dark:text-muted-foreground font-medium"
-                              : ""
-                          }
+                              ? "text-white dark:text-blue-100 font-medium"
+                              : "text-muted-foreground"
+                          }`}
                         >
                           {item.title}
                         </span>

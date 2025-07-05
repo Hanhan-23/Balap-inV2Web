@@ -86,15 +86,16 @@ export default function DataLaporanFilterDropdown({
       <DropdownMenuContent
         side="bottom"
         align="end"
-        className="w-72 px-4 py-4 space-y-5"
+        className="w-72 px-4 py-4 space-y-5 bg-white dark:bg-zinc-900 border border-gray-200 dark:border-zinc-700 shadow-lg dark:shadow-none"
       >
-        <DropdownMenuLabel className="font-bold text-base">
+        <DropdownMenuLabel className="font-bold text-base text-gray-800 dark:text-zinc-100">
           Filter
         </DropdownMenuLabel>
+
         <div className="flex flex-col px-2 space-y-5">
           {/* Jenis */}
           <div>
-            <div className="font-semibold text-xs mb-1 text-gray-700">
+            <div className="font-semibold text-xs mb-1 text-gray-700 dark:text-zinc-300">
               Jenis Infrastruktur
             </div>
             <div className="flex gap-1 flex-wrap">
@@ -102,12 +103,14 @@ export default function DataLaporanFilterDropdown({
                 <Button
                   key={item}
                   variant={tempJenis === item ? "secondary" : "outline"}
-                  className={`rounded-full px-3 py-1 text-xs font-medium ${
+                  className={`rounded-full px-3 py-1 text-xs font-medium transition-all ${
                     tempJenis === item
-                      ? "bg-blue-50 border-blue-200 text-blue-800"
-                      : ""
+                      ? "bg-blue-100 dark:bg-blue-800/40 border-blue-300 dark:border-blue-600 text-blue-800 dark:text-blue-200"
+                      : "dark:bg-zinc-800 dark:text-zinc-200 dark:border-zinc-600"
                   }`}
-                  onClick={() => setTempJenis(tempJenis === item ? null : item)}
+                  onClick={() =>
+                    setTempJenis(tempJenis === item ? null : item)
+                  }
                   type="button"
                 >
                   {item.charAt(0).toUpperCase() +
@@ -116,9 +119,10 @@ export default function DataLaporanFilterDropdown({
               ))}
             </div>
           </div>
+
           {/* Tingkat Kerusakan: Slider */}
           <div>
-            <div className="font-semibold text-xs mb-1 text-gray-700">
+            <div className="font-semibold text-xs mb-1 text-gray-700 dark:text-zinc-300">
               Tingkat Kerusakan
             </div>
             <div className="flex items-center gap-2">
@@ -130,14 +134,15 @@ export default function DataLaporanFilterDropdown({
                 className="w-32"
                 onValueChange={handleSliderChange}
               />
-              <span className="text-xs">
+              <span className="text-xs text-gray-700 dark:text-zinc-300">
                 {displayStart}% - {displayEnd}%
               </span>
             </div>
           </div>
+
           {/* Status */}
           <div>
-            <div className="font-semibold text-xs mb-1 text-gray-700">
+            <div className="font-semibold text-xs mb-1 text-gray-700 dark:text-zinc-300">
               Status
             </div>
             <div className="flex gap-1 flex-wrap">
@@ -145,13 +150,15 @@ export default function DataLaporanFilterDropdown({
                 <Button
                   key={item.value}
                   variant={tempStatus === item.value ? "secondary" : "outline"}
-                  className={`rounded-full px-3 py-1 text-xs font-medium ${
+                  className={`rounded-full px-3 py-1 text-xs font-medium transition-all ${
                     tempStatus === item.value
-                      ? "bg-blue-50 border-blue-200 text-blue-800"
-                      : ""
+                      ? "bg-blue-100 dark:bg-blue-800/40 border-blue-300 dark:border-blue-600 text-blue-800 dark:text-blue-200"
+                      : "dark:bg-zinc-800 dark:text-zinc-200 dark:border-zinc-600"
                   }`}
                   onClick={() =>
-                    setTempStatus(tempStatus === item.value ? null : item.value)
+                    setTempStatus(
+                      tempStatus === item.value ? null : item.value
+                    )
                   }
                   type="button"
                 >
@@ -160,10 +167,11 @@ export default function DataLaporanFilterDropdown({
               ))}
             </div>
           </div>
+
           <div className="flex justify-between gap-2">
             <Button
               variant="outline"
-              className="text-sm rounded-full"
+              className="text-sm rounded-full dark:border-zinc-600 dark:text-zinc-300"
               size="sm"
               onClick={handleReset}
               type="button"

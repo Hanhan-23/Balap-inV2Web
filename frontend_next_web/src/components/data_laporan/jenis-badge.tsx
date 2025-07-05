@@ -11,13 +11,36 @@ interface Props {
 
 export default function JenisBadge({ jenis }: Props) {
   const iconMap: Record<string, JSX.Element> = {
-    jalan: <RoadHorizonIcon size={14} weight="bold" className="text-stone-600" />,
-    lampu_jalan: <LightbulbIcon size={14} weight="bold" className="text-yellow-500" />,
-    jembatan: <BridgeIcon size={14} weight="bold" className="text-amber-600" />,
+    jalan: (
+      <RoadHorizonIcon
+        size={14}
+        weight="bold"
+        className="text-stone-600 dark:text-stone-300"
+      />
+    ),
+    lampu_jalan: (
+      <LightbulbIcon
+        size={14}
+        weight="bold"
+        className="text-yellow-500 dark:text-yellow-400"
+      />
+    ),
+    jembatan: (
+      <BridgeIcon
+        size={14}
+        weight="bold"
+        className="text-amber-600 dark:text-amber-400"
+      />
+    ),
   };
 
   return (
-    <div className="inline-flex items-center gap-1 px-2 py-1 border border-slate-300 rounded-full text-xs capitalize text-muted-foreground">
+    <div
+      className="inline-flex items-center gap-1 px-3 py-1 rounded-full text-xs capitalize
+        border border-slate-300 dark:border-slate-600
+        text-muted-foreground dark:text-gray-200
+        bg-slate-100 dark:bg-slate-800/60"
+    >
       {iconMap[jenis] || null}
       {jenis.replace(/_/g, " ")}
     </div>

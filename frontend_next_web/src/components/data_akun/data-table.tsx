@@ -87,7 +87,7 @@ export function DataTable<TData extends Record<string, any>, TValue>({
         <div className="flex items-center gap-2 w-full md:w-auto">
           <div className="relative w-full max-w-xs">
             <MagnifyingGlassIcon
-              className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"
+              className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 dark:text-gray-500"
               size={18}
               weight="regular"
               aria-hidden="true"
@@ -95,7 +95,7 @@ export function DataTable<TData extends Record<string, any>, TValue>({
             <Input
               type="text"
               placeholder="Cari akun..."
-              className="pl-10 pr-3"
+              className="pl-10 pr-3 rounded-full bg-white border placeholder:text-grey-800 "
               value={search}
               onChange={(e) => setSearch(e.target.value)}
             />
@@ -110,14 +110,17 @@ export function DataTable<TData extends Record<string, any>, TValue>({
         </div>
       </div>
       {/* Table */}
-      <div className="rounded-md border overflow-x-auto">
+      <div className="rounded-md border overflow-x-auto border-slate-200 dark:border-slate-700">
         <Table>
           <TableHeader>
             {table.getHeaderGroups().map((headerGroup) => (
               <TableRow key={headerGroup.id}>
                 {headerGroup.headers.map((header) => {
                   return (
-                    <TableHead className="bg-slate-300" key={header.id}>
+                    <TableHead
+                      className="bg-slate-200 dark:bg-slate-800 text-slate-700 dark:text-slate-200"
+                      key={header.id}
+                    >
                       {header.isPlaceholder
                         ? null
                         : flexRender(
@@ -136,9 +139,13 @@ export function DataTable<TData extends Record<string, any>, TValue>({
                 <TableRow
                   key={row.id}
                   data-state={row.getIsSelected() && "selected"}
+                  className="hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors"
                 >
                   {row.getVisibleCells().map((cell) => (
-                    <TableCell key={cell.id}>
+                    <TableCell
+                      key={cell.id}
+                      className="text-sm text-slate-800 dark:text-slate-200"
+                    >
                       {flexRender(
                         cell.column.columnDef.cell,
                         cell.getContext()
@@ -151,7 +158,7 @@ export function DataTable<TData extends Record<string, any>, TValue>({
               <TableRow>
                 <TableCell
                   colSpan={columns.length}
-                  className="h-24 text-center"
+                  className="h-24 text-center text-slate-600 dark:text-slate-400"
                 >
                   No results.
                 </TableCell>

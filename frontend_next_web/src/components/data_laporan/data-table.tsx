@@ -44,28 +44,22 @@ interface DataTableProps {
 }
 
 export function DataTable({ data, onStatusUpdated }: DataTableProps) {
-  // === FILTER STATES ===
   const [jenis, setJenis] = useState<string | null>(null);
   const [tingkatKerusakan, setTingkatKerusakan] = useState<[number, number]>([1, 100]);
   const [status, setStatus] = useState<string | null>(null);
+  const [search, setSearch] = useState("");
+  const [sorting, setSorting] = useState<SortingState>([]);
+  const [openDrawerId, setOpenDrawerId] = useState<string | null>(null);
+  const [detailItem, setDetailItem] = useState<LaporanDetail | null>(null);
+
   const onReset = () => {
     setJenis(null);
     setTingkatKerusakan([1, 100]);
     setStatus(null);
   };
 
-  // === SEARCH STATE ===
-  const [search, setSearch] = useState("");
-
-  // === SORTING, DRAWER, DETAIL ===
-  const [sorting, setSorting] = useState<SortingState>([]);
-  const [openDrawerId, setOpenDrawerId] = useState<string | null>(null);
-  const [detailItem, setDetailItem] = useState<LaporanDetail | null>(null);
-
-  // === FILTERED DATA ===
   const filteredData = useMemo(() => {
     return data.filter((item) => {
-      // Search
       if (
         search &&
         !(
@@ -76,26 +70,16 @@ export function DataTable({ data, onStatusUpdated }: DataTableProps) {
       ) {
         return false;
       }
-      // Jenis Infrastruktur
-      if (jenis && item.jenis !== jenis) {
-        return false;
-      }
-      // Tingkat Kerusakan (sesuaikan dengan field aslimu! Di sini pakai "persentase" dan diasumsikan 0-1)
+      if (jenis && item.jenis !== jenis) return false;
       const persen = typeof item.persentase === "number"
         ? item.persentase * 100
         : Number(item.persentase);
-      if (persen < tingkatKerusakan[0] || persen > tingkatKerusakan[1]) {
-        return false;
-      }
-      // Status
-      if (status && item.status !== status) {
-        return false;
-      }
+      if (persen < tingkatKerusakan[0] || persen > tingkatKerusakan[1]) return false;
+      if (status && item.status !== status) return false;
       return true;
     });
   }, [data, search, jenis, tingkatKerusakan, status]);
 
-  // === DRAWER HANDLER ===
   const handleOpenDrawer = async (id: string) => {
     setOpenDrawerId(id);
     try {
@@ -129,7 +113,7 @@ export function DataTable({ data, onStatusUpdated }: DataTableProps) {
 
   return (
     <div className="flex flex-col gap-6">
-      {/* --- Header: Heading + Filter + Search + ColumnToggle --- */}
+      {/* Header */}
       <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-2 md:gap-0">
         <h1 className="font-bold text-2xl">Data Laporan</h1>
         <div className="flex items-center gap-2 w-full md:w-auto">
@@ -145,7 +129,7 @@ export function DataTable({ data, onStatusUpdated }: DataTableProps) {
               placeholder="Cari laporan..."
               className="pl-10 pr-3 text-xs sm:text-sm rounded-full"
               value={search}
-              onChange={e => setSearch(e.target.value)}
+              onChange={(e) => setSearch(e.target.value)}
             />
           </div>
           <DataLaporanFilterDropdown
@@ -160,13 +144,18 @@ export function DataTable({ data, onStatusUpdated }: DataTableProps) {
           <ColumnToggle table={table} />
         </div>
       </div>
-      <div className="rounded-md border overflow-x-auto">
+
+      {/* Table */}
+      <div className="rounded-md border dark:border-gray-700 overflow-x-auto">
         <Table>
           <TableHeader>
-            {table.getHeaderGroups().map(headerGroup => (
+            {table.getHeaderGroups().map((headerGroup) => (
               <TableRow key={headerGroup.id}>
-                {headerGroup.headers.map(header => (
-                  <TableHead className="bg-slate-300" key={header.id}>
+                {headerGroup.headers.map((header) => (
+                  <TableHead
+                    className="bg-slate-300 dark:bg-gray-800 dark:text-gray-100"
+                    key={header.id}
+                  >
                     {header.isPlaceholder
                       ? null
                       : flexRender(header.column.columnDef.header, header.getContext())}
@@ -177,10 +166,16 @@ export function DataTable({ data, onStatusUpdated }: DataTableProps) {
           </TableHeader>
           <TableBody>
             {table.getRowModel().rows.length ? (
-              table.getRowModel().rows.map(row => (
-                <TableRow key={row.id}>
-                  {row.getVisibleCells().map(cell => (
-                    <TableCell key={cell.id}>
+              table.getRowModel().rows.map((row) => (
+                <TableRow
+                  key={row.id}
+                  className="dark:hover:bg-gray-800/70"
+                >
+                  {row.getVisibleCells().map((cell) => (
+                    <TableCell
+                      key={cell.id}
+                      className="dark:text-gray-200 dark:bg-gray-900/30"
+                    >
                       {flexRender(cell.column.columnDef.cell, cell.getContext())}
                     </TableCell>
                   ))}
@@ -188,8 +183,11 @@ export function DataTable({ data, onStatusUpdated }: DataTableProps) {
               ))
             ) : (
               <TableRow>
-                <TableCell colSpan={columns.length} className="text-center">
-                  No results.
+                <TableCell
+                  colSpan={columns.length}
+                  className="text-center text-gray-500 dark:text-gray-400"
+                >
+                  Tidak ada hasil.
                 </TableCell>
               </TableRow>
             )}
@@ -197,7 +195,8 @@ export function DataTable({ data, onStatusUpdated }: DataTableProps) {
         </Table>
         <DataTablePagination table={table} />
       </div>
-      {/* Drawer hanya dirender jika detailItem SUDAH ADA */}
+
+      {/* Drawer Viewer */}
       {openDrawerId && detailItem && (
         <TableCellViewer
           item={detailItem}
@@ -215,7 +214,6 @@ export function DataTable({ data, onStatusUpdated }: DataTableProps) {
   );
 }
 
-// Kustomisasi kolom (toggle tampil/sembunyi)
 function ColumnToggle({
   table,
 }: {
@@ -230,7 +228,7 @@ function ColumnToggle({
           <CaretDownIcon className="ml-1 h-3 w-3" />
         </Button>
       </DropdownMenuTrigger>
-      <DropdownMenuContent align="end" className="w-56">
+      <DropdownMenuContent align="end" className="w-56 dark:bg-gray-800 dark:text-gray-100">
         {table
           .getAllColumns()
           .filter((column) => column.getCanHide() && column.accessorFn)

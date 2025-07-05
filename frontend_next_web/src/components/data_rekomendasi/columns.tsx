@@ -89,7 +89,7 @@ export const getColumns = (
         onClick={() =>
           ctx.column.toggleSorting(ctx.column.getIsSorted() === "asc")
         }
-        className="!p-0 hover:bg-transparent"
+        className="!p-0"
       >
         Judul
         <ArrowUpDown className="ml-2 h-4 w-4" />

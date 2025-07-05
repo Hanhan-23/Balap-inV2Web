@@ -1,4 +1,3 @@
-// components/data_akun/StatusBadge.tsx
 import { cn } from "@/lib/utils";
 
 interface Props {
@@ -8,9 +7,9 @@ interface Props {
 export default function StatusBadge({ value }: Props) {
   const styleMap: Record<Props["value"], string> = {
     verif:
-      "bg-green-200 text-green-700 dark:bg-green-500/20 dark:text-green-100",
+      "bg-green-100 text-green-700 border border-green-300 dark:bg-green-900/30 dark:text-green-200 dark:border-green-700",
     belum_verif:
-      "bg-red-200 text-red-700 dark:bg-red-500/20 dark:text-red-100",
+      "bg-red-100 text-red-700 border border-red-300 dark:bg-red-900/30 dark:text-red-200 dark:border-red-700",
   };
 
   return (

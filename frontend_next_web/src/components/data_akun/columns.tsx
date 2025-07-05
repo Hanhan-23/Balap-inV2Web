@@ -24,7 +24,7 @@ export const columns = (
     id: "no",
     header: "No",
     cell: ({ row }) => row.index + 1,
-    size: 50, // opsional, buat kolom kecil
+    size: 50,
   },
   {
     accessorKey: "nama_lengkap",
