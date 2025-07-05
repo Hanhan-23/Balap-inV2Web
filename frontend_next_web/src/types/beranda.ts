@@ -33,7 +33,7 @@ export interface petaBeranda {
 	laporan: {
 		id: string;
 		judul: string;
-		latitude: string;
-		longitude: string;
+		latitude: number;
+		longitude: number;
 	}
 }

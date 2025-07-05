@@ -5,6 +5,11 @@ interface Props {
   value: string;
 }
 
+const displayMap : Record<string, string> = {
+  selesai:"Ditampilkan",
+  disembunyikan: "Disembunyikan",
+}
+
 export default function StatusBadge({ value }: Props) {
   const styleMap: Record<string, string> = {
     selesai: "bg-green-200 text-green-600 dark:bg-red-300/50 dark:text-slate-50",
@@ -18,7 +23,7 @@ export default function StatusBadge({ value }: Props) {
         styleMap[value] ?? "bg-slate-100 text-slate-500"
       )}
     >
-      {value}
+      {displayMap[value]}
     </span>
   );
 }

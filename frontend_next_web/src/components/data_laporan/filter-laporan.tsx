@@ -13,7 +13,7 @@ import { SlidersHorizontalIcon } from "@phosphor-icons/react";
 const JENIS_LIST = ["jalan", "lampu_jalan", "jembatan"];
 const STATUS_LIST = [
   { label: "Disembunyikan", value: "disembunyikan" },
-  { label: "Selesai", value: "selesai" },
+  { label: "Ditampilkan", value: "selesai" },
 ];
 
 const MIN_GAP = 20;

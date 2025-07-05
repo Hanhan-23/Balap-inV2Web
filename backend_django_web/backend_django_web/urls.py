@@ -50,6 +50,6 @@ urlpatterns = [
 
     #Akun Rekomendasi
     path('rekomendasi', viewsrekomendasi.cardRekomendasi, name='rekomendasi'),
-    path('rekomendasi/detail/<str:id>', viewsrekomendasi.getDetailRekomendasi, name='detailrekomendasi'),
+    path('rekomendasi/<str:id>', viewsrekomendasi.getDetailRekomendasi, name='detailrekomendasi'),
     path('rekomendasi/update/<str:id>', viewsrekomendasi.ubahStatusUrgentRekomendasi, name='ubahstatusrekomendasi'),
 ]

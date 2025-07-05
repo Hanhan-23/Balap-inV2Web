@@ -18,6 +18,7 @@ import StatusBadge from "./status-badge";
 import { updateStatusRekomendasi } from "@/services/datarekomendasiservices";
 import { StatusRekom } from "@/types/data-rekomendasi";
 import { ColumnDef, HeaderContext } from "@tanstack/react-table";
+import { useRouter } from "next/navigation";
 
 export const getColumns = (
   onStatusUpdated: (id: string, status: StatusRekom) => void,
@@ -110,6 +111,8 @@ export const getColumns = (
         }
       };
 
+      const router = useRouter();
+
       return (
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
@@ -125,7 +128,8 @@ export const getColumns = (
               Salin ID
             </DropdownMenuItem>
             <DropdownMenuSeparator />
-            <DropdownMenuItem onClick={() => setOpenDrawerId(item.id)}>
+            <DropdownMenuItem onClick={() => router.push(`/data-rekomendasi/${item.id}`)}>
+
               Detail
             </DropdownMenuItem>
             <DropdownMenuSub>

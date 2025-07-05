@@ -10,7 +10,7 @@ export async function getDataRekomendasi(
 }
 
 export async function getDetailRekomendasi(id: string) {
-  const response = await api.get(`/rekomendasi/detail/${id}`);
+  const response = await api.get(`/rekomendasi/${id}`);
   return response.data;
 }
 
