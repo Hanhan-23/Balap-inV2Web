@@ -13,12 +13,19 @@ export type Account = {
   nama_lengkap: string;
   email: string;
   no_telp: string;
+  tgl_pemerintah: string;
   status: "verif" | "belum_verif";
 };
 
 export const columns = (
   onStatusUpdated: (id: string, status: Account["status"]) => void
 ): ColumnDef<Account>[] => [
+  {
+    id: "no",
+    header: "No",
+    cell: ({ row }) => row.index + 1,
+    size: 50, // opsional, buat kolom kecil
+  },
   {
     accessorKey: "nama_lengkap",
     header: "Nama",
@@ -30,6 +37,16 @@ export const columns = (
   {
     accessorKey: "no_telp",
     header: "Nomor HP",
+  },
+  {
+    accessorKey: "tgl_pemerintah",
+    header: "Join",
+     cell: ({ row }) => {
+    const rawDate = row.original.tgl_pemerintah;
+    const date = new Date(rawDate);
+    const formatted = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')} | ${String(date.getHours()).padStart(2, '0')}.${String(date.getMinutes()).padStart(2, '0')}`;
+    return <span>{formatted}</span>;
+  },
   },
   {
   accessorKey: "status",

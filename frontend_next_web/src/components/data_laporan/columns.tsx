@@ -25,6 +25,12 @@ export const getColumns = (
   openDrawerHandler: (id: string | null) => void
 ): ColumnDef<Laporan>[] => [
   {
+    id: "no",
+    header: "No",
+    cell: ({ row }) => row.index + 1,
+    size: 50, // opsional, buat kolom kecil
+  },
+  {
     accessorKey: "tgl_lapor",
     header: ({ column }) => (
       <Button

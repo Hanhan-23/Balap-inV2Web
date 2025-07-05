@@ -18,6 +18,7 @@ def cardAkunPemerintah(request):
                             {'email': {'$regex': search_query, '$options': 'i'}},
                             {'no_pegawai': {'$regex': search_query, '$options': 'i'}},
                             {'no_telp': {'$regex': search_query, '$options': 'i'}},
+                            {'tgl_pemerintah': {'$regex': search_query, '$options': 'i'}},
                             {'status': {'$regex': search_query, '$options': 'i'}},
                         ]
                     }
@@ -34,6 +35,7 @@ def cardAkunPemerintah(request):
                 'email': l.email,
                 'no_pegawai': l.no_pegawai,
                 'no_telp': l.no_telp,
+                'tgl_pemerintah': l.tgl_pemerintah,
                 'status': l.status,
             })
 

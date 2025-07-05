@@ -1,4 +1,5 @@
 "use client";
+
 import { ArrowUpDown, MoreHorizontal } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
@@ -20,13 +21,69 @@ import { StatusRekom } from "@/types/data-rekomendasi";
 import { ColumnDef, HeaderContext } from "@tanstack/react-table";
 import { useRouter } from "next/navigation";
 
+// ✅ Komponen ActionsCell terpisah agar bisa pakai useRouter()
+const ActionsCell = ({
+  item,
+  onStatusUpdated,
+}: {
+  item: rekomendasi;
+  onStatusUpdated: (id: string, status: StatusRekom) => void;
+}) => {
+  const router = useRouter();
+  const statusList: StatusRekom[] = ["belum_valid", "valid", "proses", "selesai"];
+
+  const handleChangeStatus = async (status: StatusRekom) => {
+    try {
+      await updateStatusRekomendasi(item.id, { status_rekom: status });
+      onStatusUpdated(item.id, status);
+    } catch (err) {
+      console.error(err);
+      alert("Gagal update status");
+    }
+  };
+
+  return (
+    <DropdownMenu>
+      <DropdownMenuTrigger asChild>
+        <Button variant="ghost" className="h-8 w-8 p-0">
+          <MoreHorizontal className="h-4 w-4" />
+        </Button>
+      </DropdownMenuTrigger>
+      <DropdownMenuContent align="end">
+        <DropdownMenuLabel>Aksi</DropdownMenuLabel>
+        <DropdownMenuItem onClick={() => navigator.clipboard.writeText(item.id)}>
+          Salin ID
+        </DropdownMenuItem>
+        <DropdownMenuSeparator />
+        <DropdownMenuItem onClick={() => router.push(`/data-rekomendasi/${item.id}`)}>
+          Detail
+        </DropdownMenuItem>
+        <DropdownMenuSub>
+          <DropdownMenuSubTrigger>Ubah Status</DropdownMenuSubTrigger>
+          <DropdownMenuSubContent>
+            {statusList.map((s) => (
+              <DropdownMenuItem
+                key={s}
+                onClick={() => handleChangeStatus(s)}
+                className="capitalize"
+              >
+                {s.replace(/_/g, " ")}
+              </DropdownMenuItem>
+            ))}
+          </DropdownMenuSubContent>
+        </DropdownMenuSub>
+      </DropdownMenuContent>
+    </DropdownMenu>
+  );
+};
+
+// ✅ Fungsi getColumns
 export const getColumns = (
-  onStatusUpdated: (id: string, status: StatusRekom) => void,
-  setOpenDrawerId: (id: string | null) => void
+  onStatusUpdated: (id: string, status: StatusRekom) => void
 ): ColumnDef<rekomendasi>[] => [
   {
     accessorKey: "laporan.judul",
-    header: (ctx: HeaderContext<rekomendasi, any>) => (
+    header: (ctx: HeaderContext<rekomendasi, unknown>) => (
       <Button
         variant="ghost"
         onClick={() =>
@@ -60,7 +117,7 @@ export const getColumns = (
   },
   {
     accessorKey: "tingkat_urgent",
-    header: (ctx: HeaderContext<rekomendasi, any>) => (
+    header: (ctx: HeaderContext<rekomendasi, unknown>) => (
       <Button
         variant="ghost"
         onClick={() =>
@@ -92,63 +149,8 @@ export const getColumns = (
   },
   {
     id: "actions",
-    cell: ({ row }) => {
-      const item = row.original;
-      const statusList: StatusRekom[] = [
-        "belum_valid",
-        "valid",
-        "proses",
-        "selesai",
-      ];
-
-      const handleChangeStatus = async (status: StatusRekom) => {
-        try {
-          await updateStatusRekomendasi(item.id, { status_rekom: status });
-          onStatusUpdated(item.id, status);
-        } catch (err) {
-          console.error(err);
-          alert("Gagal update status");
-        }
-      };
-
-      const router = useRouter();
-
-      return (
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <Button variant="ghost" className="h-8 w-8 p-0">
-              <MoreHorizontal className="h-4 w-4" />
-            </Button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent align="end">
-            <DropdownMenuLabel>Aksi</DropdownMenuLabel>
-            <DropdownMenuItem
-              onClick={() => navigator.clipboard.writeText(item.id)}
-            >
-              Salin ID
-            </DropdownMenuItem>
-            <DropdownMenuSeparator />
-            <DropdownMenuItem onClick={() => router.push(`/data-rekomendasi/${item.id}`)}>
-
-              Detail
-            </DropdownMenuItem>
-            <DropdownMenuSub>
-              <DropdownMenuSubTrigger>Ubah Status</DropdownMenuSubTrigger>
-              <DropdownMenuSubContent>
-                {statusList.map((s) => (
-                  <DropdownMenuItem
-                    key={s}
-                    onClick={() => handleChangeStatus(s)}
-                    className="capitalize"
-                  >
-                    {s.replace(/_/g, " ")}
-                  </DropdownMenuItem>
-                ))}
-              </DropdownMenuSubContent>
-            </DropdownMenuSub>
-          </DropdownMenuContent>
-        </DropdownMenu>
-      );
-    },
+    cell: ({ row }) => (
+      <ActionsCell item={row.original} onStatusUpdated={onStatusUpdated} />
+    ),
   },
 ];

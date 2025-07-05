@@ -45,7 +45,8 @@ export function RegisterForm({
 
   // Validasi per step
   const validateStep = () => {
-    let tempErr: { [key: string]: string } = {};
+    const tempErr: { [key: string]: string } = {};
+    // let tempErr: { [key: string]: string } = {};
     if (step === 1) {
       if (!formDaftar.nama_lengkap) tempErr.nama_lengkap = "Nama wajib diisi";
       if (!formDaftar.no_pegawai) tempErr.no_pegawai = "ID Pegawai wajib diisi";

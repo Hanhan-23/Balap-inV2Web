@@ -166,7 +166,7 @@ export function DataTable({ data, onStatusUpdated }: DataTableProps) {
             {table.getHeaderGroups().map(headerGroup => (
               <TableRow key={headerGroup.id}>
                 {headerGroup.headers.map(header => (
-                  <TableHead key={header.id}>
+                  <TableHead className="bg-slate-300" key={header.id}>
                     {header.isPlaceholder
                       ? null
                       : flexRender(header.column.columnDef.header, header.getContext())}

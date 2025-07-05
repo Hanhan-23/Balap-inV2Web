@@ -110,14 +110,14 @@ export function DataTable<TData extends Record<string, any>, TValue>({
         </div>
       </div>
       {/* Table */}
-      <div className="rounded-md border">
+      <div className="rounded-md border overflow-x-auto">
         <Table>
           <TableHeader>
             {table.getHeaderGroups().map((headerGroup) => (
               <TableRow key={headerGroup.id}>
                 {headerGroup.headers.map((header) => {
                   return (
-                    <TableHead key={header.id}>
+                    <TableHead className="bg-slate-300" key={header.id}>
                       {header.isPlaceholder
                         ? null
                         : flexRender(
