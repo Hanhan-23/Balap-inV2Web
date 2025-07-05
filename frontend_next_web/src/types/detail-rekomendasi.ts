@@ -12,7 +12,7 @@ export interface detailrekomendasi {
         judul: string;
         jenis: string;
         deskripsi: string;
-        gambar: string;
+        gambar: string[];
         persentase: number;
         cuaca: string;
         status: string;

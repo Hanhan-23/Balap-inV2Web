@@ -16,6 +16,7 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { AlertDialog, AlertDialogContent, AlertDialogHeader, AlertDialogTitle, AlertDialogFooter } from "@/components/ui/alert-dialog";
 import { cardDetailRekomendasi } from "@/types/data-rekomendasi";
 import MapComponentRekomendasi from "@/components/data_rekomendasi/Map";
 import StatusBadge from "@/components/data_rekomendasi/status-badge";
@@ -30,6 +31,7 @@ export default function RecommendationDetail() {
   const [recommendation, setRecommendation] = useState<cardDetailRekomendasi>();
   const [status, setStatus] = useState<StatusRekom>("belum_valid");
   const [loading, setLoading] = useState(true);
+  const [showSuccessDialog, setShowSuccessDialog] = useState(false);
 
   useEffect(() => {
     setLoading(true);
@@ -53,6 +55,7 @@ export default function RecommendationDetail() {
       });
       setStatus(newStatus);
       setRecommendation({ ...recommendation, status_rekom: newStatus });
+      setShowSuccessDialog(true);
     } catch (err) {
       alert(`Gagal mengubah status: ${err}`);
     }
@@ -92,6 +95,8 @@ export default function RecommendationDetail() {
           <span className="text-sm px-2 py-1 rounded-md bg-gray-100 dark:bg-gray-700 dark:text-gray-200">
             {recommendation.laporan.jenis}
           </span>
+          <span className="font-medium dark:text-gray-200">Jumlah Laporan :</span>
+          <span className="dark:text-gray-300">{recommendation.jumlah_laporan}</span>
         </div>
 
         <p className="mb-2 text-gray-700 dark:text-gray-300">
@@ -101,9 +106,7 @@ export default function RecommendationDetail() {
 
         <div className="flex flex-wrap items-center gap-6 mb-6">
           <div className="flex items-center gap-2">
-            <span className="font-medium dark:text-gray-200">
-              Tingkat Urgensi:
-            </span>
+            <span className="font-medium dark:text-gray-200">Tingkat Urgensi:</span>
             <span className="dark:text-gray-300">
               {(Number(recommendation.tingkat_urgent) * 100).toFixed(2)}%
             </span>
@@ -111,9 +114,7 @@ export default function RecommendationDetail() {
           </div>
 
           <div className="flex items-center gap-2">
-            <span className="font-medium dark:text-gray-200">
-              Status Rekomendasi:
-            </span>
+            <span className="font-medium dark:text-gray-200">Status Rekomendasi:</span>
             <StatusBadge type="rekom" value={status} />
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
@@ -141,24 +142,24 @@ export default function RecommendationDetail() {
         </div>
 
         {/* Dokumentasi Foto */}
-        <h3 className="font-medium mb-2 dark:text-gray-100">
-          Dokumentasi Foto:
-        </h3>
+        <h3 className="font-medium mb-2 dark:text-gray-100">Dokumentasi Laporan:</h3>
         <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
-          {recommendation.laporan.gambar ? (
-            <div className="rounded-lg overflow-hidden shadow-md">
-              <div className="relative aspect-square w-full h-32">
-                <Image
-                  src={recommendation.laporan.gambar}
-                  alt="Dokumentasi"
-                  fill
-                  className="object-cover"
-                />
+          {Array.isArray(recommendation.laporan.gambar) && recommendation.laporan.gambar.length > 0 ? (
+            recommendation.laporan.gambar.map((url: string, idx: number) => (
+              <div key={idx} className="rounded-lg overflow-hidden shadow-md">
+                <div className="relative aspect-square w-full h-32">
+                  <Image
+                    src={url}
+                    alt={recommendation.laporan.judul}
+                    fill
+                    className="object-cover"
+                  />
+                </div>
+                <div className="p-2 capitalize bg-gray-50 dark:bg-gray-700 text-center text-xs text-gray-600 dark:text-gray-300">
+                  {recommendation.laporan.judul}
+                </div>
               </div>
-              <div className="p-2 bg-gray-50 dark:bg-gray-700 text-center text-xs text-gray-600 dark:text-gray-300">
-                Dokumentasi
-              </div>
-            </div>
+            ))
           ) : (
             <div className="text-xs text-gray-500 dark:text-gray-400 col-span-full">
               Tidak ada dokumentasi foto
@@ -167,9 +168,7 @@ export default function RecommendationDetail() {
         </div>
 
         {/* Peta */}
-        <h3 className="font-medium mb-2 text-md mt-4 dark:text-gray-100">
-          Peta Rekomendasi
-        </h3>
+        <h3 className="font-medium mb-2 text-md mt-4 dark:text-gray-100">Peta Rekomendasi</h3>
         <div className="h-[300px] w-full rounded-lg overflow-hidden mb-6">
           <MapComponentRekomendasi markersBeranda={recommendation} />
         </div>
@@ -177,36 +176,39 @@ export default function RecommendationDetail() {
 
       {/* Rencana Tindakan */}
       <div className="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-6">
-        <h2 className="text-xl font-semibold mb-4 dark:text-white">
-          Rencana Tindakan
-        </h2>
+        <h2 className="text-xl font-semibold mb-4 dark:text-white">Rencana Tindakan</h2>
         <div className="space-y-4">
           <div className="p-4 bg-blue-50 dark:bg-blue-900/30 rounded-lg">
-            <h3 className="font-medium mb-2 dark:text-blue-200">
-              1. Pemeriksaan Lapangan
-            </h3>
+            <h3 className="font-medium mb-2 dark:text-blue-200">1. Pemeriksaan Lapangan</h3>
             <p className="text-gray-700 dark:text-gray-300">
               Tim akan melakukan pemeriksaan lapangan dalam 3 hari kerja.
             </p>
           </div>
           <div className="p-4 bg-yellow-50 dark:bg-yellow-900/30 rounded-lg">
-            <h3 className="font-medium mb-2 dark:text-yellow-200">
-              2. Penyusunan Rencana
-            </h3>
+            <h3 className="font-medium mb-2 dark:text-yellow-200">2. Penyusunan Rencana</h3>
             <p className="text-gray-700 dark:text-gray-300">
               Penyusunan rencana perbaikan berdasarkan hasil pemeriksaan.
             </p>
           </div>
           <div className="p-4 bg-green-50 dark:bg-green-900/30 rounded-lg">
-            <h3 className="font-medium mb-2 dark:text-green-200">
-              3. Pelaksanaan Perbaikan
-            </h3>
+            <h3 className="font-medium mb-2 dark:text-green-200">3. Pelaksanaan Perbaikan</h3>
             <p className="text-gray-700 dark:text-gray-300">
               Perbaikan akan dilaksanakan sesuai jadwal yang ditentukan.
             </p>
           </div>
         </div>
       </div>
+
+      <AlertDialog open={showSuccessDialog} onOpenChange={setShowSuccessDialog}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Status berhasil diubah menjadi {recommendation.status_rekom}! </AlertDialogTitle>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <Button onClick={() => setShowSuccessDialog(false)}>Tutup</Button>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   );
 }

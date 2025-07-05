@@ -83,7 +83,7 @@ export function DataTable({ data, onStatusUpdated }: DataTableProps) {
   });
 
   return (
-    <div className="flex flex-col gap-6">
+    <div className="flex flex-col gap-6 overflow-hidden">
       <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-2 md:gap-0">
         <h1 className="font-bold text-2xl">Data Rekomendasi</h1>
         <div className="flex items-center gap-2 w-full md:w-auto">
@@ -117,8 +117,8 @@ export function DataTable({ data, onStatusUpdated }: DataTableProps) {
         </div>
       </div>
 
-      <div className="rounded-md border border-slate-200 dark:border-slate-700 overflow-x-auto">
-        <Table>
+      <div className="w-full rounded-md border border-slate-200 dark:border-slate-700 overflow-x-auto">
+        <Table className="min-w-full w-full">
           <TableHeader>
             {table.getHeaderGroups().map((headerGroup) => (
               <TableRow key={headerGroup.id}>

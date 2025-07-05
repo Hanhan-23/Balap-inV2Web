@@ -21,7 +21,6 @@ import { StatusRekom } from "@/types/data-rekomendasi";
 import { ColumnDef, HeaderContext } from "@tanstack/react-table";
 import { useRouter } from "next/navigation";
 
-// ✅ Komponen ActionsCell terpisah agar bisa pakai useRouter()
 const ActionsCell = ({
   item,
   onStatusUpdated,
@@ -77,7 +76,6 @@ const ActionsCell = ({
   );
 };
 
-// ✅ Fungsi getColumns
 export const getColumns = (
   onStatusUpdated: (id: string, status: StatusRekom) => void
 ): ColumnDef<rekomendasi>[] => [
@@ -92,7 +90,7 @@ export const getColumns = (
         className="!p-0"
       >
         Judul
-        <ArrowUpDown className="ml-2 h-4 w-4" />
+        <ArrowUpDown className="ml-0 h-4 w-4" />
       </Button>
     ),
     cell: ({ row }) => {
@@ -112,7 +110,7 @@ export const getColumns = (
     header: "Alamat",
     cell: ({ getValue }) => {
       const text = getValue() as string;
-      return text.length > 25 ? `${text.slice(0, 25)}...` : text;
+      return text.length > 22 ? `${text.slice(0, 22)}...` : text;
     },
   },
   {
@@ -125,7 +123,7 @@ export const getColumns = (
         }
       >
         Tingkat Urgensi
-        <ArrowUpDown className="ml-2 h-4 w-4" />
+        <ArrowUpDown className="ml-0 h-4 w-4" />
       </Button>
     ),
     cell: ({ getValue }) => {
@@ -142,7 +140,7 @@ export const getColumns = (
   },
   {
     accessorKey: "status_rekom",
-    header: "Status Rekomendasi",
+    header: "Tindakan",
     cell: ({ getValue }) => (
       <StatusBadge type="rekom" value={getValue() as string} />
     ),
