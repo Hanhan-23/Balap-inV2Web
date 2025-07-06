@@ -50,7 +50,7 @@ const chartConfig: ChartConfig & Record<BrowserKey, { label: string; color: stri
 
 export function AppPieChart({ data }: { data: PieDataItem[] }) {
   return (
-    <Card className="flex flex-col">
+    <Card className="flex flex-col shadow-xl dark:shadow-[0_4px_10px_rgba(255,255,255,0.2)]">
       <CardHeader className="items-center pb-0">
         <CardTitle>
           <h1 className="text-md font-medium mb-0 flex items-center gap-1 dark:text-white">

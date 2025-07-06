@@ -70,7 +70,7 @@ export const getColumns = (
         onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
         className="!p-0"
       >
-        Kerusakan <ArrowUpDown className="ml-2 h-4 w-4" />
+        Kerusakan <ArrowUpDown className="ml-0 h-4 w-4" />
       </Button>
     ),
     cell: ({ getValue }) => (
@@ -84,7 +84,7 @@ export const getColumns = (
     header: "Lokasi",
     cell: ({ getValue }) => {
       const a = getValue() as string;
-      return a.length > 25 ? `${a.slice(0, 25)}…` : a;
+      return a.length > 23 ? `${a.slice(0, 23)}…` : a;
     },
   },
   {

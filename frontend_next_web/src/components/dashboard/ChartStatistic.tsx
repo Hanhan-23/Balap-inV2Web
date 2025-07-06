@@ -81,7 +81,7 @@ export function ChartAreaInteractive({
 
   const filteredData = mappedData.filter((item) => {
     const date = new Date(item.date);
-    const referenceDate = new Date("2024-05-01");
+    const referenceDate = new Date("2024-06-01");
     let daysToSubtract = 90;
     if (timeRange === "30d") {
       daysToSubtract = 30;

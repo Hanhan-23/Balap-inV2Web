@@ -20,6 +20,8 @@ import { AlertDialog, AlertDialogContent, AlertDialogHeader, AlertDialogTitle, A
 import { cardDetailRekomendasi } from "@/types/data-rekomendasi";
 import MapComponentRekomendasi from "@/components/data_rekomendasi/Map";
 import StatusBadge from "@/components/data_rekomendasi/status-badge";
+import { motion } from "framer-motion";
+import { MapPin, Wrench, CheckCircle } from "lucide-react";
 
 type StatusRekom = "belum_valid" | "valid" | "proses" | "selesai";
 
@@ -79,13 +81,13 @@ export default function RecommendationDetail() {
         variant="outline"
         size="sm"
         onClick={() => router.back()}
-        className="text-sm text-gray-600 hover:text-black border-gray-300 hover:bg-gray-100 dark:text-gray-300 dark:hover:text-white dark:border-gray-600 dark:hover:bg-gray-700"
+        className="text-sm shadow-md dark:shadow-[0_2px_4px_rgba(255,255,255,0.2)] text-gray-600 hover:text-black border-gray-300 hover:bg-gray-100 dark:text-gray-300 dark:hover:text-white dark:border-gray-600 dark:hover:bg-gray-700"
       >
         <ChevronLeft className="h-4 w-4 mr-2" />
         Kembali
       </Button>
 
-      <div className="bg-white mt-2 dark:bg-gray-800 rounded-lg border dark:border-gray-700 shadow-xl p-6 mb-8">
+      <div className="bg-white shadow-xl dark:shadow-[0_4px_10px_rgba(255,255,255,0.2)] mt-2 dark:bg-stone-950 rounded-lg border dark:border-gray-700 p-6 mb-8">
         <h1 className="text-2xl font-bold mb-4 dark:text-white">
           {recommendation.laporan.judul}
         </h1>
@@ -175,29 +177,60 @@ export default function RecommendationDetail() {
       </div>
 
       {/* Rencana Tindakan */}
-      <div className="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-6">
+            <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.6 }}
+        className="bg-white dark:bg-stone-950 border rounded-lg shadow-lg p-6 dark:shadow-[0_4px_10px_rgba(255,255,255,0.2)]"
+      >
         <h2 className="text-xl font-semibold mb-4 dark:text-white">Rencana Tindakan</h2>
         <div className="space-y-4">
-          <div className="p-4 bg-blue-50 dark:bg-blue-900/30 rounded-lg">
-            <h3 className="font-medium mb-2 dark:text-blue-200">1. Pemeriksaan Lapangan</h3>
-            <p className="text-gray-700 dark:text-gray-300">
-              Tim akan melakukan pemeriksaan lapangan dalam 3 hari kerja.
-            </p>
-          </div>
-          <div className="p-4 bg-yellow-50 dark:bg-yellow-900/30 rounded-lg">
-            <h3 className="font-medium mb-2 dark:text-yellow-200">2. Penyusunan Rencana</h3>
-            <p className="text-gray-700 dark:text-gray-300">
-              Penyusunan rencana perbaikan berdasarkan hasil pemeriksaan.
-            </p>
-          </div>
-          <div className="p-4 bg-green-50 dark:bg-green-900/30 rounded-lg">
-            <h3 className="font-medium mb-2 dark:text-green-200">3. Pelaksanaan Perbaikan</h3>
-            <p className="text-gray-700 dark:text-gray-300">
-              Perbaikan akan dilaksanakan sesuai jadwal yang ditentukan.
-            </p>
-          </div>
+          {/* Validasi */}
+          <motion.div
+            whileHover={{ scale: 1.02 }}
+            className="p-4 bg-blue-50 dark:bg-blue-900/30 rounded-lg flex items-start gap-4"
+          >
+            <MapPin className="text-blue-500 dark:text-blue-300 mt-1" />
+            <div>
+              <h3 className="font-medium mb-2 dark:text-blue-200">1. Validasi Laporan</h3>
+              <p className="text-gray-700 dark:text-gray-300">
+                Status ini menunjukkan bahwa tim pemerintah telah melakukan survei langsung ke lokasi sesuai laporan. 
+                Jika ditemukan bahwa kerusakan benar-benar ada di lokasi sebagaimana dilaporkan, maka laporan dinyatakan <strong>Valid</strong> dan dapat dilanjutkan ke tahap perencanaan perbaikan.
+              </p>
+            </div>
+          </motion.div>
+
+          {/* Proses */}
+          <motion.div
+            whileHover={{ scale: 1.02 }}
+            className="p-4 bg-yellow-50 dark:bg-yellow-900/30 rounded-lg flex items-start gap-4"
+          >
+            <Wrench className="text-yellow-600 dark:text-yellow-300 mt-1" />
+            <div>
+              <h3 className="font-medium mb-2 dark:text-yellow-200">2. Proses Perbaikan</h3>
+              <p className="text-gray-700 dark:text-gray-300">
+                Setelah laporan dari rekomendasi dinyatakan valid, pemerintah akan memulai proses perbaikan sesuai dengan rencana
+                yang telah disusun. Status harus di update menjadi <strong>Proses</strong>.
+              </p>
+            </div>
+          </motion.div>
+
+          {/* Selesai */}
+          <motion.div
+            whileHover={{ scale: 1.02 }}
+            className="p-4 bg-green-50 dark:bg-green-900/30 rounded-lg flex items-start gap-4"
+          >
+            <CheckCircle className="text-green-600 dark:text-green-300 mt-1" />
+            <div>
+              <h3 className="font-medium mb-2 dark:text-green-200">3. Penyelesaian</h3>
+              <p className="text-gray-700 dark:text-gray-300">
+                Status ini menandakan bahwa seluruh proses perbaikan telah <strong>diselesaikan</strong>, dan kondisi infrastruktur di lokasi tersebut telah ditangani sesuai laporan yang masuk.
+              </p>
+            </div>
+          </motion.div>
         </div>
-      </div>
+      </motion.div>
+
 
       <AlertDialog open={showSuccessDialog} onOpenChange={setShowSuccessDialog}>
         <AlertDialogContent>
