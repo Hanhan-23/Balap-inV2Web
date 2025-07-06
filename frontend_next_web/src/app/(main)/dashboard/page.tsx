@@ -122,7 +122,7 @@ const SingleUserPage = () => {
 
 
         {/* Section Analisis dan Top 3 Rekomendasi */}
-        <div className="flex flex-col gap-4 md:col-span-2">
+        <div className="flex flex-col gap-3 md:col-span-2">
           {/* Layout Analisis Rekomendasi */}
           <div className="grid grid-cols-2  lg:grid-cols-4 gap-2">
             {/* Analisis 1 */}
