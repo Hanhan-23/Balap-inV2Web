@@ -17,13 +17,30 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { AlertDialog, AlertDialogContent, AlertDialogHeader, AlertDialogTitle, AlertDialogFooter } from "@/components/ui/alert-dialog";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
 import { cardDetailRekomendasi } from "@/types/data-rekomendasi";
 import MapComponentRekomendasi from "@/components/data_rekomendasi/Map";
 import StatusBadge from "@/components/data_rekomendasi/status-badge";
 import { motion } from "framer-motion";
-import { MapPin, Wrench, CheckCircle } from "lucide-react";
+import { MapPin, Wrench, CheckCircle, Calendar } from "lucide-react";
 
 type StatusRekom = "belum_valid" | "valid" | "proses" | "selesai";
+
+interface LaporanDetail {
+  id: string;
+  judul: string;
+  jenis: string;
+  deskripsi: string;
+  gambar: string[];
+  status: string;
+  tgl_lapor: string;
+  peta: {
+    alamat: string;
+    jalan: string;
+    latitude: number;
+    longitude: number;
+  };
+}
 
 export default function RecommendationDetail() {
   const router = useRouter();
@@ -34,6 +51,8 @@ export default function RecommendationDetail() {
   const [status, setStatus] = useState<StatusRekom>("belum_valid");
   const [loading, setLoading] = useState(true);
   const [showSuccessDialog, setShowSuccessDialog] = useState(false);
+  const [selectedLaporan, setSelectedLaporan] = useState<LaporanDetail | null>(null);
+  const [showLaporanDetail, setShowLaporanDetail] = useState(false);
 
   useEffect(() => {
     setLoading(true);
@@ -63,6 +82,20 @@ export default function RecommendationDetail() {
     }
   };
 
+  const openLaporanDetail = (laporan: any) => {
+    setSelectedLaporan({
+      id: laporan.id,
+      judul: laporan.judul,
+      jenis: laporan.jenis,
+      deskripsi: laporan.deskripsi,
+      gambar: Array.isArray(laporan.gambar) ? laporan.gambar : [],
+      status: laporan.status,
+      tgl_lapor: laporan.tgl_lapor,
+      peta: laporan.peta
+    });
+    setShowLaporanDetail(true);
+  };
+
   if (loading || !recommendation) {
     return (
       <div className="p-8 text-center dark:text-gray-200">
@@ -74,6 +107,14 @@ export default function RecommendationDetail() {
   function StatusUrgentBadge({ value }: { value: string }) {
     return <StatusBadge type="urgent" value={value} />;
   }
+
+  // Mengumpulkan semua gambar dari semua laporan
+  const allImages = recommendation.laporan.flatMap(laporan => 
+    Array.isArray(laporan.gambar) ? laporan.gambar : []
+  );
+
+  // Menggunakan laporan pertama untuk data utama (judul, jenis, alamat)
+  const firstReport = recommendation.laporan[0];
 
   return (
     <div className="mb-2">
@@ -87,15 +128,15 @@ export default function RecommendationDetail() {
         Kembali
       </Button>
 
-      <div className="bg-white shadow-xl dark:shadow-[0_4px_10px_rgba(255,255,255,0.2)] mt-2 dark:bg-stone-950 rounded-lg border dark:border-gray-700 p-6 mb-8">
+      <div className="bg-white capitalize shadow-xl dark:shadow-[0_4px_10px_rgba(255,255,255,0.2)] mt-2 dark:bg-stone-950 rounded-lg border dark:border-gray-700 p-6 mb-8">
         <h1 className="text-2xl font-bold mb-4 dark:text-white">
-          {recommendation.laporan.judul}
+          {firstReport.judul}
         </h1>
 
         <div className="flex items-center gap-2 mb-4">
           <span className="font-medium dark:text-gray-200">Jenis:</span>
           <span className="text-sm px-2 py-1 rounded-md bg-gray-100 dark:bg-gray-700 dark:text-gray-200">
-            {recommendation.laporan.jenis}
+            {firstReport.jenis}
           </span>
           <span className="font-medium dark:text-gray-200">Jumlah Laporan :</span>
           <span className="dark:text-gray-300">{recommendation.jumlah_laporan}</span>
@@ -103,7 +144,7 @@ export default function RecommendationDetail() {
 
         <p className="mb-2 text-gray-700 dark:text-gray-300">
           <span className="font-medium">Lokasi:</span>{" "}
-          {recommendation.laporan.peta.alamat}
+          {firstReport.peta.alamat}
         </p>
 
         <div className="flex flex-wrap items-center gap-6 mb-6">
@@ -143,22 +184,55 @@ export default function RecommendationDetail() {
           </div>
         </div>
 
+        {/* Daftar Laporan
+        <h3 className="font-medium mb-2 dark:text-gray-100">Daftar Laporan</h3>
+        <div className="space-y-2 mb-4">
+          {recommendation.laporan.map((laporan, index) => (
+            <div 
+              key={laporan.id} 
+              className="border rounded-lg p-3 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-800 cursor-pointer transition-colors"
+              onClick={() => openLaporanDetail(laporan)}
+            >
+              <div className="flex justify-between items-center">
+                <h4 className="font-medium dark:text-gray-200">{index + 1}. {laporan.judul}</h4>
+                <span className="text-xs px-2 py-1 rounded-md bg-gray-100 dark:bg-gray-700 dark:text-gray-200">
+                  {laporan.jenis}
+                </span>
+              </div>
+              <p className="text-sm text-gray-600 dark:text-gray-400 mt-1 line-clamp-2">
+                {laporan.deskripsi}
+              </p>
+            </div>
+          ))}
+        </div> */}
+
         {/* Dokumentasi Foto */}
         <h3 className="font-medium mb-2 dark:text-gray-100">Dokumentasi Laporan:</h3>
         <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
-          {Array.isArray(recommendation.laporan.gambar) && recommendation.laporan.gambar.length > 0 ? (
-            recommendation.laporan.gambar.map((url: string, idx: number) => (
-              <div key={idx} className="rounded-lg overflow-hidden shadow-md">
-                <div className="relative aspect-square w-full h-32">
+          {allImages.length > 0 ? (
+            allImages.map((url: string, idx: number) => (
+              <div 
+                key={idx} 
+                className="rounded-lg overflow-hidden shadow-md cursor-pointer hover:shadow-lg transition-shadow"
+                onClick={() => {
+                  // Cari laporan yang memiliki gambar ini
+                  const relatedLaporan = recommendation.laporan.find(l => 
+                    Array.isArray(l.gambar) && l.gambar.includes(url)
+                  );
+                  if (relatedLaporan) openLaporanDetail(relatedLaporan);
+                }}
+              >
+                <div className="relative aspect-square w-full h-36">
                   <Image
                     src={url}
-                    alt={recommendation.laporan.judul}
+                    alt={`Dokumentasi laporan ${idx + 1}`}
                     fill
                     className="object-cover"
+                    sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
                   />
                 </div>
                 <div className="p-2 capitalize bg-gray-50 dark:bg-gray-700 text-center text-xs text-gray-600 dark:text-gray-300">
-                  {recommendation.laporan.judul}
+                  Laporan {idx + 1}
                 </div>
               </div>
             ))
@@ -177,7 +251,7 @@ export default function RecommendationDetail() {
       </div>
 
       {/* Rencana Tindakan */}
-            <motion.div
+      <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.6 }}
@@ -231,11 +305,66 @@ export default function RecommendationDetail() {
         </div>
       </motion.div>
 
+      {/* Modal Detail Laporan */}
+      <Dialog open={showLaporanDetail} onOpenChange={setShowLaporanDetail}>
+        <DialogContent className="max-w-2xl">
+          <DialogHeader>
+            <DialogTitle className="text-xl">{selectedLaporan?.judul}</DialogTitle>
+            <DialogDescription className="flex items-center gap-2">
+              <span className="text-sm px-2 py-1 rounded-md bg-gray-100 dark:bg-gray-700 dark:text-gray-200">
+                {selectedLaporan?.jenis}
+              </span>
+              <span className="flex items-center text-sm text-gray-600 dark:text-gray-400">
+                <Calendar className="h-4 w-4 mr-1" />
+                {selectedLaporan?.tgl_lapor ? new Date(selectedLaporan.tgl_lapor).toLocaleDateString() : '-'}
+              </span>
+            </DialogDescription>
+          </DialogHeader>
+
+          <div className="space-y-4">  
+            <div className="flex items-start gap-2">
+              <MapPin className="h-4 w-4 mt-1 text-gray-500" />
+              <div>
+                <p className="font-medium text-gray-700 dark:text-gray-300">Lokasi:</p>
+                <p className="text-sm text-gray-600 dark:text-gray-400">
+                  {selectedLaporan?.peta.alamat || 'Tidak ada alamat'}
+                </p>
+              </div>
+            </div>
+
+            <div>
+              <p className="font-medium text-gray-700 dark:text-gray-300 mb-2">Deskripsi:</p>
+              <p className="text-sm text-gray-600 dark:text-gray-400">
+                {selectedLaporan?.deskripsi || 'Tidak ada deskripsi'}
+              </p>
+            </div>
+
+            {selectedLaporan?.gambar && selectedLaporan.gambar.length > 0 && (
+              <div>
+                <p className="font-medium text-gray-700 dark:text-gray-300 mb-2">Dokumentasi:</p>
+                <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
+                  {selectedLaporan.gambar.map((url, idx) => (
+                    <div key={idx} className="relative aspect-square rounded-md overflow-hidden">
+                      <Image
+                        src={url}
+                        alt={`Dokumentasi ${idx + 1}`}
+                        fill
+                        className="object-cover"
+                        sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                      />
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+          </div>
+        </DialogContent>
+      </Dialog>
 
       <AlertDialog open={showSuccessDialog} onOpenChange={setShowSuccessDialog}>
         <AlertDialogContent>
           <AlertDialogHeader>
-            <AlertDialogTitle>Status berhasil diubah menjadi {recommendation.status_rekom}! </AlertDialogTitle>
+            <AlertDialogTitle>Status berhasil diubah menjadi {status}! </AlertDialogTitle>
           </AlertDialogHeader>
           <AlertDialogFooter>
             <Button onClick={() => setShowSuccessDialog(false)}>Tutup</Button>

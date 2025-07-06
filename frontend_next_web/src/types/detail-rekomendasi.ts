@@ -27,3 +27,18 @@ export interface detailrekomendasi {
   };
 }
 }
+export interface LaporanDetail {
+  id: string;
+  judul: string;
+  jenis: string;
+  deskripsi: string;
+  gambar: string[];
+  status: string;
+  tgl_lapor: string;
+  peta: {
+    alamat: string;
+    jalan: string;
+    latitude: number;
+    longitude: number;
+  };
+}

@@ -204,8 +204,11 @@ const SingleUserPage = () => {
 
       {/* Map */}
       <div className="bg-white dark:bg-neutral-900 border dark:border-gray-800 rounded-xl shadow-xl dark:shadow-[0_4px_10px_rgba(255,255,255,0.2)] p-4">
-        <div className="w-full h-[550px] md:h-[450px] ">
-          <h3 className="text-lg font-semibold text-gray-800 dark:text-gray-200 mb-2">Peta Laporan Infrastruktur Jalan Batam</h3>
+        <div className="w-full h-[300px] sm:h-[350px] md:h-[400px] lg:h-[450px] overflow-hidden">
+        {/* <div className="w-full aspect-[4/3] max-h-[400px] sm:max-h-[500px] overflow-hidden"> */}
+          <h3 className="text-lg font-semibold text-gray-800 dark:text-gray-200 mb-2">
+            Peta Laporan Infrastruktur Jalan Batam
+          </h3>
           <div>
             <MapComponent markersBeranda={petaBeranda} />
           </div>

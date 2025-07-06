@@ -1,3 +1,4 @@
+// types/data-rekomendasi.ts
 export type StatusRekom = "belum_valid" | "valid" | "proses" | "selesai";
 
 export interface rekomendasi {
@@ -25,7 +26,7 @@ export interface cardDetailRekomendasi {
     judul: string;
     jenis: string;
     deskripsi: string;
-    gambar: string;
+    gambar: string[];
     persentase: number;
     cuaca: string;
     status: string;
@@ -38,5 +39,5 @@ export interface cardDetailRekomendasi {
       latitude: number;
       longitude: number;
     };
-  };
+  }[];
 }

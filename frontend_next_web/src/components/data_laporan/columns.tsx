@@ -96,7 +96,7 @@ export const getColumns = (
     id: "actions",
     cell: ({ row }) => {
       const item = row.original;
-      const label = item.status === "selesai" ? "Sembunyikan" : "Tampilkan";
+      const label = item.status === "Ditampilkan" ? "Sembunyikan" : "Tampilkan";
       return (
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
