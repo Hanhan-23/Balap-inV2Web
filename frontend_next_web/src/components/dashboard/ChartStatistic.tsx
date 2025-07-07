@@ -26,22 +26,22 @@ import {
 } from "@/components/ui/select"
 
 export const description = "An interactive area chart";
-  const chartConfig = {
-    desktop: {
-      label: "Jalan Rusak",
-      color: "#EF4444",
-    },
-    mobile: {
-      label: "Lampu Rusak",
-      color: "#3B82F6",
-    },
-    device: {
-      label: "Jembatan Rusak",
-      color: "#FACC15",
-    },
-  } satisfies ChartConfig;
+const chartConfig = {
+  desktop: {
+    label: "Jalan Rusak",
+    color: "#EF4444",
+  },
+  mobile: {
+    label: "Lampu Rusak",
+    color: "#3B82F6",
+  },
+  device: {
+    label: "Jembatan Rusak",
+    color: "#FACC15",
+  },
+} satisfies ChartConfig;
 
-  const CustomChartLegendContent = ({ colorMap }: { colorMap: Record<string, string> }) => (
+const CustomChartLegendContent = ({ colorMap }: { colorMap: Record<string, string> }) => (
   <div className="flex flex-wrap gap-x-6 gap-y-3 mt-4 text-sm font-medium">
     {Object.entries(colorMap).map(([key, color]) => (
       <div key={key} className="flex items-center gap-2 min-w-[140px]">
@@ -60,7 +60,7 @@ export const description = "An interactive area chart";
 interface ChartAreaInteractiveProps {
   itemStatistik: any;
   title: string;
-  titleSize?: "text-xl" | "text-2xl" | "text-3xl" | "text-4xl" | "text-5xl"; // opsi ukuran
+  titleSize?: "text-xl" | "text-2xl" | "text-3xl" | "text-4xl" | "text-5xl";
   showDescription?: boolean;
 }
 
@@ -79,16 +79,25 @@ export function ChartAreaInteractive({
 
   const [timeRange, setTimeRange] = React.useState("7d");
 
-  const filteredData = mappedData.filter((item) => {
+  // Urutkan data berdasarkan tanggal untuk memastikan data terbaru ada di akhir
+  const sortedData = [...mappedData].sort((a, b) => 
+    new Date(a.date).getTime() - new Date(b.date).getTime()
+  );
+
+  // Ambil tanggal terbaru dari data
+  const latestDate = sortedData.length > 0 
+    ? new Date(sortedData[sortedData.length - 1].date) 
+    : new Date();
+
+  const filteredData = sortedData.filter((item) => {
     const date = new Date(item.date);
-    const referenceDate = new Date("2024-06-01");
     let daysToSubtract = 90;
     if (timeRange === "30d") {
       daysToSubtract = 30;
     } else if (timeRange === "7d") {
       daysToSubtract = 7;
     }
-    const startDate = new Date(referenceDate);
+    const startDate = new Date(latestDate);
     startDate.setDate(startDate.getDate() - daysToSubtract);
     return date >= startDate;
   });
@@ -136,7 +145,6 @@ export function ChartAreaInteractive({
             '--color-device': chartConfig.device.color,
           } as React.CSSProperties}
         >
-
           <AreaChart data={filteredData} stackOffset="expand">
             <defs>
               <linearGradient id="fillDesktop" x1="0" y1="0" x2="0" y2="1">
@@ -210,34 +218,30 @@ export function ChartAreaInteractive({
               type="natural"
               fill="url(#fillMobile)"
               stroke="var(--color-mobile)"
-              // stackId="a"
             />
             <Area
               dataKey="desktop"
               type="natural"
               fill="url(#fillDesktop)"
               stroke="var(--color-desktop)"
-              // stackId="a"
             />
             <Area
               dataKey="device"
               type="natural"
               fill="url(#fillDevice)"
               stroke="var(--color-device)"
-              // stackId="a"
             />
-            {/* <ChartLegend content={<ChartLegendContent />} /> */}
             <ChartLegend
-                content={
-                  <CustomChartLegendContent
-                    colorMap={{
-                      desktop: chartConfig.desktop.color,
-                      mobile: chartConfig.mobile.color,
-                      device: chartConfig.device.color,
-                    }}
-                  />
-                }
-              />
+              content={
+                <CustomChartLegendContent
+                  colorMap={{
+                    desktop: chartConfig.desktop.color,
+                    mobile: chartConfig.mobile.color,
+                    device: chartConfig.device.color,
+                  }}
+                />
+              }
+            />
           </AreaChart>
         </ChartContainer>
       </CardContent>
