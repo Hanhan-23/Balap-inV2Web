@@ -1,21 +1,7 @@
-// components/data_rekomendasi/LaporanImageGallery.tsx
 import Image from "next/image";
+import { cardDetailRekomendasi } from "@/types/data-rekomendasi";
 
-interface Laporan {
-  id: string;
-  judul: string;
-  jenis: string;
-  deskripsi: string;
-  gambar: string[];
-  status: string;
-  tgl_lapor: string;
-  peta: {
-    alamat: string;
-    jalan: string;
-    latitude: number;
-    longitude: number;
-  };
-}
+type Laporan = cardDetailRekomendasi['laporan'][0];
 
 interface LaporanImageGalleryProps {
   images: string[];

@@ -30,7 +30,7 @@ interface DataTableProps<TData, TValue> {
   isLoading?: boolean;
 }
 
-export function DataTable<TData extends Record<string, any>, TValue>({
+export function DataTable<TData extends Record<string, unknown>, TValue>({
   columns,
   data,
   isLoading = false,

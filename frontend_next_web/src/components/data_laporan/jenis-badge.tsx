@@ -1,4 +1,4 @@
-// components/data_laporan/JenisBadge.tsx
+import { ReactElement } from "react"; // Tambahkan ini!
 import {
   RoadHorizonIcon,
   LightbulbIcon,
@@ -10,7 +10,7 @@ interface Props {
 }
 
 export default function JenisBadge({ jenis }: Props) {
-  const iconMap: Record<string, JSX.Element> = {
+  const iconMap: Record<string, ReactElement> = {
     jalan: (
       <RoadHorizonIcon
         size={14}

@@ -194,7 +194,7 @@ export function DataTable({ data, onStatusUpdated, isLoading = false }: DataTabl
 function ColumnToggle({
   table,
 }: {
-  table: ReturnType<typeof useReactTable<any>>;
+  table: ReturnType<typeof useReactTable<rekomendasi>>;
 }) {
   return (
     <DropdownMenu>

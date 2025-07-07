@@ -10,7 +10,6 @@ import {
   getDetailRekomendasi,
 } from "@/services/datarekomendasiservices";
 import MapComponentRekomendasi from "@/components/data_rekomendasi/Map";
-import StatusBadge from "@/components/data_rekomendasi/status-badge";
 
 import StatusRekomendasi from "@/components/data_rekomendasi/detail-rekomendasi/StatusRekomendasi";
 import LaporanImageGallery from "@/components/data_rekomendasi/detail-rekomendasi/LaporanImageGallery";
@@ -18,6 +17,7 @@ import RencanaTindakan from "@/components/data_rekomendasi/detail-rekomendasi/Re
 import LaporanDetailModal from "@/components/data_rekomendasi/detail-rekomendasi/LaporanDetailModal";
 import StatusChangeSuccessDialog from "@/components/data_rekomendasi/detail-rekomendasi/StatusChangeDialog";
 import StatusUrgentBadge from "@/components/data_rekomendasi/detail-rekomendasi/StatusUrgentBadge";
+import { cardDetailRekomendasi } from "@/types/data-rekomendasi";
 
 type StatusRekom = "belum_valid" | "valid" | "proses" | "selesai";
 
@@ -42,11 +42,15 @@ export default function RecommendationDetail() {
   const params = useParams();
   const id = params.id as string;
 
-  const [recommendation, setRecommendation] = useState<any>();
+  const [recommendation, setRecommendation] = useState<
+    cardDetailRekomendasi | undefined
+  >();
   const [status, setStatus] = useState<StatusRekom>("belum_valid");
   const [loading, setLoading] = useState(true);
   const [showSuccessDialog, setShowSuccessDialog] = useState(false);
-  const [selectedLaporan, setSelectedLaporan] = useState<LaporanDetail | null>(null);
+  const [selectedLaporan, setSelectedLaporan] = useState<LaporanDetail | null>(
+    null
+  );
   const [showLaporanDetail, setShowLaporanDetail] = useState(false);
 
   useEffect(() => {
@@ -77,17 +81,8 @@ export default function RecommendationDetail() {
     }
   };
 
-  const openLaporanDetail = (laporan: any) => {
-    setSelectedLaporan({
-      id: laporan.id,
-      judul: laporan.judul,
-      jenis: laporan.jenis,
-      deskripsi: laporan.deskripsi,
-      gambar: Array.isArray(laporan.gambar) ? laporan.gambar : [],
-      status: laporan.status,
-      tgl_lapor: laporan.tgl_lapor,
-      peta: laporan.peta
-    });
+  const openLaporanDetail = (laporan: LaporanDetail) => {
+    setSelectedLaporan(laporan);
     setShowLaporanDetail(true);
   };
 
@@ -99,12 +94,10 @@ export default function RecommendationDetail() {
     );
   }
 
-  // Mengumpulkan semua gambar dari semua laporan
-  const allImages = recommendation.laporan.flatMap((laporan: any) => 
+  const allImages = recommendation?.laporan.flatMap((laporan: LaporanDetail) =>
     Array.isArray(laporan.gambar) ? laporan.gambar : []
   );
 
-  // Menggunakan laporan pertama untuk data utama (judul, jenis, alamat)
   const firstReport = recommendation.laporan[0];
 
   return (
@@ -129,32 +122,48 @@ export default function RecommendationDetail() {
           <span className="text-sm px-2 py-1 rounded-md bg-gray-100 dark:bg-gray-700 dark:text-gray-200">
             {firstReport.jenis}
           </span>
-          <span className="font-medium dark:text-gray-200">Jumlah Laporan :</span>
-          <span className="dark:text-gray-300">{recommendation.jumlah_laporan}</span>
+          <span className="font-medium dark:text-gray-200">
+            Jumlah Laporan :
+          </span>
+          <span className="dark:text-gray-300">
+            {recommendation.jumlah_laporan}
+          </span>
         </div>
 
         <p className="mb-2 text-gray-700 dark:text-gray-300">
-          <span className="font-medium">Lokasi:</span>{" "}
-          {firstReport.peta.alamat}
+          <span className="font-medium">Lokasi:</span> {firstReport.peta.alamat}
         </p>
 
         <div className="flex flex-wrap items-center gap-6 mb-6">
           <div className="flex items-center gap-2">
-            <span className="font-medium dark:text-gray-200">Tingkat Urgensi:</span>
+            <span className="font-medium dark:text-gray-200">
+              Tingkat Urgensi:
+            </span>
             <span className="dark:text-gray-300">
               {(Number(recommendation.tingkat_urgent) * 100).toFixed(2)}%
             </span>
             <StatusUrgentBadge value={recommendation.status_urgent} />
           </div>
-          <StatusRekomendasi status={status} onChangeStatus={handleChangeStatus} />
+          <StatusRekomendasi
+            status={status}
+            onChangeStatus={handleChangeStatus}
+          />
         </div>
 
         {/* Dokumentasi Foto */}
-        <h3 className="font-medium mb-2 dark:text-gray-100">Dokumentasi Laporan:</h3>
-        <LaporanImageGallery images={allImages} laporan={recommendation.laporan} onClickLaporan={openLaporanDetail} />
+        <h3 className="font-medium mb-2 dark:text-gray-100">
+          Dokumentasi Laporan:
+        </h3>
+        <LaporanImageGallery
+          images={allImages}
+          laporan={recommendation.laporan}
+          onClickLaporan={openLaporanDetail}
+        />
 
         {/* Peta */}
-        <h3 className="font-medium mb-2 text-md mt-4 dark:text-gray-100">Peta Rekomendasi</h3>
+        <h3 className="font-medium mb-2 text-md mt-4 dark:text-gray-100">
+          Peta Rekomendasi
+        </h3>
         <div className="h-[300px] w-full rounded-lg overflow-hidden mb-6">
           <MapComponentRekomendasi markersBeranda={recommendation} />
         </div>

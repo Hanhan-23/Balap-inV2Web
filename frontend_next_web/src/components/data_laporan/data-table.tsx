@@ -241,7 +241,7 @@ export function DataTable({
 function ColumnToggle({
   table,
 }: {
-  table: ReturnType<typeof useReactTable<any>>;
+  table: ReturnType<typeof useReactTable<Laporan>>;
 }) {
   return (
     <DropdownMenu>
