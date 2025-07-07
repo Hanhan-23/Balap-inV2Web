@@ -1,4 +1,3 @@
-// app/(dashboard)/laporan/page.tsx
 "use client";
 
 import { useEffect, useState } from "react";
@@ -17,6 +16,7 @@ const LaporanPage = () => {
         setData(result);
       } catch (error) {
         console.error("Gagal mengambil data laporan:", error);
+        setData([]);
       } finally {
         setIsLoading(false);
       }
@@ -34,12 +34,12 @@ const LaporanPage = () => {
   };
 
   return (
-    <div className="p-4">
-      {isLoading ? (
-        <p className="text-center">Memuat data laporan...</p>
-      ) : (
-        <DataTable data={data} onStatusUpdated={handleStatusUpdate} />
-      )}
+    <div className="container mx-auto py-8">
+      <DataTable
+        data={data}
+        onStatusUpdated={handleStatusUpdate}
+        isLoading={isLoading}
+      />
     </div>
   );
 };

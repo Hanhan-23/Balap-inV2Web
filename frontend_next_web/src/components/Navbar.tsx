@@ -1,7 +1,9 @@
 "use client";
 
-import { LogOut, Moon, Sun, User } from "lucide-react";
+import React, { useRef, useEffect, useState } from "react";
+import { usePathname, useRouter } from "next/navigation";
 import Link from "next/link";
+import { LogOut, Moon, Sun, User, MoreHorizontal } from "lucide-react";
 import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar";
 import {
   DropdownMenu,
@@ -15,47 +17,153 @@ import { Button } from "./ui/button";
 import { useTheme } from "next-themes";
 import { SidebarTrigger, useSidebar } from "./ui/sidebar";
 import { Separator } from "./ui/separator";
-import { useRouter } from "next/navigation";
+import {
+  Breadcrumb,
+  BreadcrumbList,
+  BreadcrumbItem,
+  BreadcrumbLink,
+  BreadcrumbSeparator,
+  BreadcrumbPage,
+} from "@/components/ui/breadcrumb";
 
-const Navbar = () => {
+// Mapping segment path ke label yang ramah user
+const routeLabel: Record<string, string> = {
+  "": "Home",
+  "data-laporan": "Data Laporan",
+  "data-akun": "Data Akun",
+  "data-rekomendasi": "Data Rekomendasi",
+  profile: "Profil",
+  // Tambahkan mapping lain sesuai kebutuhan
+};
+
+export default function Navbar() {
+  const pathname = usePathname();
+  const segments = pathname.split("/").filter(Boolean); // ex: ["data-rekomendasi", "123"]
   const { theme, setTheme } = useTheme();
   const { toggleSidebar } = useSidebar();
   const router = useRouter();
 
   // Handler untuk logout
   const handleLogout = () => {
-    // Hapus token dari localStorage
     localStorage.removeItem("access_token");
     localStorage.removeItem("refresh_token");
-    // Redirect ke halaman login
     router.replace("/login");
   };
+
+  // Breadcrumbs segments, always start with root ""
+  const breadcrumbSegments = ["", ...segments];
+
+  // Ref & State for responsive collapse
+  const containerRef = useRef<HTMLDivElement>(null);
+  const [collapsed, setCollapsed] = useState(false);
+
+  // Cek overflow (collapse breadcrumbs jika overflow-x)
+  useEffect(() => {
+    const handleResize = () => {
+      if (containerRef.current) {
+        setCollapsed(
+          containerRef.current.scrollWidth > containerRef.current.offsetWidth + 16 // 16 = padding guard
+        );
+      }
+    };
+    handleResize();
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, [pathname]);
+
+  // Dropdown untuk list semua segmen
+  const BreadcrumbDropdown = () => (
+    <DropdownMenu>
+      <DropdownMenuTrigger asChild>
+        <Button variant="ghost" size="sm" className="p-1 h-6 w-6 rounded-full">
+          <MoreHorizontal className="size-5" />
+          <span className="sr-only">Show breadcrumbs</span>
+        </Button>
+      </DropdownMenuTrigger>
+      <DropdownMenuContent align="start">
+        {breadcrumbSegments.map((seg, idx) => {
+          const url = "/" + breadcrumbSegments.slice(1, idx + 1).join("/");
+          const label =
+            routeLabel[seg] ||
+            seg
+              .replace(/-/g, " ")
+              .replace(/\b\w/g, (c) => c.toUpperCase());
+          return (
+            <DropdownMenuItem key={url}>
+              <Link href={url || "/"} className="block w-full">
+                {label}
+              </Link>
+            </DropdownMenuItem>
+          );
+        })}
+      </DropdownMenuContent>
+    </DropdownMenu>
+  );
+
   return (
- <nav className="px-4 h-16 flex items-center justify-between sticky top-0 bg-background z-10 shadow-md dark:shadow-[0_8px_8px_rgba(255,255,255,0.08)] transition-shadow">
+    <nav className="px-2 h-16 flex items-center justify-between sticky top-0 bg-background z-10 transition-shadow">
       {/* LEFT */}
-      <div className="flex items-center gap-4">
+      <div className="flex items-center gap-2 min-w-0 flex-1">
         <SidebarTrigger />
         <Separator
           orientation="vertical"
           className="mr-2 data-[orientation=vertical]:h-4"
         />
-        {/* <Breadcrumb>
-          <BreadcrumbList>
-            <BreadcrumbItem className="hidden md:block">
-              <BreadcrumbLink href="#">
-                Building Your Application
-              </BreadcrumbLink>
-            </BreadcrumbItem>
-            <BreadcrumbSeparator className="hidden md:block" />
-            <BreadcrumbItem>
-              <BreadcrumbPage>Data Fetching</BreadcrumbPage>
-            </BreadcrumbItem>
-          </BreadcrumbList>
-        </Breadcrumb> */}
+        {/* Breadcrumb */}
+        <div className="flex-1 min-w-0">
+          <div
+            ref={containerRef}
+            className="relative flex items-center min-w-0"
+            style={{ overflow: "hidden" }}
+          >
+            {collapsed ? (
+              <BreadcrumbDropdown />
+            ) : (
+              <Breadcrumb>
+                <BreadcrumbList className="flex min-w-0 overflow-hidden">
+                  {breadcrumbSegments.map((seg, idx) => {
+                    const url =
+                      "/" +
+                      breadcrumbSegments
+                        .slice(1, idx + 1)
+                        .filter(Boolean)
+                        .join("/");
+                    const isLast = idx === breadcrumbSegments.length - 1;
+                    const label =
+                      routeLabel[seg] ||
+                      seg
+                        .replace(/-/g, " ")
+                        .replace(/\b\w/g, (c) => c.toUpperCase());
+                    return (
+                      <React.Fragment key={url || "/"}>
+                        {idx > 0 && <BreadcrumbSeparator />}
+                        <BreadcrumbItem className="truncate max-w-[90px]">
+                          {isLast ? (
+                            <BreadcrumbPage className="truncate max-w-[90px] overflow-hidden whitespace-nowrap text-xs sm:text-sm">
+                              {label}
+                            </BreadcrumbPage>
+                          ) : (
+                            <BreadcrumbLink asChild>
+                              <Link
+                                href={url || "/"}
+                                className="truncate max-w-[90px] overflow-hidden whitespace-nowrap text-xs sm:text-sm"
+                              >
+                                {label}
+                              </Link>
+                            </BreadcrumbLink>
+                          )}
+                        </BreadcrumbItem>
+                      </React.Fragment>
+                    );
+                  })}
+                </BreadcrumbList>
+              </Breadcrumb>
+            )}
+          </div>
+        </div>
       </div>
-
       {/* RIGHT */}
-      <div className="flex items-center gap-4">
+      <div className="flex items-center gap-2">
         {/* THEME MENU */}
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
@@ -94,21 +202,17 @@ const Navbar = () => {
                 Profil
               </DropdownMenuItem>
             </Link>
-            <Link href="/login">
-              <DropdownMenuItem
-                variant="destructive"
-                onClick={handleLogout}
-                className="text-red-600 cursor-pointer"
-              >
-                <LogOut className="h-[1.2rem] w-[1.2rem] mr-2" />
-                Keluar
-              </DropdownMenuItem>
-            </Link>
+            <DropdownMenuItem
+              variant="destructive"
+              onClick={handleLogout}
+              className="text-red-600 cursor-pointer"
+            >
+              <LogOut className="h-[1.2rem] w-[1.2rem] mr-2" />
+              Keluar
+            </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
       </div>
     </nav>
   );
-};
-
-export default Navbar;
+}

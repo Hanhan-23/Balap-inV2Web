@@ -4,7 +4,6 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Textarea } from "@/components/ui/textarea";
 import { useState } from "react";
 import { Eye, EyeOff, CheckCircle, AlertTriangle } from "lucide-react";
 import { useRouter } from "next/navigation";
@@ -30,7 +29,6 @@ export function RegisterForm({
     nama_lengkap: "",
     no_pegawai: "",
     no_telp: "",
-    alamat: "",
     email: "",
     password: "",
     status: "belum_verif",
@@ -46,12 +44,10 @@ export function RegisterForm({
   // Validasi per step
   const validateStep = () => {
     const tempErr: { [key: string]: string } = {};
-    // let tempErr: { [key: string]: string } = {};
     if (step === 1) {
       if (!formDaftar.nama_lengkap) tempErr.nama_lengkap = "Nama wajib diisi";
       if (!formDaftar.no_pegawai) tempErr.no_pegawai = "ID Pegawai wajib diisi";
       if (!formDaftar.no_telp) tempErr.no_telp = "No. Telepon wajib diisi";
-      if (!formDaftar.alamat) tempErr.alamat = "Alamat wajib diisi";
     } else if (step === 2) {
       if (!formDaftar.email) tempErr.email = "Email wajib diisi";
       if (!formDaftar.password) tempErr.password = "Password wajib diisi";
@@ -61,7 +57,7 @@ export function RegisterForm({
   };
 
   const handleChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+    e: React.ChangeEvent<HTMLInputElement>
   ) => {
     setFormDaftar({
       ...formDaftar,
@@ -105,7 +101,10 @@ export function RegisterForm({
     } catch (error: any) {
       // Cek kemungkinan error dari backend
       const errors = error?.response?.data?.status;
-      if (errors === "failed" && error.response?.data?.message === "email_sudah_terdaftar") {
+      if (
+        errors === "failed" &&
+        error.response?.data?.message === "email_sudah_terdaftar"
+      ) {
         setDialogTitle("Pendaftaran Gagal");
         setDialogMessage("Email sudah terdaftar, silakan gunakan email lain atau login.");
         setDialogType("error");
@@ -207,23 +206,7 @@ export function RegisterForm({
                       </span>
                     )}
                   </div>
-                  <div className="grid gap-3">
-                    <Label htmlFor="address">Alamat</Label>
-                    <Textarea
-                      id="address"
-                      name="alamat"
-                      required
-                      placeholder="Masukkan alamat lengkap"
-                      value={formDaftar.alamat}
-                      onChange={handleChange}
-                      className="resize-y overflow-x-hidden break-all"
-                    />
-                    {errors.alamat && (
-                      <span className="text-xs text-red-500">
-                        {errors.alamat}
-                      </span>
-                    )}
-                  </div>
+                  {/* Field alamat DIHAPUS */}
                 </div>
               )}
 

@@ -23,25 +23,37 @@ import {
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "@/components/ui/select"
+} from "@/components/ui/select";
+import { ChartLineIcon } from "@phosphor-icons/react";
+
+interface StatistikItem {
+  date: string;
+  desktop: number;
+  mobile: number;
+  device: number;
+}
 
 export const description = "An interactive area chart";
 const chartConfig = {
   desktop: {
     label: "Jalan Rusak",
-    color: "#EF4444",
+    color: "#2563eb", // blue-600
   },
   mobile: {
     label: "Lampu Rusak",
-    color: "#3B82F6",
+    color: "#60A5FA", // blue-400 (soft blue)
   },
   device: {
     label: "Jembatan Rusak",
-    color: "#FACC15",
+    color: "#A5B4FC", // indigo-300
   },
-} satisfies ChartConfig;
+};
 
-const CustomChartLegendContent = ({ colorMap }: { colorMap: Record<string, string> }) => (
+const CustomChartLegendContent = ({
+  colorMap,
+}: {
+  colorMap: Record<string, string>;
+}) => (
   <div className="flex flex-wrap gap-x-6 gap-y-3 mt-4 text-sm font-medium">
     {Object.entries(colorMap).map(([key, color]) => (
       <div key={key} className="flex items-center gap-2 min-w-[140px]">
@@ -58,7 +70,7 @@ const CustomChartLegendContent = ({ colorMap }: { colorMap: Record<string, strin
 );
 
 interface ChartAreaInteractiveProps {
-  itemStatistik: any;
+  itemStatistik: StatistikItem[];
   title: string;
   titleSize?: "text-xl" | "text-2xl" | "text-3xl" | "text-4xl" | "text-5xl";
   showDescription?: boolean;
@@ -106,12 +118,22 @@ export function ChartAreaInteractive({
     <Card className="pt-0 rounded-xl">
       <CardHeader className="flex items-center gap-2 space-y-0 border-b py-5 sm:flex-row">
         <div className="grid flex-1 gap-1 max-w-sm">
-          <CardTitle className={`${titleSize} font-semibold mb-2`}>
-            {title}
+          <CardTitle className="flex items-center gap-2 mb-2">
+            <span className={`${titleSize} p-1 bg-blue-100 border-blue-300 border rounded-md dark:bg-blue-900 dark:border-blue-700`}>
+              <ChartLineIcon
+                weight="bold"
+                className="size-4 text-blue-600 dark:text-blue-300"
+              />
+            </span>
+            <h1 className="text-base sm:text-lg font-semibold flex items-center dark:text-white">
+              {title}
+            </h1>
           </CardTitle>
+
           {showDescription && (
             <CardDescription className="text-black text-[10px] md:text-xs lg:text-sm">
-              Memberikan gambaran komprehensif terkait intensitas dan persebaran laporan kerusakan jalan dari masyarakat.
+              Memberikan gambaran komprehensif terkait intensitas dan persebaran
+              laporan kerusakan jalan dari masyarakat.
             </CardDescription>
           )}
         </div>
@@ -139,11 +161,13 @@ export function ChartAreaInteractive({
         <ChartContainer
           config={chartConfig}
           className="aspect-auto h-[250px] w-full"
-          style={{
-            '--color-desktop': chartConfig.desktop.color,
-            '--color-mobile': chartConfig.mobile.color,
-            '--color-device': chartConfig.device.color,
-          } as React.CSSProperties}
+          style={
+            {
+              "--color-desktop": chartConfig.desktop.color,
+              "--color-mobile": chartConfig.mobile.color,
+              "--color-device": chartConfig.device.color,
+            } as React.CSSProperties
+          }
         >
           <AreaChart data={filteredData} stackOffset="expand">
             <defs>

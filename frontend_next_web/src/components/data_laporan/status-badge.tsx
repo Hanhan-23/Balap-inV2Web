@@ -21,7 +21,7 @@ export default function StatusBadge({ value }: Props) {
   return (
     <span
       className={cn(
-        "px-2 py-1 text-xs font-medium capitalize rounded-full inline-block transition-colors duration-200",
+        "px-2 py-1 text-xs capitalize rounded-full inline-block transition-colors duration-200",
         styleMap[value] ?? "bg-slate-100 text-slate-500 dark:bg-slate-700 dark:text-slate-300"
       )}
     >

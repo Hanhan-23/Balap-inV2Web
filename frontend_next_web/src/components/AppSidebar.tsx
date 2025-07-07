@@ -49,11 +49,14 @@ const AppSidebar = () => {
   const pathname = usePathname(); // Get current path
 
   return (
-    <Sidebar className="flex flex-col h-full bg-white dark:bg-[#0f172a] text-black dark:text-slate-200 shadow-md dark:shadow-[2px_0_8px_rgba(255,255,255,0.05)] transition-colors" collapsible="icon">
-    {/* <Sidebar className="flex flex-col h-full" collapsible="icon"> */}
+    <Sidebar
+      className="flex flex-col h-full bg-white dark:bg-[#0f172a] text-black dark:text-slate-200 shadow-md dark:shadow-[2px_0_8px_rgba(255,255,255,0.05)] transition-colors"
+      collapsible="icon"
+    >
+      {/* <Sidebar className="flex flex-col h-full" collapsible="icon"> */}
       {/* Header */}
       <SidebarHeader className="py-4">
-         <SidebarMenu>
+        <SidebarMenu>
           <SidebarMenuItem>
             <SidebarMenuButton
               size="lg"
@@ -69,7 +72,10 @@ const AppSidebar = () => {
                 />
               </div>
               <div className="flex-1 text-left text-sm leading-tight">
-                <Link href={"/dashboard"} className="truncate font-medium dark:text-white">
+                <Link
+                  href={"/dashboard"}
+                  className="truncate font-medium dark:text-white"
+                >
                   BALAP-IN
                 </Link>
               </div>
@@ -92,27 +98,13 @@ const AppSidebar = () => {
                       asChild
                       className={`transition-all ${
                         isActive
-                          ? "bg-blue-600 hover:bg-blue-600 active:bg-blue-700 text-white dark:bg-blue-900/40 dark:hover:bg-blue-900/60 rounded-full p-3"
+                          ? "bg-blue-600 text-white hover:text-white hover:bg-blue-600 active:bg-blue-700 active:text-white dark:bg-blue-900/40 dark:hover:bg-blue-900/60 rounded-full p-3"
                           : "hover:bg-slate-100 dark:hover:bg-slate-800 rounded-full"
                       }`}
                     >
                       <Link href={item.url}>
-                        <item.icon
-                          className={`text-[18px] ${
-                            isActive
-                              ? "text-white dark:text-blue-100"
-                              : "text-muted-foreground"
-                          }`}
-                        />
-                        <span
-                          className={`text-sm ${
-                            isActive
-                              ? "text-white dark:text-blue-100 font-medium"
-                              : "text-muted-foreground"
-                          }`}
-                        >
-                          {item.title}
-                        </span>
+                        <item.icon />
+                        <span>{item.title}</span>
                       </Link>
                     </SidebarMenuButton>
                     {item.title === "Inbox" && (

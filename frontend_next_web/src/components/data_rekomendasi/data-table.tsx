@@ -24,7 +24,7 @@ import { Button } from "@/components/ui/button";
 import {
   ColumnsIcon,
   CaretDownIcon,
-  MagnifyingGlassIcon,
+  MagnifyingGlassIcon
 } from "@phosphor-icons/react";
 import {
   DropdownMenu,
@@ -35,13 +35,15 @@ import {
 import { StatusRekom } from "@/types/data-rekomendasi";
 import { Input } from "@/components/ui/input";
 import DataRekomendasiFilterDropdown from "@/components/data_rekomendasi/filter-rekomendasi";
+import { LoaderSpinner } from "../ui/spinner";
 
 interface DataTableProps {
   data: rekomendasi[];
   onStatusUpdated: (id: string, newStatus: StatusRekom) => void;
+  isLoading?: boolean;
 }
 
-export function DataTable({ data, onStatusUpdated }: DataTableProps) {
+export function DataTable({ data, onStatusUpdated, isLoading = false }: DataTableProps) {
   const [jenis, setJenis] = useState<string | null>(null);
   const [tingkatUrgensi, setTingkatUrgensi] = useState<[number, number]>([1, 100]);
   const [statusUrgensi, setStatusUrgensi] = useState<string | null>(null);
@@ -58,12 +60,18 @@ export function DataTable({ data, onStatusUpdated }: DataTableProps) {
 
   const filteredData = useMemo(() => {
     return data.filter((item) => {
-      if (search && !item.laporan.judul.toLowerCase().includes(search.toLowerCase())) return false;
+      if (
+        search &&
+        !item.laporan.judul.toLowerCase().includes(search.toLowerCase())
+      )
+        return false;
       if (jenis && item.laporan.jenis !== jenis) return false;
-      const persen = typeof item.tingkat_urgent === "number"
-        ? item.tingkat_urgent * 100
-        : Number(item.tingkat_urgent);
-      if (persen < tingkatUrgensi[0] || persen > tingkatUrgensi[1]) return false;
+      const persen =
+        typeof item.tingkat_urgent === "number"
+          ? item.tingkat_urgent * 100
+          : Number(item.tingkat_urgent);
+      if (persen < tingkatUrgensi[0] || persen > tingkatUrgensi[1])
+        return false;
       if (statusUrgensi && item.status_urgent !== statusUrgensi) return false;
       if (statusRekom && item.status_rekom !== statusRekom) return false;
       return true;
@@ -117,38 +125,60 @@ export function DataTable({ data, onStatusUpdated }: DataTableProps) {
         </div>
       </div>
 
-      <div className="w-full rounded-md border border-slate-200 dark:border-slate-700 overflow-x-auto">
-        <Table className="min-w-full w-full">
-          <TableHeader>
+      <div className="rounded-md border border-slate-200 dark:border-slate-700 overflow-x-auto">
+        <Table>
+          <TableHeader className="bg-muted">
             {table.getHeaderGroups().map((headerGroup) => (
               <TableRow key={headerGroup.id}>
                 {headerGroup.headers.map((header) => (
-                  <TableHead
-                    className="bg-slate-300 text-slate-800 dark:bg-slate-800 dark:text-slate-100"
-                    key={header.id}
-                  >
+                  <TableHead key={header.id}>
                     {header.isPlaceholder
                       ? null
-                      : flexRender(header.column.columnDef.header, header.getContext())}
+                      : flexRender(
+                          header.column.columnDef.header,
+                          header.getContext()
+                        )}
                   </TableHead>
                 ))}
               </TableRow>
             ))}
           </TableHeader>
           <TableBody>
-            {table.getRowModel().rows.length ? (
+            {isLoading ? (
+              <TableRow>
+                <TableCell
+                  colSpan={columns.length}
+                  className="p-0"
+                  style={{ height: 200 }}
+                >
+                  <div className="flex flex-col items-center justify-center h-full w-full">
+                    <LoaderSpinner />
+                    <div className="text-muted-foreground mt-2">Memuat data...</div>
+                  </div>
+                </TableCell>
+              </TableRow>
+            ) : table.getRowModel().rows.length ? (
               table.getRowModel().rows.map((row) => (
-                <TableRow key={row.id} data-state={row.getIsSelected() && "selected"}>
+                <TableRow
+                  key={row.id}
+                  data-state={row.getIsSelected() && "selected"}
+                >
                   {row.getVisibleCells().map((cell) => (
                     <TableCell key={cell.id}>
-                      {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                      {flexRender(
+                        cell.column.columnDef.cell,
+                        cell.getContext()
+                      )}
                     </TableCell>
                   ))}
                 </TableRow>
               ))
             ) : (
               <TableRow>
-                <TableCell colSpan={columns.length} className="h-24 text-center">
+                <TableCell
+                  colSpan={columns.length}
+                  className="h-24 text-center"
+                >
                   Tidak ada hasil.
                 </TableCell>
               </TableRow>

@@ -22,15 +22,18 @@ import { useState, useMemo } from "react";
 import { MagnifyingGlassIcon } from "@phosphor-icons/react";
 import { Input } from "@/components/ui/input";
 import DataAkunFilterDropdown from "./filter-akun";
+import { LoaderSpinner } from "../ui/spinner";
 
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];
   data: TData[];
+  isLoading?: boolean;
 }
 
 export function DataTable<TData extends Record<string, any>, TValue>({
   columns,
   data,
+  isLoading = false,
 }: DataTableProps<TData, TValue>) {
   const [sorting, setSorting] = useState<SortingState>([]);
   const [rowSelection, setRowSelection] = useState({});
@@ -112,15 +115,12 @@ export function DataTable<TData extends Record<string, any>, TValue>({
       {/* Table */}
       <div className="rounded-md border overflow-x-auto border-slate-200 dark:border-slate-700">
         <Table>
-          <TableHeader>
+          <TableHeader className="bg-muted">
             {table.getHeaderGroups().map((headerGroup) => (
               <TableRow key={headerGroup.id}>
                 {headerGroup.headers.map((header) => {
                   return (
-                    <TableHead
-                      className="bg-slate-200 dark:bg-slate-800 text-slate-700 dark:text-slate-200"
-                      key={header.id}
-                    >
+                    <TableHead key={header.id}>
                       {header.isPlaceholder
                         ? null
                         : flexRender(
@@ -134,7 +134,16 @@ export function DataTable<TData extends Record<string, any>, TValue>({
             ))}
           </TableHeader>
           <TableBody>
-            {table.getRowModel().rows?.length ? (
+            {isLoading ? (
+              <TableRow>
+                <TableCell colSpan={columns.length} className="p-0" style={{ height: 200 }}>
+                  <div className="flex flex-col items-center justify-center h-full w-full">
+                    <LoaderSpinner />
+                    <div className="text-muted-foreground mt-2">Memuat data akun...</div>
+                  </div>
+                </TableCell>
+              </TableRow>
+            ) : table.getRowModel().rows?.length ? (
               table.getRowModel().rows.map((row) => (
                 <TableRow
                   key={row.id}

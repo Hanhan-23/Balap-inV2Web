@@ -7,9 +7,9 @@ interface Props {
 export default function StatusBadge({ value }: Props) {
   const styleMap: Record<Props["value"], string> = {
     verif:
-      "bg-green-100 text-green-700 border border-green-300 dark:bg-green-900/30 dark:text-green-200 dark:border-green-700",
+      "bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-200 dark:border-green-700",
     belum_verif:
-      "bg-red-100 text-red-700 border border-red-300 dark:bg-red-900/30 dark:text-red-200 dark:border-red-700",
+      "bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-200 dark:border-red-700",
   };
 
   return (

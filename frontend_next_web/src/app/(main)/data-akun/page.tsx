@@ -34,12 +34,12 @@ const AkunPage = () => {
   };
 
   return (
-    <div className="p-4">
-      {isLoading ? (
-        <p className="text-center">Memuat data akun...</p>
-      ) : (
-        <DataTable columns={columns(handleStatusUpdate)} data={data} />
-      )}
+    <div className="container mx-auto py-8">
+      <DataTable
+        columns={columns(handleStatusUpdate)}
+        data={data}
+        isLoading={isLoading}
+      />
     </div>
   );
 };

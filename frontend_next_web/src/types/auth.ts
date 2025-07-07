@@ -3,7 +3,6 @@ export interface daftar{
     no_pegawai: number;
     email: string;
     no_telp: string;
-    alamat: string;
     password: string;
     status: string;
 }

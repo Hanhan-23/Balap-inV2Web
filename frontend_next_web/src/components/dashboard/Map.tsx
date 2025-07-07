@@ -6,7 +6,11 @@ import { useState, useEffect } from "react";
 import { getPetaBeranda } from "@/services/berandaservices";
 import { useRouter } from "next/navigation";
 
-const MapComponent = ({ markersBeranda = [] }: { markersBeranda: petaBeranda[] }) => {
+const MapComponent = ({
+  markersBeranda = [],
+}: {
+  markersBeranda: petaBeranda[];
+}) => {
   const router = useRouter();
   const [markers, setMarkers] = useState<petaBeranda[]>(markersBeranda);
 
@@ -40,8 +44,8 @@ const MapComponent = ({ markersBeranda = [] }: { markersBeranda: petaBeranda[] }
 
   return (
     <div className="mb-4">
-      <div className="w-full h-[300px] sm:h-[350px] md:h-[400px]">
-        <APIProvider apiKey={process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY!}>
+      <APIProvider apiKey={process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY!}>
+        <div className="relative border-none overflow-hidden h-96 rounded-xl">
           <Map
             style={{ width: "100%", height: "100%" }}
             defaultCenter={batamCenter}
@@ -69,8 +73,8 @@ const MapComponent = ({ markersBeranda = [] }: { markersBeranda: petaBeranda[] }
                 />
               ))}
           </Map>
-        </APIProvider>
-      </div>
+        </div>
+      </APIProvider>
     </div>
   );
 };

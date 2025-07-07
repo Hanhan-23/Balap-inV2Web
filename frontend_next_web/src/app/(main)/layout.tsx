@@ -30,7 +30,7 @@ export default function RootLayout({
       <AppSidebar />
       <main className="w-full">
         <Navbar />
-        <div className="px-4 lg:px-6 py-4 md:py-6">{children}</div>
+        <div className="py-4 px-8 rounded-3xl">{children}</div>
       </main>
     </SidebarProvider>
   );

@@ -1,76 +1,93 @@
 "use client";
 
-import { TrendingUp } from "lucide-react";
-import { Pie, PieChart } from "recharts";
+import { Pie, PieChart, Cell } from "recharts";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { ChartContainer, ChartTooltip, ChartTooltipContent } from "@/components/ui/chart";
+import { TrendUpIcon } from "@phosphor-icons/react";
+import { useTheme } from "next-themes";
 
-import {
-  Card,
-  CardContent,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
-import {
-  ChartConfig,
-  ChartContainer,
-  ChartTooltip,
-  ChartTooltipContent,
-} from "@/components/ui/chart";
-
-// Tambahkan kembali type PieDataItem
+// Type
 export interface PieDataItem {
   browser: "JLT" | "RK" | "RT" | "RBV";
   visitors: number;
-  fill?: string;
 }
-
-// Optional: bisa dipakai untuk chartConfig typing
 type BrowserKey = "JLT" | "RK" | "RT" | "RBV";
 
-const chartConfig: ChartConfig & Record<BrowserKey, { label: string; color: string }> = {
-  visitors: {
-    label: "Visitors",
-  },
+// **Perbaiki deklarasi ini!**
+const chartConfig: Record<BrowserKey, { label: string; color: string; colorDark?: string }> & { visitors: { label: string } } = {
+  visitors: { label: "Visitors" },
   JLT: {
     label: "Jumlah Laporan Terkini",
-    color: "var(--chart-1)",
+    color: "#3B82F6",      // blue-500
+    colorDark: "#60A5FA",  // blue-400 (lebih cerah & harmonis di dark)
   },
   RK: {
     label: "Rekomendasi Terkini",
-    color: "var(--chart-2)",
+    color: "#60A5FA",      // blue-400
+    colorDark: "#93C5FD",  // blue-300
   },
   RT: {
     label: "Rekomendasi Tervalidasi",
-    color: "var(--chart-3)",
+    color: "#93C5FD",      // blue-300
+    colorDark: "#A5B4FC",  // indigo-300
   },
   RBV: {
     label: "Rekomendasi Butuh Validasi",
-    color: "var(--chart-4)",
+    color: "#DBEAFE",      // blue-100
+    colorDark: "#38BDF8",  // sky-400 (biru muda netral)
   },
 };
 
 export function AppPieChart({ data }: { data: PieDataItem[] }) {
+  const { resolvedTheme } = useTheme();
+  const isDark = resolvedTheme === "dark";
+
   return (
     <Card className="flex flex-col shadow-xl dark:shadow-[0_4px_10px_rgba(255,255,255,0.2)]">
       <CardHeader className="items-center pb-0">
         <CardTitle>
-          <h1 className="text-md font-medium mb-0 flex items-center gap-1 dark:text-white">
-            Ringkasan terkini data laporan masyarakat
-            <TrendingUp className="h-6 w-6 text-green-500" />
-          </h1>
+          <div className="flex items-center gap-2">
+            <div className="p-1 bg-blue-100 border-blue-300 border rounded-md dark:bg-blue-900 dark:border-blue-700">
+              <TrendUpIcon weight="bold" className="size-4 text-blue-600 dark:text-blue-300" />
+            </div>
+            <h1 className="text-base sm:text-lg font-semibold flex items-center dark:text-white">
+              Ringkasan terkini data laporan masyarakat
+            </h1>
+          </div>
         </CardTitle>
       </CardHeader>
-
       <CardContent className="flex-1 pb-0">
         <ChartContainer
           config={chartConfig}
-          className="[&_.recharts-pie-label-text]:fill-foreground mx-auto aspect-square max-h-[200px] pb-0"
+          className="[&_.recharts-pie-label-text]:fill-foreground mx-auto aspect-square pb-0"
         >
-          <PieChart>
+          <PieChart width={200} height={200}>
             <ChartTooltip content={<ChartTooltipContent hideLabel />} />
-            <Pie data={data} dataKey="visitors" label nameKey="browser" />
+            <Pie
+              data={data}
+              dataKey="visitors"
+              label
+              nameKey="browser"
+              outerRadius={90}
+              stroke="white"
+              strokeWidth={2}
+              cx="50%"
+              cy="50%"
+              isAnimationActive
+            >
+              {data.map((entry) => (
+                <Cell
+                  key={`cell-${entry.browser}`}
+                  fill={
+                    isDark
+                      ? chartConfig[entry.browser as BrowserKey].colorDark
+                      : chartConfig[entry.browser as BrowserKey].color
+                  }
+                />
+              ))}
+            </Pie>
           </PieChart>
         </ChartContainer>
-
         <div className="mt-3 grid grid-cols-2 gap-y-1 gap-x-4 justify-center">
           {data.map((item) => {
             const config = chartConfig[item.browser];
@@ -78,7 +95,9 @@ export function AppPieChart({ data }: { data: PieDataItem[] }) {
               <div key={item.browser} className="flex items-center gap-2">
                 <span
                   className="inline-block w-3 h-3 rounded-full"
-                  style={{ backgroundColor: config.color }}
+                  style={{
+                    backgroundColor: isDark ? config.colorDark : config.color,
+                  }}
                 ></span>
                 <span className="text-xs text-muted-foreground">
                   {config.label}

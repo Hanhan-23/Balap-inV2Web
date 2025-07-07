@@ -16,6 +16,7 @@ const RecommendedPage = () => {
       .then((res) => setData(res))
       .catch((err) => {
         console.error("Gagal mengambil data rekomendasi:", err);
+        setData([]);
       })
       .finally(() => setIsLoading(false));
   }, []);
@@ -29,13 +30,13 @@ const RecommendedPage = () => {
   };
 
   return (
-    <div className="p-4">
-      {isLoading ? (
-        <p className="text-center">Memuat data...</p>
-      ) : (
-        <DataTable data={data} onStatusUpdated={handleStatusUpdate} />
-      )}
-    </div>
+    <>
+      <DataTable
+        data={data}
+        onStatusUpdated={handleStatusUpdate}
+        isLoading={isLoading}
+      />
+    </>
   );
 };
 

@@ -36,10 +36,9 @@ export default function JenisBadge({ jenis }: Props) {
 
   return (
     <div
-      className="inline-flex items-center gap-1 px-3 py-1 rounded-full text-xs capitalize
+      className="inline-flex items-center gap-1 px-2 py-1 rounded-full text-xs capitalize
         border border-slate-300 dark:border-slate-600
-        text-muted-foreground dark:text-gray-200
-        bg-slate-100 dark:bg-slate-800/60"
+        text-muted-foreground dark:text-gray-200 dark:bg-slate-800/60"
     >
       {iconMap[jenis] || null}
       {jenis.replace(/_/g, " ")}

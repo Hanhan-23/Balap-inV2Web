@@ -37,15 +37,23 @@ import { Button } from "@/components/ui/button";
 import { getDetailLaporan } from "@/services/datalaporanservices";
 import { LaporanDetail } from "@/types/data-laporan";
 import DataLaporanFilterDropdown from "./filter-laporan";
+import { LoaderSpinner } from "../ui/spinner";
 
 interface DataTableProps {
   data: Laporan[];
   onStatusUpdated: (id: string, status: string) => void;
+  isLoading?: boolean;
 }
 
-export function DataTable({ data, onStatusUpdated }: DataTableProps) {
+export function DataTable({
+  data,
+  onStatusUpdated,
+  isLoading = false,
+}: DataTableProps) {
   const [jenis, setJenis] = useState<string | null>(null);
-  const [tingkatKerusakan, setTingkatKerusakan] = useState<[number, number]>([1, 100]);
+  const [tingkatKerusakan, setTingkatKerusakan] = useState<[number, number]>([
+    1, 100,
+  ]);
   const [status, setStatus] = useState<string | null>(null);
   const [search, setSearch] = useState("");
   const [sorting, setSorting] = useState<SortingState>([]);
@@ -71,10 +79,12 @@ export function DataTable({ data, onStatusUpdated }: DataTableProps) {
         return false;
       }
       if (jenis && item.jenis !== jenis) return false;
-      const persen = typeof item.persentase === "number"
-        ? item.persentase * 100
-        : Number(item.persentase);
-      if (persen < tingkatKerusakan[0] || persen > tingkatKerusakan[1]) return false;
+      const persen =
+        typeof item.persentase === "number"
+          ? item.persentase * 100
+          : Number(item.persentase);
+      if (persen < tingkatKerusakan[0] || persen > tingkatKerusakan[1])
+        return false;
       if (status && item.status !== status) return false;
       return true;
     });
@@ -148,35 +158,49 @@ export function DataTable({ data, onStatusUpdated }: DataTableProps) {
       {/* Table */}
       <div className="rounded-md border dark:border-gray-700 overflow-x-auto">
         <Table>
-          <TableHeader>
+          <TableHeader className="bg-muted">
             {table.getHeaderGroups().map((headerGroup) => (
               <TableRow key={headerGroup.id}>
                 {headerGroup.headers.map((header) => (
-                  <TableHead
-                    className="bg-slate-300 dark:bg-gray-800 dark:text-gray-100"
-                    key={header.id}
-                  >
+                  <TableHead key={header.id}>
                     {header.isPlaceholder
                       ? null
-                      : flexRender(header.column.columnDef.header, header.getContext())}
+                      : flexRender(
+                          header.column.columnDef.header,
+                          header.getContext()
+                        )}
                   </TableHead>
                 ))}
               </TableRow>
             ))}
           </TableHeader>
           <TableBody>
-            {table.getRowModel().rows.length ? (
-              table.getRowModel().rows.map((row) => (
-                <TableRow
-                  key={row.id}
-                  className="dark:hover:bg-gray-800/70"
+            {isLoading ? (
+              <TableRow>
+                <TableCell
+                  colSpan={columns.length}
+                  className="py-8 text-center"
                 >
+                  <div className="flex flex-col items-center justify-center h-full w-full">
+                    <LoaderSpinner />
+                    <div className="text-muted-foreground mt-2">
+                      Memuat data laporan...
+                    </div>
+                  </div>
+                </TableCell>
+              </TableRow>
+            ) : table.getRowModel().rows.length ? (
+              table.getRowModel().rows.map((row) => (
+                <TableRow key={row.id} className="dark:hover:bg-gray-800/70">
                   {row.getVisibleCells().map((cell) => (
                     <TableCell
                       key={cell.id}
                       className="dark:text-gray-200 dark:bg-gray-900/30"
                     >
-                      {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                      {flexRender(
+                        cell.column.columnDef.cell,
+                        cell.getContext()
+                      )}
                     </TableCell>
                   ))}
                 </TableRow>
@@ -228,7 +252,10 @@ function ColumnToggle({
           <CaretDownIcon className="ml-1 h-3 w-3" />
         </Button>
       </DropdownMenuTrigger>
-      <DropdownMenuContent align="end" className="w-56 dark:bg-gray-800 dark:text-gray-100">
+      <DropdownMenuContent
+        align="end"
+        className="w-56 dark:bg-gray-800 dark:text-gray-100"
+      >
         {table
           .getAllColumns()
           .filter((column) => column.getCanHide() && column.accessorFn)
