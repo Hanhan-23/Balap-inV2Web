@@ -3,8 +3,7 @@ from .models import Pemerintah
 from django.contrib.auth.hashers import make_password
 
 class PemerintahSerializer(serializers.Serializer):
-    id = serializers.CharField(read_only=True)  
-    alamat = serializers.CharField(required=True)
+    id = serializers.CharField(read_only=True)
     nama_lengkap = serializers.CharField(required=True)
     email = serializers.EmailField(required=True)
     no_pegawai = serializers.IntegerField(required=True)
@@ -20,7 +19,6 @@ class PemerintahSerializer(serializers.Serializer):
         return pemerintah
 
     def update(self, instance, validated_data):
-        instance.alamat = validated_data.get('alamat', instance.alamat)
         instance.nama_lengkap = validated_data.get('nama_lengkap', instance.nama_lengkap)
         instance.email = validated_data.get('email', instance.email)
         instance.no_pegawai = validated_data.get('no_pegawai', instance.no_pegawai)

@@ -15,7 +15,7 @@ import {
 } from "./ui/dropdown-menu";
 import { Button } from "./ui/button";
 import { useTheme } from "next-themes";
-import { SidebarTrigger, useSidebar } from "./ui/sidebar";
+import { SidebarTrigger } from "./ui/sidebar";
 import { Separator } from "./ui/separator";
 import {
   Breadcrumb,
@@ -38,9 +38,8 @@ const routeLabel: Record<string, string> = {
 
 export default function Navbar() {
   const pathname = usePathname();
-  const segments = pathname.split("/").filter(Boolean); // ex: ["data-rekomendasi", "123"]
-  const { theme, setTheme } = useTheme();
-  const { toggleSidebar } = useSidebar();
+  const segments = pathname.split("/").filter(Boolean);
+  const { setTheme } = useTheme();
   const router = useRouter();
 
   // Handler untuk logout
@@ -62,7 +61,7 @@ export default function Navbar() {
     const handleResize = () => {
       if (containerRef.current) {
         setCollapsed(
-          containerRef.current.scrollWidth > containerRef.current.offsetWidth + 16 // 16 = padding guard
+          containerRef.current.scrollWidth > containerRef.current.offsetWidth
         );
       }
     };
@@ -137,16 +136,16 @@ export default function Navbar() {
                     return (
                       <React.Fragment key={url || "/"}>
                         {idx > 0 && <BreadcrumbSeparator />}
-                        <BreadcrumbItem className="truncate max-w-[90px]">
+                        <BreadcrumbItem className="max-w-none">
                           {isLast ? (
-                            <BreadcrumbPage className="truncate max-w-[90px] overflow-hidden whitespace-nowrap text-xs sm:text-sm">
+                            <BreadcrumbPage className="text-xs sm:text-sm whitespace-nowrap">
                               {label}
                             </BreadcrumbPage>
                           ) : (
                             <BreadcrumbLink asChild>
                               <Link
                                 href={url || "/"}
-                                className="truncate max-w-[90px] overflow-hidden whitespace-nowrap text-xs sm:text-sm"
+                                className="text-xs sm:text-sm whitespace-nowrap"
                               >
                                 {label}
                               </Link>

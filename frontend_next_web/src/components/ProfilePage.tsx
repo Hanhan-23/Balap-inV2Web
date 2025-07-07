@@ -15,6 +15,22 @@ import {
 import { userProfile } from "@/types/user-profile";
 import { PencilSimpleIcon, XIcon } from "@phosphor-icons/react";
 
+interface UpdateProfileData {
+  nama_lengkap: string;
+  no_telp: string;
+  email: string;
+  old_password?: string;
+  new_password?: string;
+}
+
+interface ApiError {
+  response?: {
+    data?: {
+      message?: string;
+    };
+  };
+}
+
 const ProfilePage = () => {
   const [akun, setAkun] = useState<userProfile>();
   const [isEditing, setIsEditing] = useState(false);
@@ -61,7 +77,7 @@ const ProfilePage = () => {
 
     setLoading(true);
     try {
-      const updatedData: any = {
+      const updatedData: UpdateProfileData = {
         nama_lengkap: akun.nama_lengkap,
         no_telp: akun.no_telp,
         email: akun.email,
@@ -99,14 +115,15 @@ const ProfilePage = () => {
 
       const refreshed = await getAkunPemerintahMe(access_token);
       setAkun(refreshed);
-    } catch (err: any) {
+    } catch (error: unknown) {
+      const err = error as ApiError;
       setAlertType("error");
       setAlertMessage(
         err?.response?.data?.message ||
           "Gagal memperbarui profil. Periksa kembali data atau password."
       );
       setShowAlert(true);
-      console.error("Gagal update profile:", err);
+      console.error("Gagal update profile:", error);
     } finally {
       setLoading(false);
     }
@@ -194,17 +211,6 @@ const ProfilePage = () => {
                 className="rounded-lg border border-[#dbe3ea] text-sm px-4 py-3 bg-transparent"
               />
             </div>
-            {/* Alamat */}
-            {/* <div>
-              <Label className="text-sm font-normal mb-1 block">Alamat</Label>
-              <Input
-                name="alamat"
-                value={akun?.alamat || ""}
-                onChange={handleChange}
-                readOnly={!isEditing}
-                className="rounded-lg border border-[#dbe3ea] text-sm px-4 py-3 bg-transparent"
-              />
-            </div> */}
             {/* No Hp */}
             <div>
               <Label className="text-sm font-normal mb-1 block">No. Hp</Label>

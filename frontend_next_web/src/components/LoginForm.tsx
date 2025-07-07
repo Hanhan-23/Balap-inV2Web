@@ -19,6 +19,14 @@ import {
 } from "@/components/ui/dialog";
 import { CheckCircle, AlertTriangle } from "lucide-react";
 
+interface ApiError {
+  response?: {
+    data?: {
+      status?: string;
+    };
+  };
+}
+
 export function LoginForm({
   className,
   ...props
@@ -84,8 +92,9 @@ export function LoginForm({
           }, 1500);
         }
       }
-    } catch (error: any) {
-      const errors = error?.response?.data?.status;
+    } catch (error: unknown) {
+      const apiError = error as ApiError;
+      const errors = apiError?.response?.data?.status;
 
       if (errors === "password_salah") {
         setDialogTitle("Login Gagal");

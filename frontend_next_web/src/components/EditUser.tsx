@@ -127,17 +127,17 @@ const EditUser = () => {
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel>Role</FormLabel>
-                    <FormControl>
-                      <Select>
+                    <Select onValueChange={field.onChange} defaultValue={field.value}>
+                      <FormControl>
                         <SelectTrigger>
-                          <SelectValue placeholder="Role" />
+                          <SelectValue placeholder="Select a role" />
                         </SelectTrigger>
-                        <SelectContent>
-                          <SelectItem value="admin">Admin</SelectItem>
-                          <SelectItem value="user">User</SelectItem>
-                        </SelectContent>
-                      </Select>
-                    </FormControl>
+                      </FormControl>
+                      <SelectContent>
+                        <SelectItem value="admin">Admin</SelectItem>
+                        <SelectItem value="user">User</SelectItem>
+                      </SelectContent>
+                    </Select>
                     <FormDescription>
                       Only verified users can be admin.
                     </FormDescription>

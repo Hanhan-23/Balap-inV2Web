@@ -17,6 +17,24 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 
+interface ApiError {
+  response?: {
+    data?: {
+      status?: string;
+      message?: string;
+    };
+  };
+}
+
+interface RegisterFormData {
+  nama_lengkap: string;
+  no_pegawai: string;
+  no_telp: string;
+  email: string;
+  password: string;
+  status: string;
+}
+
 export function RegisterForm({
   className,
   ...props
@@ -25,7 +43,7 @@ export function RegisterForm({
 
   const [showPassword, setShowPassword] = useState(false);
   const [step, setStep] = useState(1);
-  const [formDaftar, setFormDaftar] = useState({
+  const [formDaftar, setFormDaftar] = useState<RegisterFormData>({
     nama_lengkap: "",
     no_pegawai: "",
     no_telp: "",
@@ -98,12 +116,13 @@ export function RegisterForm({
           router.push("/login");
         }, 1500);
       }
-    } catch (error: any) {
+    } catch (error: unknown) {
+      const err = error as ApiError;
       // Cek kemungkinan error dari backend
-      const errors = error?.response?.data?.status;
+      const errors = err?.response?.data?.status;
       if (
         errors === "failed" &&
-        error.response?.data?.message === "email_sudah_terdaftar"
+        err.response?.data?.message === "email_sudah_terdaftar"
       ) {
         setDialogTitle("Pendaftaran Gagal");
         setDialogMessage("Email sudah terdaftar, silakan gunakan email lain atau login.");

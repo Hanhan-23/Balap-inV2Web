@@ -1,11 +1,13 @@
 // types/data-rekomendasi.ts
 export type StatusRekom = "belum_valid" | "valid" | "proses" | "selesai";
+export type TingkatUrgent = "rendah" | "sedang" | "tinggi" | "sangat_tinggi" | string;
+// export type TingkatUrgent = "rendah" | "sedang" | "tinggi" | "sangat_tinggi";
 
 export interface rekomendasi {
   id: string;
   jumlah_laporan: number;
   status_urgent: string;
-  tingkat_urgent: any;
+  tingkat_urgent: TingkatUrgent;
   status_rekom: StatusRekom;
   laporan: {
     judul: string;
