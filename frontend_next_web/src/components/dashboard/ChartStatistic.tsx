@@ -37,15 +37,15 @@ export const description = "An interactive area chart";
 const chartConfig = {
   desktop: {
     label: "Jalan Rusak",
-    color: "#2563eb", // blue-600
+    color: "#5EEAD4", // teal-300
   },
   mobile: {
     label: "Lampu Rusak",
-    color: "#60A5FA", // blue-400 (soft blue)
+    color: "#D8B4FE", // purple-300
   },
   device: {
     label: "Jembatan Rusak",
-    color: "#A5B4FC", // indigo-300
+    color: "#93C5FD", // blue-300
   },
 };
 

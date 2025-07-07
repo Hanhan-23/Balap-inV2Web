@@ -14,27 +14,32 @@ export interface PieDataItem {
 type BrowserKey = "JLT" | "RK" | "RT" | "RBV";
 
 // **Perbaiki deklarasi ini!**
-const chartConfig: Record<BrowserKey, { label: string; color: string; colorDark?: string }> & { visitors: { label: string } } = {
+const chartConfig: Record<
+  BrowserKey,
+  { label: string; color: string; colorDark?: string }
+> & {
+  visitors: { label: string };
+} = {
   visitors: { label: "Visitors" },
   JLT: {
     label: "Jumlah Laporan Terkini",
-    color: "#3B82F6",      // blue-500
-    colorDark: "#60A5FA",  // blue-400 (lebih cerah & harmonis di dark)
+    color: "#D8B4FE",
+    colorDark: "#6B21A8",
   },
   RK: {
     label: "Rekomendasi Terkini",
-    color: "#60A5FA",      // blue-400
-    colorDark: "#93C5FD",  // blue-300
+    color: "#99F6E4",
+    colorDark: "#115E59",
   },
   RT: {
     label: "Rekomendasi Tervalidasi",
-    color: "#93C5FD",      // blue-300
-    colorDark: "#A5B4FC",  // indigo-300
+    color: "#93C5FD",
+    colorDark: "#1E40AF",
   },
   RBV: {
     label: "Rekomendasi Butuh Validasi",
-    color: "#DBEAFE",      // blue-100
-    colorDark: "#38BDF8",  // sky-400 (biru muda netral)
+    color: "#F0ABFC", 
+    colorDark: "#86198F",
   },
 };
 
