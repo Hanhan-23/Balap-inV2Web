@@ -26,7 +26,7 @@ const ActionsCell = ({
   onStatusUpdated,
 }: {
   item: rekomendasi;
-  onStatusUpdated: (id: string, status: StatusRekom) => void;
+  onStatusUpdated: (id: string, status: StatusRekom, result?: "success" | "error") => void;
 }) => {
   const router = useRouter();
   const statusList: StatusRekom[] = ["belum_valid", "valid", "proses", "selesai"];
@@ -34,10 +34,10 @@ const ActionsCell = ({
   const handleChangeStatus = async (status: StatusRekom) => {
     try {
       await updateStatusRekomendasi(item.id, { status_rekom: status });
-      onStatusUpdated(item.id, status);
+      onStatusUpdated(item.id, status, "success");
     } catch (err) {
       console.error(err);
-      alert("Gagal update status");
+      onStatusUpdated(item.id, item.status_rekom, "error");
     }
   };
 
@@ -77,7 +77,7 @@ const ActionsCell = ({
 };
 
 export const getColumns = (
-  onStatusUpdated: (id: string, status: StatusRekom) => void
+  onStatusUpdated: (id: string, status: StatusRekom, result?: "success" | "error") => void
 ): ColumnDef<rekomendasi>[] => [
   {
     accessorKey: "laporan.judul",

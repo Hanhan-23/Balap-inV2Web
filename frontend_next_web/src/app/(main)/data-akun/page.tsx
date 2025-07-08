@@ -36,9 +36,10 @@ const AkunPage = () => {
   return (
     <div className="container mx-auto py-8">
       <DataTable
-        columns={columns(handleStatusUpdate)}
+        columns={columns}
         data={data}
         isLoading={isLoading}
+        onStatusUpdated={handleStatusUpdate}
       />
     </div>
   );

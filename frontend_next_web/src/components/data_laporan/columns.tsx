@@ -20,7 +20,11 @@ import { updateLaporanStatus } from "@/lib/update-status";
 import { ColumnDef } from "@tanstack/react-table";
 
 export const getColumns = (
-  onStatusUpdated: (id: string, status: string) => void,
+  onStatusUpdated: (
+    id: string,
+    status: string,
+    result?: "success" | "error"
+  ) => void,
   openDrawerHandler: (id: string | null) => void
 ): ColumnDef<Laporan>[] => [
   {
@@ -69,11 +73,12 @@ export const getColumns = (
         onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
         className="!p-0"
       >
-        Kerusakan <ArrowUpDown className="ml-0 h-4 w-4" />
+        Kerusakan
+        <ArrowUpDown className="ml-0 h-4 w-4" />
       </Button>
     ),
     cell: ({ getValue }) => (
-      <div className="text-center">
+      <div className="text-start">
         {((getValue() as number) * 100).toFixed(0)}%
       </div>
     ),
@@ -95,7 +100,6 @@ export const getColumns = (
     id: "actions",
     cell: ({ row }) => {
       const item = row.original;
-      // Label akan selalu sesuai status terakhir (karena data di-update dari parent)
       const label = item.status === "selesai" ? "Sembunyikan" : "Tampilkan";
       return (
         <DropdownMenu>
@@ -107,7 +111,10 @@ export const getColumns = (
           <DropdownMenuContent align="end">
             <DropdownMenuLabel>Aksi</DropdownMenuLabel>
             <DropdownMenuSeparator />
-            <DropdownMenuItem asChild onClick={() => openDrawerHandler(item.id)}>
+            <DropdownMenuItem
+              asChild
+              onClick={() => openDrawerHandler(item.id)}
+            >
               <span>Detail</span>
             </DropdownMenuItem>
             <DropdownMenuSub>
@@ -115,11 +122,15 @@ export const getColumns = (
               <DropdownMenuSubContent>
                 <DropdownMenuItem
                   onClick={async () => {
-                    await updateLaporanStatus(
-                      item.id,
-                      item.status,
-                      onStatusUpdated
-                    );
+                    try {
+                      await updateLaporanStatus(
+                        item.id,
+                        item.status,
+                        (id, status) => onStatusUpdated(id, status, "success")
+                      );
+                    } catch {
+                      onStatusUpdated(item.id, item.status, "error");
+                    }
                   }}
                 >
                   {label}

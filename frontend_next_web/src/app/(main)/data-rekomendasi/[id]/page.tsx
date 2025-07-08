@@ -10,14 +10,15 @@ import {
   getDetailRekomendasi,
 } from "@/services/datarekomendasiservices";
 import MapComponentRekomendasi from "@/components/data_rekomendasi/Map";
-
 import StatusRekomendasi from "@/components/data_rekomendasi/detail-rekomendasi/StatusRekomendasi";
 import LaporanImageGallery from "@/components/data_rekomendasi/detail-rekomendasi/LaporanImageGallery";
 import RencanaTindakan from "@/components/data_rekomendasi/detail-rekomendasi/RencanaTindakan";
 import LaporanDetailModal from "@/components/data_rekomendasi/detail-rekomendasi/LaporanDetailModal";
-import StatusChangeSuccessDialog from "@/components/data_rekomendasi/detail-rekomendasi/StatusChangeDialog";
+// import StatusChangeSuccessDialog from "@/components/data_rekomendasi/detail-rekomendasi/StatusChangeDialog";
 import StatusUrgentBadge from "@/components/data_rekomendasi/detail-rekomendasi/StatusUrgentBadge";
 import { cardDetailRekomendasi } from "@/types/data-rekomendasi";
+import { Alert, AlertTitle, AlertDescription } from "@/components/ui/alert";
+import { CheckCircleIcon, XCircleIcon } from "@phosphor-icons/react";
 
 type StatusRekom = "belum_valid" | "valid" | "proses" | "selesai";
 
@@ -37,6 +38,12 @@ interface LaporanDetail {
   };
 }
 
+type ToastAlert = {
+  id: number;
+  type: "success" | "error";
+  message: string;
+};
+
 export default function RecommendationDetail() {
   const router = useRouter();
   const params = useParams();
@@ -47,11 +54,28 @@ export default function RecommendationDetail() {
   >();
   const [status, setStatus] = useState<StatusRekom>("belum_valid");
   const [loading, setLoading] = useState(true);
-  const [showSuccessDialog, setShowSuccessDialog] = useState(false);
+
+  // Notifikasi/alert state
+  const [alerts, setAlerts] = useState<ToastAlert[]>([]);
+  const [alertId, setAlertId] = useState(0);
+
+  // Detail modal laporan
   const [selectedLaporan, setSelectedLaporan] = useState<LaporanDetail | null>(
     null
   );
   const [showLaporanDetail, setShowLaporanDetail] = useState(false);
+
+  // --- ALERT HANDLER ---
+  const addAlert = (type: "success" | "error", message: string) => {
+    const id = alertId + 1;
+    setAlertId(id);
+    setAlerts((prev) => [...prev, { id, type, message }]);
+    setTimeout(() => removeAlert(id), 4000);
+  };
+
+  const removeAlert = (id: number) => {
+    setAlerts((prev) => prev.filter((a) => a.id !== id));
+  };
 
   useEffect(() => {
     setLoading(true);
@@ -75,9 +99,10 @@ export default function RecommendationDetail() {
       });
       setStatus(newStatus);
       setRecommendation({ ...recommendation, status_rekom: newStatus });
-      setShowSuccessDialog(true);
+      addAlert("success", "Status berhasil diubah.");
+      // setShowSuccessDialog(true); // Tidak perlu kalau sudah pakai toast
     } catch (err) {
-      alert(`Gagal mengubah status: ${err}`);
+      addAlert("error", `Gagal mengubah status: ${err}`);
     }
   };
 
@@ -178,11 +203,59 @@ export default function RecommendationDetail() {
         onOpenChange={setShowLaporanDetail}
       />
 
-      <StatusChangeSuccessDialog
-        open={showSuccessDialog}
-        onClose={() => setShowSuccessDialog(false)}
-        status={status}
-      />
+      {/* TOAST ALERT */}
+      {alerts.length > 0 && (
+        <div className="fixed bottom-6 right-6 z-50 max-w-xs">
+          <div className="group relative">
+            <Alert
+              variant={
+                alerts[alerts.length - 1].type === "error"
+                  ? "destructive"
+                  : "green"
+              }
+              className={`
+          shadow-lg pr-10
+          bg-white border border-neutral-200 text-neutral-800
+          dark:bg-neutral-900 dark:text-neutral-100 dark:border-neutral-700
+          transition-colors
+        `}
+            >
+              {alerts[alerts.length - 1].type === "success" ? (
+                <CheckCircleIcon className="h-5 w-5 text-green-500 dark:text-green-400" />
+              ) : (
+                <XCircleIcon className="h-5 w-5 text-red-500 dark:text-red-400" />
+              )}
+              <AlertTitle
+                className={
+                  alerts[alerts.length - 1].type === "success"
+                    ? "text-green-600 dark:text-green-400"
+                    : "text-red-600 dark:text-red-400"
+                }
+              >
+                {alerts[alerts.length - 1].type === "success"
+                  ? "Berhasil"
+                  : "Gagal"}
+              </AlertTitle>
+              <AlertDescription>
+                {alerts[alerts.length - 1].message}
+                {alerts.length > 1 && (
+                  <span className="ml-2 text-xs font-semibold text-red-500 dark:text-red-400">
+                    • Menampilkan {alerts.length} alert
+                  </span>
+                )}
+              </AlertDescription>
+              <button
+                onClick={() => removeAlert(alerts[alerts.length - 1].id)}
+                className="absolute top-1.5 right-2 text-gray-400 hover:text-red-500 dark:text-gray-500 dark:hover:text-red-400 opacity-0 group-hover:opacity-100 transition"
+                style={{ pointerEvents: "auto" }}
+                aria-label="Tutup notifikasi"
+              >
+                ×
+              </button>
+            </Alert>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

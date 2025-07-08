@@ -25,6 +25,8 @@ import {
   MagnifyingGlassIcon,
   ColumnsIcon,
   CaretDownIcon,
+  CheckCircleIcon,
+  XCircleIcon,
 } from "@phosphor-icons/react";
 import { Input } from "@/components/ui/input";
 import {
@@ -38,6 +40,12 @@ import { getDetailLaporan } from "@/services/datalaporanservices";
 import { LaporanDetail } from "@/types/data-laporan";
 import DataLaporanFilterDropdown from "./filter-laporan";
 import { LoaderSpinner } from "../ui/spinner";
+import { Alert, AlertTitle, AlertDescription } from "@/components/ui/alert";
+type ToastAlert = {
+  id: number;
+  type: "success" | "error";
+  message: string;
+};
 
 interface DataTableProps {
   data: Laporan[];
@@ -59,6 +67,36 @@ export function DataTable({
   const [sorting, setSorting] = useState<SortingState>([]);
   const [openDrawerId, setOpenDrawerId] = useState<string | null>(null);
   const [detailItem, setDetailItem] = useState<LaporanDetail | null>(null);
+
+  // Toast alert state (array, hanya tampilkan satu teratas)
+  const [alerts, setAlerts] = useState<ToastAlert[]>([]);
+  const [alertId, setAlertId] = useState(0);
+
+  // Fungsi untuk menambah alert baru
+  const addAlert = (type: "success" | "error", message: string) => {
+    const id = alertId + 1;
+    setAlertId(id);
+    setAlerts((prev) => [...prev, { id, type, message }]);
+    setTimeout(() => removeAlert(id), 4000);
+  };
+  // Fungsi hapus alert (by id)
+  const removeAlert = (id: number) => {
+    setAlerts((prev) => prev.filter((a) => a.id !== id));
+  };
+
+  // Handler status (support result)
+  const handleStatusUpdate = (
+    id: string,
+    newStatus: string,
+    result?: "success" | "error"
+  ) => {
+    onStatusUpdated(id, newStatus);
+    if (result === "success") {
+      addAlert("success", "Status berhasil diperbarui.");
+    } else {
+      addAlert("error", "Gagal memperbarui status.");
+    }
+  };
 
   const onReset = () => {
     setJenis(null);
@@ -109,7 +147,7 @@ export function DataTable({
     }
   };
 
-  const columns = getColumns(onStatusUpdated, openDrawerHandler);
+  const columns = getColumns(handleStatusUpdate, openDrawerHandler);
 
   const table = useReactTable({
     data: filteredData,
@@ -231,8 +269,62 @@ export function DataTable({
               setDetailItem(null);
             }
           }}
-          onStatusUpdated={onStatusUpdated}
+          onStatusUpdated={handleStatusUpdate}
         />
+      )}
+
+      {/* ALERT TOAST */}
+      {alerts.length > 0 && (
+        <div className="fixed bottom-6 right-6 z-50 max-w-xs">
+          <div className="group relative">
+            <Alert
+              variant={
+                alerts[alerts.length - 1].type === "error"
+                  ? "destructive"
+                  : "green"
+              }
+              className={`
+          shadow-lg pr-10
+          bg-white border border-neutral-200 text-neutral-800
+          dark:bg-neutral-900 dark:text-neutral-100 dark:border-neutral-700
+          transition-colors
+        `}
+            >
+              {alerts[alerts.length - 1].type === "success" ? (
+                <CheckCircleIcon className="h-5 w-5 text-green-500 dark:text-green-400" />
+              ) : (
+                <XCircleIcon className="h-5 w-5 text-red-500 dark:text-red-400" />
+              )}
+              <AlertTitle
+                className={
+                  alerts[alerts.length - 1].type === "success"
+                    ? "text-green-600 dark:text-green-400"
+                    : "text-red-600 dark:text-red-400"
+                }
+              >
+                {alerts[alerts.length - 1].type === "success"
+                  ? "Berhasil"
+                  : "Gagal"}
+              </AlertTitle>
+              <AlertDescription>
+                {alerts[alerts.length - 1].message}
+                {alerts.length > 1 && (
+                  <span className="ml-2 text-xs font-semibold text-red-500 dark:text-red-400">
+                    • Menampilkan {alerts.length} alert
+                  </span>
+                )}
+              </AlertDescription>
+              <button
+                onClick={() => removeAlert(alerts[alerts.length - 1].id)}
+                className="absolute top-1.5 right-2 text-gray-400 hover:text-red-500 dark:text-gray-500 dark:hover:text-red-400 opacity-0 group-hover:opacity-100 transition"
+                style={{ pointerEvents: "auto" }}
+                aria-label="Tutup notifikasi"
+              >
+                ×
+              </button>
+            </Alert>
+          </div>
+        </div>
       )}
     </div>
   );

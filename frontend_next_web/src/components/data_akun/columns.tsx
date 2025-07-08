@@ -1,10 +1,16 @@
-// components/data_akun/columns.tsx
 "use client";
 
 import { DotsThreeIcon } from "@phosphor-icons/react";
 import { ColumnDef } from "@tanstack/react-table";
 import { Button } from "@/components/ui/button";
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 import { toggleStatusAkun } from "@/services/akunservices";
 import StatusBadge from "./status-badge";
 
@@ -18,7 +24,11 @@ export type Account = {
 };
 
 export const columns = (
-  onStatusUpdated: (id: string, status: Account["status"]) => void
+  onStatusUpdated: (
+    id: string,
+    status: Account["status"],
+    result?: "success" | "error"
+  ) => void
 ): ColumnDef<Account>[] => [
   {
     id: "no",
@@ -29,33 +39,40 @@ export const columns = (
   {
     accessorKey: "nama_lengkap",
     header: "Nama",
+    cell: ({ getValue }) => getValue() as string,
   },
   {
     accessorKey: "email",
     header: "Email",
+    cell: ({ getValue }) => getValue() as string,
   },
   {
     accessorKey: "no_telp",
     header: "Nomor HP",
+    cell: ({ getValue }) => getValue() as string,
   },
   {
     accessorKey: "tgl_pemerintah",
     header: "Join",
-     cell: ({ row }) => {
-    const rawDate = row.original.tgl_pemerintah;
-    const date = new Date(rawDate);
-    const formatted = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')} | ${String(date.getHours()).padStart(2, '0')}.${String(date.getMinutes()).padStart(2, '0')}`;
-    return <span>{formatted}</span>;
-  },
+    cell: ({ row }) => {
+      const rawDate = row.original.tgl_pemerintah;
+      const date = new Date(rawDate);
+      const formatted = `${date.getFullYear()}-${String(
+        date.getMonth() + 1
+      ).padStart(2, "0")}-${String(date.getDate()).padStart(2, "0")} | ${String(
+        date.getHours()
+      ).padStart(2, "0")}.${String(date.getMinutes()).padStart(2, "0")}`;
+      return <span>{formatted}</span>;
+    },
   },
   {
-  accessorKey: "status",
-  header: "Status",
-  cell: ({ row }) => {
-    const status = row.original.status;
-    return <StatusBadge value={status} />;
+    accessorKey: "status",
+    header: "Status",
+    cell: ({ row }) => {
+      const status = row.original.status;
+      return <StatusBadge value={status} />;
+    },
   },
-},
   {
     id: "aksi",
     header: "Aksi",
@@ -68,10 +85,10 @@ export const columns = (
       const handleToggleStatus = async () => {
         try {
           await toggleStatusAkun(account.id);
-          onStatusUpdated(account.id, nextStatus);
+          onStatusUpdated(account.id, nextStatus, "success");
         } catch (err) {
           console.error("Gagal mengubah status akun:", err);
-          alert("Gagal mengubah status akun.");
+          onStatusUpdated(account.id, account.status, "error");
         }
       };
 
@@ -91,8 +108,6 @@ export const columns = (
             </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
-
-        
       );
     },
   },

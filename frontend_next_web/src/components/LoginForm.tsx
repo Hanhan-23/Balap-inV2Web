@@ -191,7 +191,7 @@ export function LoginForm({
               alt="Image"
               width={100}
               height={100}
-              className="size-72 dark:brightness-[0.2] dark:grayscale"
+              className="size-72"
               priority
             />
           </div>
