@@ -59,16 +59,63 @@ export function RegisterForm({
   const [dialogMessage, setDialogMessage] = useState("");
   const [dialogType, setDialogType] = useState<"success" | "error">("success");
 
-  // Validasi per step
+  // Regex
+  const regexNama = /^[A-Za-zÀ-ÿ\s.]+$/; // hanya huruf, spasi, titik, accent
+  const regexIdPegawai = /^\d+$/;
+  const regexTelp = /^08\d{8,13}$/; // Mulai 08 dan panjang 10-15 digit
+  const regexEmail = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  const regexPassword = /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d\S]{8,50}$/; // min 8, max 50, huruf & angka, tanpa spasi
+
+  // Validasi per step & pola karakter
   const validateStep = () => {
     const tempErr: { [key: string]: string } = {};
     if (step === 1) {
-      if (!formDaftar.nama_lengkap) tempErr.nama_lengkap = "Nama wajib diisi";
-      if (!formDaftar.no_pegawai) tempErr.no_pegawai = "ID Pegawai wajib diisi";
-      if (!formDaftar.no_telp) tempErr.no_telp = "No. Telepon wajib diisi";
+      // NAMA LENGKAP
+      if (!formDaftar.nama_lengkap || formDaftar.nama_lengkap.length < 3) {
+        tempErr.nama_lengkap = "Nama minimal 3 karakter";
+      } else if (formDaftar.nama_lengkap.length > 50) {
+        tempErr.nama_lengkap = "Nama maksimal 50 karakter";
+      } else if (!regexNama.test(formDaftar.nama_lengkap)) {
+        tempErr.nama_lengkap = "Nama hanya boleh huruf, spasi, dan titik";
+      }
+      // ID PEGAWAI
+      if (!formDaftar.no_pegawai) {
+        tempErr.no_pegawai = "ID Pegawai wajib diisi";
+      } else if (
+        formDaftar.no_pegawai.length < 4 ||
+        formDaftar.no_pegawai.length > 18
+      ) {
+        tempErr.no_pegawai = "ID Pegawai harus 4-18 digit angka";
+      } else if (!regexIdPegawai.test(formDaftar.no_pegawai)) {
+        tempErr.no_pegawai = "ID Pegawai hanya boleh angka";
+      }
+      // NO TELP
+      if (!formDaftar.no_telp) {
+        tempErr.no_telp = "No. Telepon wajib diisi";
+      } else if (!regexTelp.test(formDaftar.no_telp)) {
+        tempErr.no_telp = "No. Telepon harus mulai 08 dan 10-15 digit angka";
+      }
     } else if (step === 2) {
-      if (!formDaftar.email) tempErr.email = "Email wajib diisi";
-      if (!formDaftar.password) tempErr.password = "Password wajib diisi";
+      // EMAIL
+      if (!formDaftar.email) {
+        tempErr.email = "Email wajib diisi";
+      } else if (formDaftar.email.length < 6 || formDaftar.email.length > 100) {
+        tempErr.email = "Email harus 6-100 karakter";
+      } else if (!regexEmail.test(formDaftar.email)) {
+        tempErr.email = "Format email tidak valid";
+      }
+      // PASSWORD
+      if (!formDaftar.password) {
+        tempErr.password = "Password wajib diisi";
+      } else if (
+        formDaftar.password.length < 8 ||
+        formDaftar.password.length > 50
+      ) {
+        tempErr.password = "Password harus 8-50 karakter";
+      } else if (!regexPassword.test(formDaftar.password)) {
+        tempErr.password =
+          "Password harus kombinasi huruf & angka, tanpa spasi";
+      }
     }
     setErrors(tempErr);
     return Object.keys(tempErr).length === 0;
@@ -77,9 +124,14 @@ export function RegisterForm({
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement>
   ) => {
+    // Hapus spasi depan-belakang dan limit angka pada ID Pegawai / Telp
+    let val = e.target.value.trimStart();
+    if (e.target.name === "no_pegawai" || e.target.name === "no_telp") {
+      val = val.replace(/[^0-9]/g, "");
+    }
     setFormDaftar({
       ...formDaftar,
-      [e.target.name]: e.target.value,
+      [e.target.name]: val,
     });
     setErrors({ ...errors, [e.target.name]: "" });
   };
@@ -118,7 +170,6 @@ export function RegisterForm({
       }
     } catch (error: unknown) {
       const err = error as ApiError;
-      // Cek kemungkinan error dari backend
       const errors = err?.response?.data?.status;
       if (
         errors === "failed" &&
@@ -183,8 +234,11 @@ export function RegisterForm({
                       name="nama_lengkap"
                       type="text"
                       required
+                      minLength={3}
+                      maxLength={50}
                       value={formDaftar.nama_lengkap}
                       onChange={handleChange}
+                      autoComplete="off"
                     />
                     {errors.nama_lengkap && (
                       <span className="text-xs text-red-500">
@@ -197,10 +251,15 @@ export function RegisterForm({
                     <Input
                       id="employeeId"
                       name="no_pegawai"
-                      type="number"
+                      type="text"
+                      inputMode="numeric"
+                      pattern="[0-9]*"
                       required
+                      minLength={4}
+                      maxLength={18}
                       value={formDaftar.no_pegawai}
                       onChange={handleChange}
+                      autoComplete="off"
                     />
                     {errors.no_pegawai && (
                       <span className="text-xs text-red-500">
@@ -213,11 +272,16 @@ export function RegisterForm({
                     <Input
                       id="phone"
                       name="no_telp"
-                      type="tel"
+                      type="text"
+                      inputMode="numeric"
+                      pattern="^08[0-9]{8,13}$"
                       required
+                      minLength={10}
+                      maxLength={15}
                       value={formDaftar.no_telp}
                       onChange={handleChange}
                       placeholder="08xxxxxxxxxx"
+                      autoComplete="off"
                     />
                     {errors.no_telp && (
                       <span className="text-xs text-red-500">
@@ -225,7 +289,6 @@ export function RegisterForm({
                       </span>
                     )}
                   </div>
-                  {/* Field alamat DIHAPUS */}
                 </div>
               )}
 
@@ -239,9 +302,12 @@ export function RegisterForm({
                       name="email"
                       type="email"
                       required
+                      minLength={6}
+                      maxLength={100}
                       value={formDaftar.email}
                       onChange={handleChange}
                       placeholder="example@gmail.com"
+                      autoComplete="off"
                     />
                     {errors.email && (
                       <span className="text-xs text-red-500">
@@ -257,14 +323,18 @@ export function RegisterForm({
                         name="password"
                         type={showPassword ? "text" : "password"}
                         required
+                        minLength={8}
+                        maxLength={50}
                         className="pr-10"
                         value={formDaftar.password}
                         onChange={handleChange}
+                        autoComplete="off"
                       />
                       <button
                         type="button"
                         onClick={() => setShowPassword(!showPassword)}
                         className="absolute right-2 top-2.5 text-muted-foreground"
+                        tabIndex={-1}
                       >
                         {showPassword ? (
                           <EyeOff size={20} />

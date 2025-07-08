@@ -19,7 +19,6 @@ import JenisBadge from "./jenis-badge";
 import { updateLaporanStatus } from "@/lib/update-status";
 import { ColumnDef } from "@tanstack/react-table";
 
-// Ganti setOpenDrawerId menjadi openDrawerHandler (sesuai handler dari DataTable)
 export const getColumns = (
   onStatusUpdated: (id: string, status: string) => void,
   openDrawerHandler: (id: string | null) => void
@@ -42,7 +41,7 @@ export const getColumns = (
       </Button>
     ),
     cell: ({ row }) => {
-      const item = row.original
+      const item = row.original;
       return item.tgl_lapor.slice(0, 10);
     },
     enableHiding: false,
@@ -51,10 +50,10 @@ export const getColumns = (
     accessorKey: "judul",
     header: "Judul Pengaduan",
     cell: ({ row }) => {
-      const item = row.original
+      const item = row.original;
       return item.judul.length > 25
         ? `${item.judul.slice(0, 25)}…`
-        : row.original.judul
+        : item.judul;
     },
   },
   {
@@ -96,7 +95,8 @@ export const getColumns = (
     id: "actions",
     cell: ({ row }) => {
       const item = row.original;
-      const label = item.status === "Ditampilkan" ? "Sembunyikan" : "Tampilkan";
+      // Label akan selalu sesuai status terakhir (karena data di-update dari parent)
+      const label = item.status === "selesai" ? "Sembunyikan" : "Tampilkan";
       return (
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
