@@ -1,4 +1,4 @@
-import React from "react";
+import { ReactElement } from "react";
 import { RoadHorizonIcon, LightbulbIcon, BridgeIcon } from "@phosphor-icons/react";
 
 interface Props {
@@ -6,7 +6,7 @@ interface Props {
 }
 
 export default function JenisBadge({ jenis }: Props) {
-  const iconMap: Record<string, JSX.Element> = {
+  const iconMap: Record<string, ReactElement> = {
     jalan: <RoadHorizonIcon size={14} weight="bold" className="text-stone-600" />,
     lampu_jalan: <LightbulbIcon size={14} weight="bold" className="text-yellow-500" />,
     jembatan: <BridgeIcon size={14} weight="bold" className="text-amber-600" />,
