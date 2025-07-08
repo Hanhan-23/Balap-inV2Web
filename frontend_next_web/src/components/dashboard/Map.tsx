@@ -56,7 +56,8 @@ const MapComponent = ({
                 (marker) =>
                   marker.laporan &&
                   marker.laporan.latitude != null &&
-                  marker.laporan.longitude != null
+                  marker.laporan.longitude != null &&
+                  marker.status_rekom !== "selesai"
               )
               .map((marker) => (
                 <Marker
