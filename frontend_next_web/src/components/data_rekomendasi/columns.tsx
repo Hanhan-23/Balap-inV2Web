@@ -44,7 +44,7 @@ const ActionsCell = ({
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <Button variant="ghost" className="h-8 w-8 p-0">
+        <Button id="dropdown-menu-trigger" variant="ghost" className="h-8 w-8 p-0">
           <MoreHorizontal className="h-4 w-4" />
         </Button>
       </DropdownMenuTrigger>
@@ -58,7 +58,7 @@ const ActionsCell = ({
           Detail
         </DropdownMenuItem>
         <DropdownMenuSub>
-          <DropdownMenuSubTrigger>Ubah Status</DropdownMenuSubTrigger>
+          <DropdownMenuSubTrigger id="dropdown-menu-status">Ubah Status</DropdownMenuSubTrigger>
           <DropdownMenuSubContent>
             {statusList.map((s) => (
               <DropdownMenuItem

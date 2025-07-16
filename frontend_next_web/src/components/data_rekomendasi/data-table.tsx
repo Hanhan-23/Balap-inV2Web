@@ -169,7 +169,7 @@ export function DataTable({
       </div>
 
       <div className="rounded-md border border-slate-200 dark:border-slate-700 overflow-x-auto">
-        <Table>
+        <Table id="table-data-rekomendasi">
           <TableHeader className="bg-muted">
             {table.getHeaderGroups().map((headerGroup) => (
               <TableRow key={headerGroup.id}>
