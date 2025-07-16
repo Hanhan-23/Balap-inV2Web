@@ -16,3 +16,4 @@ class BalapinUser(HttpUser):
                 response.success()
             else:
                 response.failure("Login gagal")
+# jalankan dengan locust -f LoginLocust.py
