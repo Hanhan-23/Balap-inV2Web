@@ -2,7 +2,7 @@ from locust import HttpUser, task, between
 
 class BalapinUser(HttpUser):
     wait_time = between(1, 3)
-    host = "http://127.0.0.1:8000"
+    host = "https://pemerintah.balapin.web.id"
 
     @task
     def login(self):
@@ -16,4 +16,3 @@ class BalapinUser(HttpUser):
                 response.success()
             else:
                 response.failure("Login gagal")
-# jalankan dengan locust -f LoginLocust.py
